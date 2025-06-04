@@ -7,15 +7,12 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Search, 
-  Filter, 
   Star, 
   Download, 
   Copy, 
   Play,
   User,
-  Calendar,
-  TrendingUp,
-  Menu
+  Calendar
 } from 'lucide-react';
 
 const Templates = () => {
@@ -153,192 +150,176 @@ const Templates = () => {
 
   return (
     <div className="min-h-screen bg-gray-900">
-      <div className="w-full max-w-none">
-        <div className="p-4 sm:p-6">
-          <div className="max-w-7xl mx-auto">
-            {/* Header */}
-            <div className="mb-6 sm:mb-8">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Templates Library</h1>
-                  <p className="text-gray-400 text-sm sm:text-base">Pre-built automation workflows ready to use</p>
-                </div>
-                
-                {/* Mobile menu trigger - visible on small screens */}
-                <div className="lg:hidden">
+      <div className="container mx-auto px-4 py-6 max-w-7xl">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Templates Library</h1>
+          <p className="text-gray-400">Pre-built automation workflows ready to use</p>
+        </div>
+
+        <Tabs defaultValue="browse" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 sm:w-96 bg-gray-800 border-gray-700 mb-6">
+            <TabsTrigger value="browse" className="data-[state=active]:bg-purple-500">
+              Browse Templates
+            </TabsTrigger>
+            <TabsTrigger value="installed" className="data-[state=active]:bg-purple-500">
+              My Templates
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Browse Templates Tab */}
+          <TabsContent value="browse" className="space-y-6">
+            {/* Search and Filters */}
+            <div className="flex flex-col gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Search templates..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-gray-800 border-gray-700 text-white"
+                />
+              </div>
+              
+              {/* Category filters */}
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {categories.map((category) => (
                   <Button
-                    variant="outline"
+                    key={category.id}
+                    variant={selectedCategory === category.id ? "default" : "outline"}
                     size="sm"
-                    className="border-gray-600 hover:bg-gray-700"
+                    onClick={() => setSelectedCategory(category.id)}
+                    className={`whitespace-nowrap flex-shrink-0 ${
+                      selectedCategory === category.id
+                        ? 'bg-purple-500 hover:bg-purple-600'
+                        : 'border-gray-600 hover:bg-gray-700'
+                    }`}
                   >
-                    <Menu className="w-4 h-4 mr-2" />
-                    Menu
+                    {category.label}
                   </Button>
-                </div>
+                ))}
               </div>
             </div>
 
-            <Tabs defaultValue="browse" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 sm:w-96 bg-gray-800 border-gray-700 mb-6">
-                <TabsTrigger value="browse" className="data-[state=active]:bg-purple-500 text-xs sm:text-sm">
-                  Browse Templates
-                </TabsTrigger>
-                <TabsTrigger value="installed" className="data-[state=active]:bg-purple-500 text-xs sm:text-sm">
-                  My Templates
-                </TabsTrigger>
-              </TabsList>
-
-              {/* Browse Templates Tab */}
-              <TabsContent value="browse" className="space-y-4 sm:space-y-6">
-                {/* Search and Filters */}
-                <div className="flex flex-col gap-4">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      placeholder="Search templates..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 bg-gray-800 border-gray-700 text-white"
-                    />
-                  </div>
+            {/* Templates Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredTemplates.map((template) => (
+                <Card key={template.id} className="bg-gray-800 border-gray-700 hover:border-gray-600 transition-all flex flex-col h-full">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <CardTitle className="text-white text-lg leading-tight pr-2 flex-1 min-w-0">
+                        <span className="break-words">{template.title}</span>
+                      </CardTitle>
+                      <div className="flex items-center space-x-1 text-yellow-400 flex-shrink-0">
+                        <Star className="w-4 h-4 fill-current" />
+                        <span className="text-sm">{template.rating}</span>
+                      </div>
+                    </div>
+                    <p className="text-gray-400 text-sm mb-4 break-words">{template.description}</p>
+                    
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-1 mb-4">
+                      {template.tags.slice(0, 3).map((tag, index) => (
+                        <Badge key={index} variant="outline" className="border-gray-600 text-gray-300 text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                      {template.tags.length > 3 && (
+                        <Badge variant="outline" className="border-gray-600 text-gray-300 text-xs">
+                          +{template.tags.length - 3}
+                        </Badge>
+                      )}
+                    </div>
+                  </CardHeader>
                   
-                  {/* Category filters - horizontal scroll on mobile */}
-                  <div className="flex gap-2 overflow-x-auto pb-2">
-                    {categories.map((category) => (
-                      <Button
-                        key={category.id}
-                        variant={selectedCategory === category.id ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setSelectedCategory(category.id)}
-                        className={`whitespace-nowrap flex-shrink-0 text-xs sm:text-sm ${
-                          selectedCategory === category.id
-                            ? 'bg-purple-500 hover:bg-purple-600'
-                            : 'border-gray-600 hover:bg-gray-700'
-                        }`}
-                      >
-                        {category.label}
+                  <CardContent className="pt-0 mt-auto">
+                    {/* Template Info */}
+                    <div className="flex items-center justify-between mb-4 text-xs text-gray-400">
+                      <div className="flex items-center space-x-4 min-w-0 flex-1">
+                        <span className="flex items-center min-w-0">
+                          <User className="w-3 h-3 mr-1 flex-shrink-0" />
+                          <span className="truncate">{template.creator}</span>
+                        </span>
+                        <span className="flex items-center flex-shrink-0">
+                          <Download className="w-3 h-3 mr-1" />
+                          {template.installs}
+                        </span>
+                      </div>
+                      <Badge className={`${getDifficultyColor(template.difficulty)} text-white text-xs ml-2 flex-shrink-0`}>
+                        {template.difficulty}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Button size="sm" className="flex-1 bg-purple-500 hover:bg-purple-600 text-sm">
+                        <Download className="w-3 h-3 mr-1" />
+                        Install
                       </Button>
-                    ))}
-                  </div>
-                </div>
+                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 flex-shrink-0">
+                        <Play className="w-3 h-3" />
+                      </Button>
+                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 flex-shrink-0">
+                        <Copy className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
 
-                {/* Templates Grid - responsive */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                  {filteredTemplates.map((template) => (
-                    <Card key={template.id} className="bg-gray-800 border-gray-700 hover:border-gray-600 transition-all h-full flex flex-col">
-                      <CardHeader className="flex-shrink-0">
-                        <div className="flex items-start justify-between mb-2">
-                          <CardTitle className="text-white text-base sm:text-lg leading-tight">{template.title}</CardTitle>
-                          <div className="flex items-center space-x-1 text-yellow-400 flex-shrink-0 ml-2">
-                            <Star className="w-3 h-3 sm:w-4 sm:h-4 fill-current" />
-                            <span className="text-xs sm:text-sm">{template.rating}</span>
-                          </div>
-                        </div>
-                        <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-3">{template.description}</p>
-                        
-                        {/* Tags */}
-                        <div className="flex flex-wrap gap-1 mb-3 sm:mb-4">
-                          {template.tags.slice(0, 3).map((tag, index) => (
-                            <Badge key={index} variant="outline" className="border-gray-600 text-gray-300 text-xs">
-                              {tag}
-                            </Badge>
-                          ))}
-                          {template.tags.length > 3 && (
-                            <Badge variant="outline" className="border-gray-600 text-gray-300 text-xs">
-                              +{template.tags.length - 3}
-                            </Badge>
-                          )}
-                        </div>
-                      </CardHeader>
-                      
-                      <CardContent className="flex-grow flex flex-col justify-end">
-                        {/* Template Info */}
-                        <div className="flex items-center justify-between mb-3 sm:mb-4 text-xs text-gray-400">
-                          <div className="flex items-center space-x-2 sm:space-x-4 min-w-0">
-                            <span className="flex items-center truncate">
-                              <User className="w-3 h-3 mr-1 flex-shrink-0" />
-                              <span className="truncate">{template.creator}</span>
-                            </span>
-                            <span className="flex items-center flex-shrink-0">
-                              <Download className="w-3 h-3 mr-1" />
-                              {template.installs}
-                            </span>
-                          </div>
-                          <Badge className={`${getDifficultyColor(template.difficulty)} text-white text-xs flex-shrink-0`}>
-                            {template.difficulty}
-                          </Badge>
-                        </div>
-                        
-                        <div className="flex items-center space-x-2">
-                          <Button size="sm" className="flex-1 bg-purple-500 hover:bg-purple-600 text-xs sm:text-sm">
-                            <Download className="w-3 h-3 mr-1" />
-                            Install
-                          </Button>
-                          <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 flex-shrink-0">
-                            <Play className="w-3 h-3" />
-                          </Button>
-                          <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 flex-shrink-0">
-                            <Copy className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </TabsContent>
+          {/* Installed Templates Tab */}
+          <TabsContent value="installed" className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <h2 className="text-xl font-semibold text-white">My Installed Templates</h2>
+              <Button className="bg-purple-500 hover:bg-purple-600">
+                Import Template
+              </Button>
+            </div>
 
-              {/* Installed Templates Tab */}
-              <TabsContent value="installed" className="space-y-4 sm:space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <h2 className="text-lg sm:text-xl font-semibold text-white">My Installed Templates</h2>
-                  <Button className="bg-purple-500 hover:bg-purple-600 text-xs sm:text-sm">
-                    Import Template
-                  </Button>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                  {installedTemplates.map((template) => (
-                    <Card key={template.id} className="bg-gray-800 border-gray-700 h-full flex flex-col">
-                      <CardHeader className="flex-shrink-0">
-                        <div className="flex items-start justify-between mb-2">
-                          <CardTitle className="text-white text-base sm:text-lg leading-tight">{template.title}</CardTitle>
-                          <Badge className={template.isActive ? 'bg-green-500' : 'bg-gray-500'}>
-                            {template.isActive ? 'Active' : 'Inactive'}
-                          </Badge>
-                        </div>
-                        <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4">{template.description}</p>
-                      </CardHeader>
-                      
-                      <CardContent className="flex-grow flex flex-col justify-end">
-                        <div className="flex items-center justify-between mb-3 sm:mb-4 text-xs text-gray-400">
-                          <span className="flex items-center">
-                            <Calendar className="w-3 h-3 mr-1" />
-                            Modified {template.lastModified}
-                          </span>
-                          <Badge className={`${getDifficultyColor(template.difficulty)} text-white text-xs`}>
-                            {template.difficulty}
-                          </Badge>
-                        </div>
-                        
-                        <div className="flex items-center space-x-2">
-                          <Button size="sm" className="flex-1 bg-purple-500 hover:bg-purple-600 text-xs sm:text-sm">
-                            Edit
-                          </Button>
-                          <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 flex-shrink-0">
-                            <Copy className="w-3 h-3" />
-                          </Button>
-                          <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 text-red-400 flex-shrink-0">
-                            Del
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {installedTemplates.map((template) => (
+                <Card key={template.id} className="bg-gray-800 border-gray-700 flex flex-col h-full">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <CardTitle className="text-white text-lg leading-tight pr-2 flex-1 min-w-0">
+                        <span className="break-words">{template.title}</span>
+                      </CardTitle>
+                      <Badge className={template.isActive ? 'bg-green-500' : 'bg-gray-500'} variant="outline">
+                        {template.isActive ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </div>
+                    <p className="text-gray-400 text-sm mb-4 break-words">{template.description}</p>
+                  </CardHeader>
+                  
+                  <CardContent className="pt-0 mt-auto">
+                    <div className="flex items-center justify-between mb-4 text-xs text-gray-400">
+                      <span className="flex items-center">
+                        <Calendar className="w-3 h-3 mr-1" />
+                        Modified {template.lastModified}
+                      </span>
+                      <Badge className={`${getDifficultyColor(template.difficulty)} text-white text-xs`}>
+                        {template.difficulty}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Button size="sm" className="flex-1 bg-purple-500 hover:bg-purple-600">
+                        Edit
+                      </Button>
+                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 flex-shrink-0">
+                        <Copy className="w-3 h-3" />
+                      </Button>
+                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 text-red-400 flex-shrink-0">
+                        Del
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '../hooks/useAuth';
-import { Menu, X, User, LogOut, Settings } from 'lucide-react';
+import { Menu, X, User, LogOut, Settings, Plus, Book } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +16,11 @@ export const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const isLandingPage = location.pathname === '/';
+  const isDashboard = location.pathname.includes('/dashboard') || 
+                     location.pathname.includes('/templates') || 
+                     location.pathname.includes('/community') || 
+                     location.pathname.includes('/marketplace') || 
+                     location.pathname.includes('/settings');
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-lg border-b border-gray-800">
@@ -31,7 +36,24 @@ export const Navbar: React.FC = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-6">
+            {isDashboard && user && (
+              <>
+                <Link to="/agent-builder">
+                  <Button className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
+                    <Plus className="w-4 h-4 mr-2" />
+                    New Workflow
+                  </Button>
+                </Link>
+                <Link to="/templates">
+                  <Button variant="outline" className="border-gray-600 hover:bg-gray-700">
+                    <Book className="w-4 h-4 mr-2" />
+                    Templates
+                  </Button>
+                </Link>
+              </>
+            )}
+            
             {isLandingPage ? (
               <>
                 <Link to="/how-it-works" className="text-gray-300 hover:text-white transition-colors">
@@ -74,7 +96,7 @@ export const Navbar: React.FC = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2">
                     <User className="w-4 h-4" />
-                    <span>{user.name}</span>
+                    <span className="hidden sm:inline">{user.name}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
@@ -104,7 +126,7 @@ export const Navbar: React.FC = () => {
             )}
 
             {/* Mobile menu button */}
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <Button
                 variant="ghost"
                 size="sm"
@@ -118,20 +140,54 @@ export const Navbar: React.FC = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-800">
+          <div className="lg:hidden py-4 border-t border-gray-800">
             <div className="flex flex-col space-y-4">
-              <Link to="/how-it-works" className="text-gray-300 hover:text-white transition-colors">
-                How It Works
-              </Link>
-              <Link to="/templates" className="text-gray-300 hover:text-white transition-colors">
-                Templates
-              </Link>
-              <Link to="/community" className="text-gray-300 hover:text-white transition-colors">
-                Community
-              </Link>
-              <Link to="/marketplace" className="text-gray-300 hover:text-white transition-colors">
-                Marketplace
-              </Link>
+              {isDashboard && user && (
+                <>
+                  <Link to="/agent-builder" className="flex items-center space-x-2 text-purple-400 hover:text-purple-300 transition-colors">
+                    <Plus className="w-4 h-4" />
+                    <span>New Workflow</span>
+                  </Link>
+                  <Link to="/templates" className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors">
+                    <Book className="w-4 h-4" />
+                    <span>Templates</span>
+                  </Link>
+                </>
+              )}
+              
+              {isLandingPage ? (
+                <>
+                  <Link to="/how-it-works" className="text-gray-300 hover:text-white transition-colors">
+                    How It Works
+                  </Link>
+                  <Link to="/templates" className="text-gray-300 hover:text-white transition-colors">
+                    Templates
+                  </Link>
+                  <Link to="/community" className="text-gray-300 hover:text-white transition-colors">
+                    Community
+                  </Link>
+                  <Link to="/marketplace" className="text-gray-300 hover:text-white transition-colors">
+                    Marketplace
+                  </Link>
+                </>
+              ) : (
+                user && (
+                  <>
+                    <Link to="/dashboard" className="text-gray-300 hover:text-white transition-colors">
+                      Dashboard
+                    </Link>
+                    <Link to="/templates" className="text-gray-300 hover:text-white transition-colors">
+                      Templates
+                    </Link>
+                    <Link to="/community" className="text-gray-300 hover:text-white transition-colors">
+                      Community
+                    </Link>
+                    <Link to="/marketplace" className="text-gray-300 hover:text-white transition-colors">
+                      Marketplace
+                    </Link>
+                  </>
+                )
+              )}
             </div>
           </div>
         )}
