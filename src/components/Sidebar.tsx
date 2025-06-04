@@ -26,7 +26,7 @@ export const Sidebar: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-gray-800/50 backdrop-blur-lg border-r border-gray-700 p-4">
+    <div className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-gray-800/50 backdrop-blur-lg border-r border-gray-700 p-4 z-30">
       <div className="flex flex-col h-full">
         {/* Quick Actions */}
         <div className="mb-6">

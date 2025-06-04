@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -213,22 +212,22 @@ const Community = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-900 pt-16">
-      <div className="p-6">
+    <div className="min-h-screen bg-gray-900">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-6">
         <div className="max-w-7xl mx-auto">
           {/* Enhanced Header */}
           <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h1 className="text-4xl font-bold text-white mb-2 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+              <div className="flex-1">
+                <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
                   Community Hub
                 </h1>
-                <p className="text-gray-400 text-lg">Connect, share, and learn with fellow automation builders</p>
+                <p className="text-gray-400 text-base lg:text-lg">Connect, share, and learn with fellow automation builders</p>
               </div>
               
               {/* Enhanced Anonymous Mode Toggle */}
               {user && (
-                <div className="flex items-center space-x-3 bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-xl p-4 border border-gray-700/50 backdrop-blur-sm">
+                <div className="flex items-center space-x-3 bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-xl p-4 border border-gray-700/50 backdrop-blur-sm w-full lg:w-auto">
                   <div className="flex items-center space-x-2">
                     {user.isAnonymous ? <EyeOff className="w-4 h-4 text-orange-400" /> : <Eye className="w-4 h-4 text-green-400" />}
                     <span className="text-sm text-gray-300 font-medium">
@@ -248,24 +247,26 @@ const Community = () => {
           </div>
 
           <Tabs defaultValue="feed" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 lg:w-96 bg-gray-800/50 border border-gray-700 backdrop-blur-sm">
-              <TabsTrigger value="feed" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500">
-                <Flame className="w-4 h-4 mr-2" />
-                Feed
-              </TabsTrigger>
-              <TabsTrigger value="ask" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500">
-                <MessageSquare className="w-4 h-4 mr-2" />
-                Ask
-              </TabsTrigger>
-              <TabsTrigger value="showcase" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500">
-                <Rocket className="w-4 h-4 mr-2" />
-                Showcase
-              </TabsTrigger>
-              <TabsTrigger value="leaderboard" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500">
-                <Trophy className="w-4 h-4 mr-2" />
-                Leaderboard
-              </TabsTrigger>
-            </TabsList>
+            <div className="w-full overflow-x-auto mb-6">
+              <TabsList className="grid w-full grid-cols-4 min-w-[400px] lg:w-96 bg-gray-800/50 border border-gray-700 backdrop-blur-sm">
+                <TabsTrigger value="feed" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 text-xs sm:text-sm">
+                  <Flame className="w-4 h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Feed</span>
+                </TabsTrigger>
+                <TabsTrigger value="ask" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 text-xs sm:text-sm">
+                  <MessageSquare className="w-4 h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Ask</span>
+                </TabsTrigger>
+                <TabsTrigger value="showcase" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 text-xs sm:text-sm">
+                  <Rocket className="w-4 h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Showcase</span>
+                </TabsTrigger>
+                <TabsTrigger value="leaderboard" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 text-xs sm:text-sm">
+                  <Trophy className="w-4 h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Board</span>
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
             {/* Enhanced Feed Tab */}
             <TabsContent value="feed" className="space-y-6">
@@ -289,11 +290,11 @@ const Community = () => {
                             className={`flex items-center justify-between py-3 px-3 rounded-lg hover:bg-gray-700/50 cursor-pointer transition-all group ${selectedCategory === category.id ? 'bg-purple-500/20 border border-purple-500/30' : ''}`}
                             onClick={() => setSelectedCategory(category.id)}
                           >
-                            <div className="flex items-center space-x-2">
-                              <IconComponent className={`w-4 h-4 ${getCategoryColor(category.color).split(' ')[1]}`} />
-                              <span className="text-gray-300 text-sm group-hover:text-white transition-colors">{category.label}</span>
+                            <div className="flex items-center space-x-2 min-w-0">
+                              <IconComponent className={`w-4 h-4 flex-shrink-0 ${getCategoryColor(category.color).split(' ')[1]}`} />
+                              <span className="text-gray-300 text-sm group-hover:text-white transition-colors truncate">{category.label}</span>
                             </div>
-                            <Badge variant="outline" className={`${getCategoryColor(category.color)} text-xs`}>
+                            <Badge variant="outline" className={`${getCategoryColor(category.color)} text-xs flex-shrink-0`}>
                               {category.count}
                             </Badge>
                           </div>
@@ -328,10 +329,10 @@ const Community = () => {
                 </div>
 
                 {/* Enhanced Main Feed */}
-                <div className="lg:col-span-3 space-y-4">
+                <div className="lg:col-span-3 space-y-4 min-w-0">
                   {/* Enhanced Sort Options */}
-                  <div className="flex items-center justify-between bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 p-4">
-                    <div className="flex items-center space-x-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 p-4">
+                    <div className="flex flex-wrap items-center gap-2">
                       <Button
                         size="sm"
                         variant={sortBy === 'trending' ? 'default' : 'outline'}
@@ -339,7 +340,7 @@ const Community = () => {
                         className={sortBy === 'trending' ? 'bg-gradient-to-r from-purple-500 to-blue-500' : 'border-gray-600 hover:border-purple-500'}
                       >
                         <TrendingUp className="w-4 h-4 mr-1" />
-                        Trending
+                        <span className="hidden sm:inline">Trending</span>
                       </Button>
                       <Button
                         size="sm"
@@ -348,7 +349,7 @@ const Community = () => {
                         className={sortBy === 'recent' ? 'bg-gradient-to-r from-purple-500 to-blue-500' : 'border-gray-600 hover:border-purple-500'}
                       >
                         <Clock className="w-4 h-4 mr-1" />
-                        Recent
+                        <span className="hidden sm:inline">Recent</span>
                       </Button>
                       <Button
                         size="sm"
@@ -357,7 +358,7 @@ const Community = () => {
                         className={sortBy === 'hot' ? 'bg-gradient-to-r from-orange-500 to-red-500' : 'border-gray-600 hover:border-orange-500'}
                       >
                         <Flame className="w-4 h-4 mr-1" />
-                        Hot
+                        <span className="hidden sm:inline">Hot</span>
                       </Button>
                     </div>
                     
@@ -374,10 +375,10 @@ const Community = () => {
                   <div className="space-y-4">
                     {filteredPosts.map((post) => (
                       <Card key={post.id} className={`bg-gray-800/50 backdrop-blur-sm border-gray-700 hover:border-gray-600 transition-all duration-300 hover:shadow-lg group ${post.isPinned ? 'border-purple-500/50 bg-purple-900/10' : ''}`}>
-                        <CardContent className="p-6">
-                          <div className="flex items-start space-x-4">
+                        <CardContent className="p-4 sm:p-6">
+                          <div className="flex flex-col sm:flex-row sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
                             {/* Enhanced Vote Section */}
-                            <div className="flex flex-col items-center space-y-2">
+                            <div className="flex sm:flex-col items-center sm:items-center space-x-4 sm:space-x-0 sm:space-y-2 flex-shrink-0">
                               <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-purple-500/20 hover:text-purple-400 transition-colors">
                                 <ThumbsUp className="w-4 h-4" />
                               </Button>
@@ -388,44 +389,42 @@ const Community = () => {
                             </div>
 
                             {/* Enhanced Post Content */}
-                            <div className="flex-1">
-                              <div className="flex items-start justify-between mb-3">
-                                <div className="flex items-center space-x-2 flex-wrap">
-                                  {post.isPinned && (
-                                    <Badge className="bg-purple-500 text-white">
-                                      <Crown className="w-3 h-3 mr-1" />
-                                      Pinned
-                                    </Badge>
-                                  )}
-                                  {post.isHot && (
-                                    <Badge className="bg-orange-500 text-white">
-                                      <Flame className="w-3 h-3 mr-1" />
-                                      Hot
-                                    </Badge>
-                                  )}
-                                  {post.hasAcceptedAnswer && (
-                                    <Badge className="bg-green-500 text-white">
-                                      <Check className="w-3 h-3 mr-1" />
-                                      Solved
-                                    </Badge>
-                                  )}
-                                  {post.isAnonymous && (
-                                    <Badge variant="outline" className="border-purple-500 text-purple-400 text-xs">
-                                      <EyeOff className="w-3 h-3 mr-1" />
-                                      Anonymous
-                                    </Badge>
-                                  )}
-                                  <Badge className={`${getDifficultyColor(post.difficulty)} text-white text-xs`}>
-                                    {post.difficulty}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex flex-wrap items-start gap-2 mb-3">
+                                {post.isPinned && (
+                                  <Badge className="bg-purple-500 text-white">
+                                    <Crown className="w-3 h-3 mr-1" />
+                                    Pinned
                                   </Badge>
-                                </div>
+                                )}
+                                {post.isHot && (
+                                  <Badge className="bg-orange-500 text-white">
+                                    <Flame className="w-3 h-3 mr-1" />
+                                    Hot
+                                  </Badge>
+                                )}
+                                {post.hasAcceptedAnswer && (
+                                  <Badge className="bg-green-500 text-white">
+                                    <Check className="w-3 h-3 mr-1" />
+                                    Solved
+                                  </Badge>
+                                )}
+                                {post.isAnonymous && (
+                                  <Badge variant="outline" className="border-purple-500 text-purple-400 text-xs">
+                                    <EyeOff className="w-3 h-3 mr-1" />
+                                    Anonymous
+                                  </Badge>
+                                )}
+                                <Badge className={`${getDifficultyColor(post.difficulty)} text-white text-xs`}>
+                                  {post.difficulty}
+                                </Badge>
                               </div>
                               
-                              <h3 className="text-xl font-semibold text-white hover:text-purple-400 cursor-pointer transition-colors mb-2 group-hover:text-purple-300">
+                              <h3 className="text-lg sm:text-xl font-semibold text-white hover:text-purple-400 cursor-pointer transition-colors mb-2 group-hover:text-purple-300 break-words">
                                 {post.title}
                               </h3>
                               
-                              <p className="text-gray-300 mb-4 leading-relaxed">{post.content}</p>
+                              <p className="text-gray-300 mb-4 leading-relaxed break-words">{post.content}</p>
                               
                               <div className="flex flex-wrap gap-2 mb-4">
                                 {post.tags.map((tag, index) => (
@@ -435,34 +434,34 @@ const Community = () => {
                                 ))}
                               </div>
                               
-                              <div className="flex items-center justify-between text-sm text-gray-400">
-                                <div className="flex items-center space-x-4">
+                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-sm text-gray-400">
+                                <div className="flex flex-wrap items-center gap-4">
                                   <span className="flex items-center">
-                                    <User className="w-3 h-3 mr-1" />
-                                    {post.author}
+                                    <User className="w-3 h-3 mr-1 flex-shrink-0" />
+                                    <span className="truncate">{post.author}</span>
                                   </span>
                                   <span className="flex items-center">
-                                    <Clock className="w-3 h-3 mr-1" />
+                                    <Clock className="w-3 h-3 mr-1 flex-shrink-0" />
                                     {post.timestamp}
                                   </span>
                                   <span className="flex items-center">
-                                    <Eye className="w-3 h-3 mr-1" />
+                                    <Eye className="w-3 h-3 mr-1 flex-shrink-0" />
                                     {post.views} views
                                   </span>
                                 </div>
                                 
-                                <div className="flex items-center space-x-3">
-                                  <Button size="sm" variant="ghost" className="text-gray-400 hover:text-white hover:bg-gray-700/50">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <Button size="sm" variant="ghost" className="text-gray-400 hover:text-white hover:bg-gray-700/50 text-xs">
                                     <Reply className="w-3 h-3 mr-1" />
-                                    {post.replies} replies
+                                    {post.replies}
                                   </Button>
-                                  <Button size="sm" variant="ghost" className="text-gray-400 hover:text-blue-400 hover:bg-blue-500/10">
+                                  <Button size="sm" variant="ghost" className="text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 p-2">
                                     <Share2 className="w-3 h-3" />
                                   </Button>
-                                  <Button size="sm" variant="ghost" className="text-gray-400 hover:text-yellow-400 hover:bg-yellow-500/10">
+                                  <Button size="sm" variant="ghost" className="text-gray-400 hover:text-yellow-400 hover:bg-yellow-500/10 p-2">
                                     <Bookmark className="w-3 h-3" />
                                   </Button>
-                                  <Button size="sm" variant="ghost" className="text-gray-400 hover:text-red-400 hover:bg-red-500/10">
+                                  <Button size="sm" variant="ghost" className="text-gray-400 hover:text-red-400 hover:bg-red-500/10 p-2">
                                     <Flag className="w-3 h-3" />
                                   </Button>
                                 </div>
@@ -545,7 +544,7 @@ const Community = () => {
                     <label className="text-sm text-gray-300">Mark as urgent (requires immediate attention)</label>
                   </div>
                   
-                  <Button className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 transition-all">
+                  <Button className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 transition-all w-full sm:w-auto">
                     <Plus className="w-4 h-4 mr-2" />
                     Post Question
                   </Button>
@@ -611,7 +610,7 @@ const Community = () => {
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                     <div className="flex items-center space-x-2">
                       <input type="checkbox" className="rounded border-gray-600" />
                       <label className="text-sm text-gray-300">Allow others to clone this workflow</label>
@@ -622,7 +621,7 @@ const Community = () => {
                     </div>
                   </div>
                   
-                  <Button className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 transition-all">
+                  <Button className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 transition-all w-full sm:w-auto">
                     <Rocket className="w-4 h-4 mr-2" />
                     Share Workflow
                   </Button>
@@ -659,9 +658,9 @@ const Community = () => {
                             {index < 3 && <Crown className="absolute -top-2 -right-1 w-4 h-4 text-yellow-400" />}
                           </div>
                           
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <span className="font-medium text-white">{user.name}</span>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-wrap items-center gap-2 mb-1">
+                              <span className="font-medium text-white truncate">{user.name}</span>
                               {user.isAnonymous && (
                                 <Badge variant="outline" className="border-purple-500 text-purple-400 text-xs">
                                   <EyeOff className="w-2 h-2 mr-1" />
@@ -672,16 +671,16 @@ const Community = () => {
                                 {user.badge}
                               </Badge>
                             </div>
-                            <div className="flex items-center space-x-3 text-xs text-gray-400">
+                            <div className="flex flex-wrap items-center gap-1 text-xs text-gray-400">
                               <span>{user.contributions} contributions</span>
                               <span>•</span>
                               <span>{user.streak} day streak</span>
                               <span>•</span>
-                              <span className="text-purple-400">{user.level}</span>
+                              <span className="text-purple-400 truncate">{user.level}</span>
                             </div>
                           </div>
                           
-                          <div className="text-right">
+                          <div className="text-right flex-shrink-0">
                             <div className="text-lg font-bold text-purple-400">{user.points.toLocaleString()}</div>
                             <div className="text-xs text-gray-400">XP</div>
                           </div>
@@ -712,14 +711,14 @@ const Community = () => {
                         <div key={index} className={`flex items-center space-x-3 p-4 rounded-lg transition-all hover:bg-gray-700/30 ${
                           achievement.earned ? 'bg-gradient-to-r from-purple-900/20 to-blue-900/20 border border-purple-500/30' : 'bg-gray-700/20'
                         }`}>
-                          <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
                             achievement.earned ? 'bg-gradient-to-r from-purple-500 to-blue-500' : 'bg-gray-600'
                           }`}>
                             <Star className="w-6 h-6 text-white" />
                           </div>
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <h4 className="font-medium text-white">{achievement.title}</h4>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-wrap items-center gap-2 mb-1">
+                              <h4 className="font-medium text-white truncate">{achievement.title}</h4>
                               <Badge className={`text-xs ${
                                 achievement.rarity === 'Common' ? 'bg-green-500' :
                                 achievement.rarity === 'Rare' ? 'bg-blue-500' :
@@ -729,11 +728,11 @@ const Community = () => {
                                 {achievement.rarity}
                               </Badge>
                             </div>
-                            <p className="text-sm text-gray-400">{achievement.description}</p>
+                            <p className="text-sm text-gray-400 break-words">{achievement.description}</p>
                             <div className="text-xs text-purple-400 mt-1">+{achievement.points} XP</div>
                           </div>
                           {achievement.earned && (
-                            <Check className="w-5 h-5 text-green-400" />
+                            <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
                           )}
                         </div>
                       ))}
