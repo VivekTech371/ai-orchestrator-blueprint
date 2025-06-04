@@ -21,7 +21,8 @@ import {
   LogOut,
   CheckCircle,
   Calendar,
-  Lock
+  Lock,
+  Plus
 } from 'lucide-react';
 
 const Settings = () => {

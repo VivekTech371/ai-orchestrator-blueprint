@@ -21,7 +21,8 @@ import {
   Trophy,
   Star,
   Eye,
-  EyeOff
+  EyeOff,
+  Check
 } from 'lucide-react';
 
 const Community = () => {
