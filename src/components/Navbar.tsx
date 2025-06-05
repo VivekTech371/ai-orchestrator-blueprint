@@ -27,20 +27,20 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">AI</span>
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
               OrchestrAI
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Actions */}
           <div className="hidden lg:flex items-center space-x-6">
             {isDashboard && user && (
               <>
                 <Link to="/agent-builder">
-                  <Button className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
+                  <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600">
                     <Plus className="w-4 h-4 mr-2" />
                     New Workflow
                   </Button>
@@ -52,40 +52,6 @@ export const Navbar: React.FC = () => {
                   </Button>
                 </Link>
               </>
-            )}
-            
-            {isLandingPage ? (
-              <>
-                <Link to="/how-it-works" className="text-gray-300 hover:text-white transition-colors">
-                  How It Works
-                </Link>
-                <Link to="/templates" className="text-gray-300 hover:text-white transition-colors">
-                  Templates
-                </Link>
-                <Link to="/community" className="text-gray-300 hover:text-white transition-colors">
-                  Community
-                </Link>
-                <Link to="/marketplace" className="text-gray-300 hover:text-white transition-colors">
-                  Marketplace
-                </Link>
-              </>
-            ) : (
-              user && (
-                <>
-                  <Link to="/dashboard" className="text-gray-300 hover:text-white transition-colors">
-                    Dashboard
-                  </Link>
-                  <Link to="/templates" className="text-gray-300 hover:text-white transition-colors">
-                    Templates
-                  </Link>
-                  <Link to="/community" className="text-gray-300 hover:text-white transition-colors">
-                    Community
-                  </Link>
-                  <Link to="/marketplace" className="text-gray-300 hover:text-white transition-colors">
-                    Marketplace
-                  </Link>
-                </>
-              )
             )}
           </div>
 
@@ -118,7 +84,7 @@ export const Navbar: React.FC = () => {
                   <Button variant="ghost">Login</Button>
                 </Link>
                 <Link to="/signup">
-                  <Button className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
+                  <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600">
                     Get Started
                   </Button>
                 </Link>
@@ -144,7 +110,7 @@ export const Navbar: React.FC = () => {
             <div className="flex flex-col space-y-4">
               {isDashboard && user && (
                 <>
-                  <Link to="/agent-builder" className="flex items-center space-x-2 text-purple-400 hover:text-purple-300 transition-colors">
+                  <Link to="/agent-builder" className="flex items-center space-x-2 text-blue-400 hover:text-blue-300 transition-colors">
                     <Plus className="w-4 h-4" />
                     <span>New Workflow</span>
                   </Link>
@@ -153,40 +119,6 @@ export const Navbar: React.FC = () => {
                     <span>Templates</span>
                   </Link>
                 </>
-              )}
-              
-              {isLandingPage ? (
-                <>
-                  <Link to="/how-it-works" className="text-gray-300 hover:text-white transition-colors">
-                    How It Works
-                  </Link>
-                  <Link to="/templates" className="text-gray-300 hover:text-white transition-colors">
-                    Templates
-                  </Link>
-                  <Link to="/community" className="text-gray-300 hover:text-white transition-colors">
-                    Community
-                  </Link>
-                  <Link to="/marketplace" className="text-gray-300 hover:text-white transition-colors">
-                    Marketplace
-                  </Link>
-                </>
-              ) : (
-                user && (
-                  <>
-                    <Link to="/dashboard" className="text-gray-300 hover:text-white transition-colors">
-                      Dashboard
-                    </Link>
-                    <Link to="/templates" className="text-gray-300 hover:text-white transition-colors">
-                      Templates
-                    </Link>
-                    <Link to="/community" className="text-gray-300 hover:text-white transition-colors">
-                      Community
-                    </Link>
-                    <Link to="/marketplace" className="text-gray-300 hover:text-white transition-colors">
-                      Marketplace
-                    </Link>
-                  </>
-                )
               )}
             </div>
           </div>

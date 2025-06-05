@@ -19,12 +19,12 @@ import {
 
 const HowItWorks = () => {
   return (
-    <div className="min-h-screen bg-gray-900 pt-16">
+    <div className="min-h-screen bg-gray-900">
       <div className="p-6">
         <div className="max-w-6xl mx-auto">
           {/* Hero */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
               How OrchestrAI Works
             </h1>
             <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
@@ -34,7 +34,7 @@ const HowItWorks = () => {
 
           {/* Interactive Explainer */}
           <div className="mb-20">
-            <div className="relative bg-gradient-to-br from-purple-900/20 to-blue-900/20 rounded-2xl border border-purple-500/30 p-8 overflow-hidden">
+            <div className="relative bg-gradient-to-br from-blue-900/20 to-cyan-900/20 rounded-2xl border border-blue-500/30 p-8 overflow-hidden">
               <div className="max-w-4xl mx-auto">
                 <h2 className="text-3xl font-bold text-white mb-8 text-center">
                   See OrchestrAI in Action
@@ -43,7 +43,7 @@ const HowItWorks = () => {
                 {/* Demo Animation Placeholder */}
                 <div className="relative h-96 bg-gray-800/50 rounded-xl border border-gray-700 mb-8 overflow-hidden">
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center mb-4">
+                    <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mb-4">
                       <Play className="w-10 h-10 text-white" />
                     </div>
                     <p className="text-gray-400">Interactive Animation</p>
@@ -55,12 +55,12 @@ const HowItWorks = () => {
                 <div className="grid md:grid-cols-3 gap-6 text-center">
                   {[
                     {
-                      icon: <MessageSquare className="w-8 h-8 text-purple-400" />,
+                      icon: <MessageSquare className="w-8 h-8 text-blue-400" />,
                       title: 'Describe Your Goal',
                       description: 'Start with simple text description of what you need automated'
                     },
                     {
-                      icon: <Code className="w-8 h-8 text-blue-400" />,
+                      icon: <Code className="w-8 h-8 text-cyan-400" />,
                       title: 'AI Builds Workflows',
                       description: 'Our AI creates the optimal agent network for your needs'
                     },
@@ -242,7 +242,7 @@ const HowItWorks = () => {
             <h2 className="text-3xl font-bold text-white mb-6">Ready to automate your workflow?</h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/agent-builder">
-                <Button size="lg" className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
+                <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600">
                   Start Building Now
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
