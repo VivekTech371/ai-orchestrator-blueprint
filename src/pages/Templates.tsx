@@ -152,17 +152,17 @@ const Templates = () => {
     <div className="min-h-screen bg-gray-900">
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Templates Library</h1>
+        <div className="mb-8 animate-fade-in">
+          <h1 className="text-3xl font-bold text-white mb-2 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Templates Library</h1>
           <p className="text-gray-400">Pre-built automation workflows ready to use</p>
         </div>
 
-        <Tabs defaultValue="browse" className="w-full">
+        <Tabs defaultValue="browse" className="w-full animate-fade-in animation-delay-200">
           <TabsList className="grid w-full grid-cols-2 sm:w-96 bg-gray-800 border-gray-700 mb-6">
-            <TabsTrigger value="browse" className="data-[state=active]:bg-purple-500">
+            <TabsTrigger value="browse" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-cyan-500">
               Browse Templates
             </TabsTrigger>
-            <TabsTrigger value="installed" className="data-[state=active]:bg-purple-500">
+            <TabsTrigger value="installed" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-cyan-500">
               My Templates
             </TabsTrigger>
           </TabsList>
@@ -170,30 +170,31 @@ const Templates = () => {
           {/* Browse Templates Tab */}
           <TabsContent value="browse" className="space-y-6">
             {/* Search and Filters */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 animate-fade-in animation-delay-300">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
                   placeholder="Search templates..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-gray-800 border-gray-700 text-white"
+                  className="pl-10 bg-gray-800 border-gray-700 text-white focus:border-blue-500 focus:ring-blue-500 transition-all"
                 />
               </div>
               
               {/* Category filters */}
               <div className="flex gap-2 overflow-x-auto pb-2">
-                {categories.map((category) => (
+                {categories.map((category, index) => (
                   <Button
                     key={category.id}
                     variant={selectedCategory === category.id ? "default" : "outline"}
                     size="sm"
                     onClick={() => setSelectedCategory(category.id)}
-                    className={`whitespace-nowrap flex-shrink-0 ${
+                    className={`whitespace-nowrap flex-shrink-0 transition-all hover-scale ${
                       selectedCategory === category.id
-                        ? 'bg-purple-500 hover:bg-purple-600'
+                        ? 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600'
                         : 'border-gray-600 hover:bg-gray-700'
-                    }`}
+                    } animate-fade-in`}
+                    style={{ animationDelay: `${300 + index * 100}ms` }}
                   >
                     {category.label}
                   </Button>
@@ -203,8 +204,12 @@ const Templates = () => {
 
             {/* Templates Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredTemplates.map((template) => (
-                <Card key={template.id} className="bg-gray-800 border-gray-700 hover:border-gray-600 transition-all flex flex-col h-full">
+              {filteredTemplates.map((template, index) => (
+                <Card 
+                  key={template.id} 
+                  className="bg-gray-800 border-gray-700 hover:border-blue-500 transition-all flex flex-col h-full hover-scale glow-hover animate-fade-in"
+                  style={{ animationDelay: `${500 + index * 100}ms` }}
+                >
                   <CardHeader className="pb-4">
                     <div className="flex items-start justify-between mb-2">
                       <CardTitle className="text-white text-lg leading-tight pr-2 flex-1 min-w-0">
@@ -219,8 +224,8 @@ const Templates = () => {
                     
                     {/* Tags */}
                     <div className="flex flex-wrap gap-1 mb-4">
-                      {template.tags.slice(0, 3).map((tag, index) => (
-                        <Badge key={index} variant="outline" className="border-gray-600 text-gray-300 text-xs">
+                      {template.tags.slice(0, 3).map((tag, tagIndex) => (
+                        <Badge key={tagIndex} variant="outline" className="border-gray-600 text-gray-300 text-xs">
                           {tag}
                         </Badge>
                       ))}
@@ -251,14 +256,14 @@ const Templates = () => {
                     </div>
                     
                     <div className="flex items-center space-x-2">
-                      <Button size="sm" className="flex-1 bg-purple-500 hover:bg-purple-600 text-sm">
+                      <Button size="sm" className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-sm hover-scale transition-all">
                         <Download className="w-3 h-3 mr-1" />
                         Install
                       </Button>
-                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 flex-shrink-0">
+                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 flex-shrink-0 hover-scale transition-all">
                         <Play className="w-3 h-3" />
                       </Button>
-                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 flex-shrink-0">
+                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 flex-shrink-0 hover-scale transition-all">
                         <Copy className="w-3 h-3" />
                       </Button>
                     </div>
@@ -270,16 +275,20 @@ const Templates = () => {
 
           {/* Installed Templates Tab */}
           <TabsContent value="installed" className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-in animation-delay-300">
               <h2 className="text-xl font-semibold text-white">My Installed Templates</h2>
-              <Button className="bg-purple-500 hover:bg-purple-600">
+              <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all">
                 Import Template
               </Button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {installedTemplates.map((template) => (
-                <Card key={template.id} className="bg-gray-800 border-gray-700 flex flex-col h-full">
+              {installedTemplates.map((template, index) => (
+                <Card 
+                  key={template.id} 
+                  className="bg-gray-800 border-gray-700 flex flex-col h-full hover-scale glow-hover animate-fade-in transition-all"
+                  style={{ animationDelay: `${400 + index * 100}ms` }}
+                >
                   <CardHeader className="pb-4">
                     <div className="flex items-start justify-between mb-2">
                       <CardTitle className="text-white text-lg leading-tight pr-2 flex-1 min-w-0">
@@ -304,13 +313,13 @@ const Templates = () => {
                     </div>
                     
                     <div className="flex items-center space-x-2">
-                      <Button size="sm" className="flex-1 bg-purple-500 hover:bg-purple-600">
+                      <Button size="sm" className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all">
                         Edit
                       </Button>
-                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 flex-shrink-0">
+                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 flex-shrink-0 hover-scale transition-all">
                         <Copy className="w-3 h-3" />
                       </Button>
-                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 text-red-400 flex-shrink-0">
+                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-700 text-red-400 flex-shrink-0 hover-scale transition-all">
                         Del
                       </Button>
                     </div>

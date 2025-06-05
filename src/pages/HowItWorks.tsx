@@ -23,7 +23,7 @@ const HowItWorks = () => {
       <div className="p-6">
         <div className="max-w-6xl mx-auto">
           {/* Hero */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 animate-fade-in">
             <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
               How OrchestrAI Works
             </h1>
@@ -33,17 +33,17 @@ const HowItWorks = () => {
           </div>
 
           {/* Interactive Explainer */}
-          <div className="mb-20">
-            <div className="relative bg-gradient-to-br from-blue-900/20 to-cyan-900/20 rounded-2xl border border-blue-500/30 p-8 overflow-hidden">
+          <div className="mb-20 animate-fade-in animation-delay-200">
+            <div className="relative bg-gradient-to-br from-blue-900/20 to-cyan-900/20 rounded-2xl border border-blue-500/30 p-8 overflow-hidden hover-scale glow transition-all duration-500">
               <div className="max-w-4xl mx-auto">
                 <h2 className="text-3xl font-bold text-white mb-8 text-center">
                   See OrchestrAI in Action
                 </h2>
                 
                 {/* Demo Animation Placeholder */}
-                <div className="relative h-96 bg-gray-800/50 rounded-xl border border-gray-700 mb-8 overflow-hidden">
+                <div className="relative h-96 bg-gray-800/50 rounded-xl border border-gray-700 mb-8 overflow-hidden hover-scale transition-all">
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mb-4">
+                    <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mb-4 pulse">
                       <Play className="w-10 h-10 text-white" />
                     </div>
                     <p className="text-gray-400">Interactive Animation</p>
@@ -70,7 +70,11 @@ const HowItWorks = () => {
                       description: 'One-click deployment with real-time monitoring'
                     }
                   ].map((feature, index) => (
-                    <div key={index} className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+                    <div 
+                      key={index} 
+                      className="bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover-scale glow-hover transition-all animate-fade-in"
+                      style={{ animationDelay: `${600 + index * 200}ms` }}
+                    >
                       <div className="flex justify-center mb-4">
                         {feature.icon}
                       </div>
@@ -84,7 +88,7 @@ const HowItWorks = () => {
           </div>
 
           {/* Step by Step Walkthrough */}
-          <div className="mb-20">
+          <div className="mb-20 animate-fade-in animation-delay-400">
             <h2 className="text-3xl font-bold text-center text-white mb-12">
               Step-by-Step Walkthrough
             </h2>
@@ -158,9 +162,13 @@ const HowItWorks = () => {
                   ]
                 }
               ].map((step, index) => (
-                <div key={index} className={`flex flex-col ${index % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} gap-8 items-center`}>
+                <div 
+                  key={index} 
+                  className={`flex flex-col ${index % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} gap-8 items-center animate-fade-in`}
+                  style={{ animationDelay: `${600 + index * 200}ms` }}
+                >
                   <div className="w-full md:w-1/2">
-                    <div className="bg-gray-800/50 rounded-xl border border-gray-700 overflow-hidden">
+                    <div className="bg-gray-800/50 rounded-xl border border-gray-700 overflow-hidden hover-scale transition-all">
                       <img 
                         src={step.image} 
                         alt={step.title}
@@ -170,7 +178,7 @@ const HowItWorks = () => {
                   </div>
                   <div className="w-full md:w-1/2">
                     <div className="flex items-center space-x-4 mb-4">
-                      <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold glow">
                         {step.step}
                       </div>
                       <h3 className="text-2xl font-bold text-white">{step.title}</h3>
@@ -179,7 +187,7 @@ const HowItWorks = () => {
                     <ul className="space-y-3">
                       {step.points.map((point, pointIndex) => (
                         <li key={pointIndex} className="flex items-start space-x-2">
-                          <CheckCircle className="w-5 h-5 text-purple-400 mt-0.5" />
+                          <CheckCircle className="w-5 h-5 text-blue-400 mt-0.5" />
                           <span className="text-gray-300">{point}</span>
                         </li>
                       ))}
@@ -191,7 +199,7 @@ const HowItWorks = () => {
           </div>
 
           {/* FAQ Section */}
-          <div className="mb-16">
+          <div className="mb-16 animate-fade-in animation-delay-800">
             <h2 className="text-3xl font-bold text-center text-white mb-10">
               Frequently Asked Questions
             </h2>
@@ -224,8 +232,13 @@ const HowItWorks = () => {
                     answer: "Absolutely. While OrchestrAI generates workflows automatically, you can always dive in and make manual adjustments to any aspect of your workflows."
                   }
                 ].map((item, index) => (
-                  <AccordionItem key={index} value={`item-${index}`} className="border border-gray-700 rounded-lg overflow-hidden">
-                    <AccordionTrigger className="bg-gray-800 px-5 py-4 hover:bg-gray-700 hover:no-underline">
+                  <AccordionItem 
+                    key={index} 
+                    value={`item-${index}`} 
+                    className="border border-gray-700 rounded-lg overflow-hidden hover-scale transition-all animate-fade-in"
+                    style={{ animationDelay: `${1000 + index * 100}ms` }}
+                  >
+                    <AccordionTrigger className="bg-gray-800 px-5 py-4 hover:bg-gray-700 hover:no-underline transition-all">
                       <span className="text-white">{item.question}</span>
                     </AccordionTrigger>
                     <AccordionContent className="bg-gray-800/50 px-5 py-4 text-gray-300">
@@ -238,17 +251,17 @@ const HowItWorks = () => {
           </div>
 
           {/* Call to Action */}
-          <div className="text-center">
+          <div className="text-center animate-fade-in animation-delay-1000">
             <h2 className="text-3xl font-bold text-white mb-6">Ready to automate your workflow?</h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/agent-builder">
-                <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600">
+                <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all">
                   Start Building Now
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
               <Link to="/templates">
-                <Button size="lg" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                <Button size="lg" variant="outline" className="border-gray-600 hover:bg-gray-700 hover-scale transition-all">
                   Explore Templates
                 </Button>
               </Link>

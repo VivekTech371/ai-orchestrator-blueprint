@@ -3,6 +3,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Navigation } from './Navigation';
+import { Chatbot } from './Chatbot';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           {children}
         </div>
       </main>
+      <Chatbot />
     </div>
   );
 };
