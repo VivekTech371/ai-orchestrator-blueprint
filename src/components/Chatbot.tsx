@@ -92,41 +92,43 @@ export const Chatbot: React.FC = () => {
     return (
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg hover:shadow-xl transition-all duration-300 z-50 animate-bounce"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg hover:shadow-xl transition-all duration-300 z-50 animate-bounce"
         style={{ animationDuration: '2s' }}
       >
-        <MessageCircle className="w-6 h-6 text-white" />
+        <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
       </Button>
     );
   }
 
   return (
-    <div className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ${
-      isMinimized ? 'w-80 h-16' : 'w-80 h-96'
+    <div className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 transition-all duration-300 ${
+      isMinimized 
+        ? 'w-72 sm:w-80 h-14 sm:h-16' 
+        : 'w-72 sm:w-80 md:w-96 h-80 sm:h-96'
     }`}>
       <Card className="w-full h-full bg-gray-800 border-gray-700 shadow-2xl animate-scale-in">
-        <CardHeader className="p-4 border-b border-gray-700 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-t-lg">
+        <CardHeader className="p-3 sm:p-4 border-b border-gray-700 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-t-lg">
           <div className="flex items-center justify-between">
             <CardTitle className="text-white flex items-center space-x-2">
-              <Bot className="w-5 h-5" />
-              <span>AI Assistant</span>
+              <Bot className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-sm sm:text-base">AI Assistant</span>
             </CardTitle>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsMinimized(!isMinimized)}
-                className="text-white hover:bg-white/20 p-1"
+                className="text-white hover:bg-white/20 p-1 h-auto"
               >
-                {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
+                {isMinimized ? <Maximize2 className="w-3 h-3 sm:w-4 sm:h-4" /> : <Minimize2 className="w-3 h-3 sm:w-4 sm:h-4" />}
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsOpen(false)}
-                className="text-white hover:bg-white/20 p-1"
+                className="text-white hover:bg-white/20 p-1 h-auto"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3 h-3 sm:w-4 sm:h-4" />
               </Button>
             </div>
           </div>
@@ -134,23 +136,23 @@ export const Chatbot: React.FC = () => {
         
         {!isMinimized && (
           <CardContent className="p-0 flex flex-col h-full">
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 max-h-64">
+            <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 max-h-48 sm:max-h-64">
               {messages.map((message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
                 >
                   <div
-                    className={`max-w-[80%] p-3 rounded-lg ${
+                    className={`max-w-[85%] sm:max-w-[80%] p-2 sm:p-3 rounded-lg ${
                       message.sender === 'user'
                         ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
                         : 'bg-gray-700 text-gray-100'
                     }`}
                   >
-                    <div className="flex items-start space-x-2">
-                      {message.sender === 'bot' && <Bot className="w-4 h-4 mt-0.5 text-blue-400" />}
-                      {message.sender === 'user' && <User className="w-4 h-4 mt-0.5 text-white" />}
-                      <span className="text-sm">{message.text}</span>
+                    <div className="flex items-start space-x-1 sm:space-x-2">
+                      {message.sender === 'bot' && <Bot className="w-3 h-3 sm:w-4 sm:h-4 mt-0.5 text-blue-400 flex-shrink-0" />}
+                      {message.sender === 'user' && <User className="w-3 h-3 sm:w-4 sm:h-4 mt-0.5 text-white flex-shrink-0" />}
+                      <span className="text-xs sm:text-sm leading-relaxed">{message.text}</span>
                     </div>
                   </div>
                 </div>
@@ -158,13 +160,13 @@ export const Chatbot: React.FC = () => {
               
               {isTyping && (
                 <div className="flex justify-start animate-fade-in">
-                  <div className="bg-gray-700 text-gray-100 p-3 rounded-lg max-w-[80%]">
-                    <div className="flex items-center space-x-2">
-                      <Bot className="w-4 h-4 text-blue-400" />
+                  <div className="bg-gray-700 text-gray-100 p-2 sm:p-3 rounded-lg max-w-[85%] sm:max-w-[80%]">
+                    <div className="flex items-center space-x-1 sm:space-x-2">
+                      <Bot className="w-3 h-3 sm:w-4 sm:h-4 text-blue-400" />
                       <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce animation-delay-200"></div>
-                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce animation-delay-400"></div>
+                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-400 rounded-full animate-bounce"></div>
+                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-400 rounded-full animate-bounce animation-delay-200"></div>
+                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-400 rounded-full animate-bounce animation-delay-400"></div>
                       </div>
                     </div>
                   </div>
@@ -173,21 +175,21 @@ export const Chatbot: React.FC = () => {
               <div ref={messagesEndRef} />
             </div>
             
-            <div className="p-4 border-t border-gray-700">
+            <div className="p-3 sm:p-4 border-t border-gray-700">
               <div className="flex space-x-2">
                 <Input
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   placeholder="Ask me anything..."
-                  className="flex-1 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                  className="flex-1 bg-gray-700 border-gray-600 text-white placeholder-gray-400 text-sm"
                 />
                 <Button
                   onClick={handleSendMessage}
                   disabled={!inputValue.trim() || isTyping}
-                  className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
+                  className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 p-2"
                 >
-                  <Send className="w-4 h-4" />
+                  <Send className="w-3 h-3 sm:w-4 sm:h-4" />
                 </Button>
               </div>
             </div>

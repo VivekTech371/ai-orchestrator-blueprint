@@ -56,6 +56,29 @@
   }
 }
 
+/* Responsive Typography */
+@layer base {
+  h1 {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl;
+  }
+  
+  h2 {
+    @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+  }
+  
+  h3 {
+    @apply text-lg sm:text-xl md:text-2xl;
+  }
+  
+  .hero-text {
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl;
+  }
+  
+  .subtitle-text {
+    @apply text-base sm:text-lg md:text-xl lg:text-2xl;
+  }
+}
+
 /* Custom Styles */
 .story-link * {
   @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
@@ -77,6 +100,25 @@
 .animation-delay-600 { animation-delay: 600ms; }
 .animation-delay-800 { animation-delay: 800ms; }
 .animation-delay-1000 { animation-delay: 1000ms; }
+
+/* Responsive Spacing */
+@layer utilities {
+  .section-padding {
+    @apply py-12 sm:py-16 md:py-20 lg:py-24;
+  }
+  
+  .container-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+  
+  .responsive-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+  
+  .responsive-flex {
+    @apply flex flex-col sm:flex-row;
+  }
+}
 
 /* Smooth scrolling */
 html {
@@ -126,4 +168,45 @@ html {
 
 .glow-hover:hover {
   @apply shadow-xl shadow-blue-500/40;
+}
+
+/* Mobile-first responsive utilities */
+@layer utilities {
+  .mobile-menu-overlay {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-30 md:hidden;
+  }
+  
+  .mobile-safe-area {
+    @apply pb-safe-area-inset-bottom;
+  }
+  
+  .responsive-text {
+    @apply text-sm sm:text-base md:text-lg;
+  }
+  
+  .responsive-button {
+    @apply px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-3;
+  }
+}
+
+/* Enhanced animations for mobile */
+@media (max-width: 768px) {
+  .hover-scale {
+    @apply active:scale-95;
+  }
+  
+  .animate-fade-in {
+    animation-duration: 0.2s;
+  }
+}
+
+/* Optimize for touch devices */
+@media (hover: none) {
+  .hover-scale:hover {
+    @apply scale-100;
+  }
+  
+  .hover-scale:active {
+    @apply scale-95;
+  }
 }

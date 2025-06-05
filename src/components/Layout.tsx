@@ -18,8 +18,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <Navbar />
       <Navigation />
       <main className="pt-32">
-        <div className="w-full max-w-full overflow-x-hidden">
-          {children}
+        <div className="w-full max-w-full overflow-x-hidden px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </div>
       </main>
       <Chatbot />
