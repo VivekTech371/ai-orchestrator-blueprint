@@ -33,9 +33,9 @@ export const Navigation: React.FC = () => {
   });
 
   return (
-    <nav className="fixed top-16 left-0 right-0 z-40 bg-gray-800/90 backdrop-blur-sm border-b border-gray-700">
+    <nav className="fixed top-16 left-0 right-0 z-40 bg-gray-800/95 backdrop-blur-lg border-b border-gray-700/50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-center space-x-8 h-16 overflow-x-auto">
+        <div className="flex items-center justify-center space-x-1 h-16 overflow-x-auto">
           {filteredItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
@@ -44,13 +44,13 @@ export const Navigation: React.FC = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors whitespace-nowrap ${
+                className={`flex items-center space-x-2 px-4 py-3 rounded-lg transition-all duration-300 whitespace-nowrap group hover-scale ${
                   isActive
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25'
+                    : 'text-gray-300 hover:text-white hover:bg-gray-700/50 hover:shadow-md'
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className={`w-4 h-4 transition-transform group-hover:scale-110 ${isActive ? 'animate-pulse' : ''}`} />
                 <span className="text-sm font-medium">{item.label}</span>
               </Link>
             );
