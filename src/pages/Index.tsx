@@ -2,231 +2,256 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowDown, Check, Star, TrendingUp, Users, Zap } from 'lucide-react';
+import { 
+  ArrowRight, 
+  Zap, 
+  Shield, 
+  Users, 
+  Star,
+  CheckCircle,
+  Play,
+  Sparkles,
+  Globe,
+  TrendingUp,
+  Award,
+  Clock
+} from 'lucide-react';
 
 const Index = () => {
+  const features = [
+    {
+      icon: Zap,
+      title: "Lightning Fast",
+      description: "Build AI workflows in minutes, not hours. Our intuitive interface gets you started instantly.",
+      gradient: "from-yellow-400 to-orange-500"
+    },
+    {
+      icon: Shield,
+      title: "Enterprise Security",
+      description: "Bank-grade security with end-to-end encryption. Your data stays protected at all times.",
+      gradient: "from-green-400 to-blue-500"
+    },
+    {
+      icon: Users,
+      title: "Team Collaboration",
+      description: "Work together seamlessly with real-time collaboration and shared workflows.",
+      gradient: "from-purple-400 to-pink-500"
+    },
+    {
+      icon: Globe,
+      title: "Global Scale",
+      description: "Deploy worldwide with our global infrastructure. Scale from prototype to production.",
+      gradient: "from-blue-400 to-cyan-500"
+    }
+  ];
+
+  const stats = [
+    { number: "10K+", label: "Active Users", icon: Users },
+    { number: "50K+", label: "Workflows Created", icon: TrendingUp },
+    { number: "99.9%", label: "Uptime", icon: Clock },
+    { number: "4.9★", label: "User Rating", icon: Award }
+  ];
+
+  const testimonials = [
+    {
+      name: "Sarah Chen",
+      role: "Product Manager",
+      company: "TechCorp",
+      content: "OrchestrAI revolutionized how we handle automation. The intuitive interface saved us weeks of development time.",
+      avatar: "SC"
+    },
+    {
+      name: "Marcus Rodriguez",
+      role: "CTO",
+      company: "StartupXYZ",
+      content: "The best AI automation platform we've used. The community templates are incredibly valuable.",
+      avatar: "MR"
+    },
+    {
+      name: "Emily Johnson",
+      role: "Operations Lead",
+      company: "Enterprise Inc",
+      content: "Seamless integration and powerful automation capabilities. Our team productivity increased by 300%.",
+      avatar: "EJ"
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/20 to-cyan-900/20">
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent animate-fade-in">
-            Describe your goal.
-            <br />
-            We build your AI agents.
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto animate-fade-in animation-delay-200">
-            No code. Fully automated. Built for creators and businesses.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in animation-delay-400">
-            <Link to="/agent-builder">
-              <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-lg px-8 py-4 hover-scale transition-all">
-                Try It Now
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/10 to-cyan-900/10">
+      {/* Hero Section - Enhanced */}
+      <section className="relative section-padding overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 animate-pulse"></div>
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-float animation-delay-1000"></div>
+        
+        <div className="relative max-w-7xl mx-auto container-padding text-center">
+          <div className="animate-fade-in">
+            <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-full border border-blue-500/20 mb-8 hover-scale">
+              <Sparkles className="w-4 h-4 mr-2 text-blue-400" />
+              <span className="text-sm font-medium text-blue-400">Introducing AI-Powered Automation</span>
+            </div>
+            
+            <h1 className="hero-text font-bold text-white mb-6 bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent leading-tight">
+              Build Powerful AI Workflows
+              <span className="block bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                Without Code
+              </span>
+            </h1>
+            
+            <p className="subtitle-text text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+              Transform your business with intelligent automation. Create, deploy, and scale AI workflows 
+              that adapt to your needs - all through our intuitive visual interface.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 animate-fade-in animation-delay-300">
+              <Link to="/signup">
+                <Button className="enhanced-button bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-4 text-lg font-semibold shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40 hover-scale transition-all duration-300 group">
+                  Get Started Free
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              
+              <Button variant="outline" className="border-gray-600 hover:bg-gray-800/50 text-white px-8 py-4 text-lg backdrop-blur-sm hover-scale transition-all duration-300 group">
+                <Play className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
+                Watch Demo
               </Button>
-            </Link>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="border-gray-600 hover:bg-gray-700 text-lg px-8 py-4 hover-scale transition-all"
-              onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              See How It Works
-            </Button>
-          </div>
-          
-          {/* Interactive Animation Placeholder */}
-          <div className="mt-16 relative animate-fade-in animation-delay-600">
-            <div className="w-full h-64 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-2xl border border-gray-700 flex items-center justify-center hover-scale transition-all">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full mx-auto mb-4 pulse"></div>
-                <p className="text-gray-400">AI Agent Network Visualization</p>
+            </div>
+            
+            <div className="flex flex-wrap justify-center items-center gap-8 text-gray-400 animate-fade-in animation-delay-500">
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="w-4 h-4 text-green-400" />
+                <span className="text-sm">No Credit Card Required</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="w-4 h-4 text-green-400" />
+                <span className="text-sm">14-Day Free Trial</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="w-4 h-4 text-green-400" />
+                <span className="text-sm">Cancel Anytime</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 px-4 bg-gray-900/50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-4 animate-fade-in">How It Works</h2>
-          <p className="text-gray-400 text-center mb-16 text-lg animate-fade-in animation-delay-200">Four simple steps to automate anything</p>
-          
-          <div className="grid md:grid-cols-4 gap-8">
-            {[
-              {
-                step: '01',
-                title: 'Type your automation goal',
-                description: 'Describe what you want to automate in plain English',
-                icon: '✍️'
-              },
-              {
-                step: '02',
-                title: 'AI asks relevant questions',
-                description: 'Our AI clarifies requirements to build the perfect solution',
-                icon: '🤖'
-              },
-              {
-                step: '03',
-                title: 'Select from suggested workflows',
-                description: 'Choose from AI-generated workflow options',
-                icon: '⚡'
-              },
-              {
-                step: '04',
-                title: 'Deploy AI agents',
-                description: 'We generate and deploy your automation instantly',
-                icon: '🚀'
-              }
-            ].map((item, index) => (
-              <div key={index} className="text-center animate-fade-in hover-scale transition-all" style={{animationDelay: `${400 + index * 200}ms`}}>
-                <div className="text-4xl mb-4 transform hover:scale-110 transition-transform">{item.icon}</div>
-                <div className="text-sm text-blue-400 font-semibold mb-2">STEP {item.step}</div>
-                <h3 className="text-xl font-semibold mb-4">{item.title}</h3>
-                <p className="text-gray-400">{item.description}</p>
-              </div>
-            ))}
-          </div>
-          
-          <div className="text-center mt-12 animate-fade-in animation-delay-1000">
-            <Link to="/templates">
-              <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all">
-                Start with a Template
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Platform Highlights */}
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-16 animate-fade-in">Platform Highlights</h2>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <TrendingUp className="w-8 h-8" />,
-                title: 'Workflow Builder',
-                description: 'Visual multi-agent workflow designer with drag-and-drop interface',
-                color: 'from-blue-500 to-cyan-500'
-              },
-              {
-                icon: <Users className="w-8 h-8" />,
-                title: 'Agent Templates Library',
-                description: 'Pre-built automation templates for every use case',
-                color: 'from-cyan-500 to-blue-500'
-              },
-              {
-                icon: <Star className="w-8 h-8" />,
-                title: 'Community Marketplace',
-                description: 'Share, discover, and monetize AI automation workflows',
-                color: 'from-green-500 to-emerald-500'
-              },
-              {
-                icon: <Zap className="w-8 h-8" />,
-                title: 'Anonymous & Public Modes',
-                description: 'Choose your privacy level while building and sharing',
-                color: 'from-orange-500 to-red-500'
-              },
-              {
-                icon: <Check className="w-8 h-8" />,
-                title: 'Gamified System',
-                description: 'Earn points, badges, and level up as you create',
-                color: 'from-blue-500 to-cyan-500'
-              },
-              {
-                icon: <TrendingUp className="w-8 h-8" />,
-                title: 'Monetizable Agents',
-                description: 'Turn your automation skills into income streams',
-                color: 'from-yellow-500 to-orange-500'
-              }
-            ].map((feature, index) => (
-              <div key={index} className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700 hover:border-gray-600 transition-all group hover-scale animate-fade-in" style={{animationDelay: `${index * 150}ms`}}>
-                <div className={`w-12 h-12 bg-gradient-to-r ${feature.color} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                <p className="text-gray-400">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 px-4 bg-gray-900/50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-16 animate-fade-in">What Our Users Say</h2>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                quote: "Transformed my content workflow completely. What used to take hours now happens automatically.",
-                author: "Sarah Chen",
-                role: "Content Creator",
-                category: "Blogging",
-                avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b2cd?w=100&h=100&fit=crop&crop=face"
-              },
-              {
-                quote: "The AI asks exactly the right questions. It's like having a technical co-founder who gets it.",
-                author: "Marcus Rodriguez",
-                role: "Marketing Manager",
-                category: "Marketing",
-                avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face"
-              },
-              {
-                quote: "From zero automation to a full sales pipeline in under an hour. Incredible platform.",
-                author: "Emily Watson",
-                role: "Sales Director",
-                category: "Sales",
-                avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop&crop=face"
-              }
-            ].map((testimonial, index) => (
-              <div key={index} className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700 hover-scale transition-all animate-fade-in" style={{animationDelay: `${200 + index * 150}ms`}}>
-                <div className="flex items-center mb-4">
-                  <img 
-                    src={testimonial.avatar} 
-                    alt={testimonial.author}
-                    className="w-12 h-12 rounded-full mr-4 hover:scale-110 transition-transform"
-                  />
-                  <div>
-                    <h4 className="font-semibold">{testimonial.author}</h4>
-                    <p className="text-sm text-gray-400">{testimonial.role}</p>
+      {/* Stats Section - New */}
+      <section className="py-16 bg-gradient-to-r from-gray-800/50 to-gray-900/50 backdrop-blur-sm border-y border-gray-700/50">
+        <div className="max-w-7xl mx-auto container-padding">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {stats.map((stat, index) => {
+              const Icon = stat.icon;
+              return (
+                <div key={index} className="text-center group animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl mb-3 group-hover:scale-110 transition-transform">
+                    <Icon className="w-6 h-6 text-white" />
                   </div>
-                  <span className="ml-auto bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs">
-                    {testimonial.category}
-                  </span>
+                  <div className="text-2xl sm:text-3xl font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">
+                    {stat.number}
+                  </div>
+                  <div className="text-gray-400 text-sm">{stat.label}</div>
                 </div>
-                <p className="text-gray-300 italic">"{testimonial.quote}"</p>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section - Enhanced */}
+      <section className="section-padding">
+        <div className="max-w-7xl mx-auto container-padding">
+          <div className="text-center mb-16 animate-fade-in">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
+              Why Choose <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">OrchestrAI</span>?
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              Powerful features designed to accelerate your AI automation journey
+            </p>
+          </div>
+          
+          <div className="responsive-grid responsive-gap">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <div key={index} className={`card-hover bg-gray-800/60 backdrop-blur-sm p-8 rounded-2xl border border-gray-700/50 group animate-fade-in`} style={{ animationDelay: `${index * 200}ms` }}>
+                  <div className={`w-14 h-14 bg-gradient-to-r ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
+                    <Icon className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-4 group-hover:text-blue-400 transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
+                    {feature.description}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section - Enhanced */}
+      <section className="section-padding bg-gradient-to-r from-gray-800/30 to-gray-900/30 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto container-padding">
+          <div className="text-center mb-16 animate-fade-in">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
+              Loved by <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Thousands</span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              See what our users are saying about their experience
+            </p>
+          </div>
+          
+          <div className="responsive-grid responsive-gap">
+            {testimonials.map((testimonial, index) => (
+              <div key={index} className={`card-hover bg-gray-800/60 backdrop-blur-sm p-8 rounded-2xl border border-gray-700/50 animate-fade-in`} style={{ animationDelay: `${index * 200}ms` }}>
+                <div className="flex items-center mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-semibold mr-4">
+                    {testimonial.avatar}
+                  </div>
+                  <div>
+                    <h4 className="text-white font-semibold">{testimonial.name}</h4>
+                    <p className="text-gray-400 text-sm">{testimonial.role} at {testimonial.company}</p>
+                  </div>
+                </div>
+                <p className="text-gray-300 leading-relaxed italic">"{testimonial.content}"</p>
+                <div className="flex mt-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                  ))}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent animate-fade-in">
-            Your AI workflow, zero code.
-          </h2>
-          <p className="text-xl text-gray-300 mb-8 animate-fade-in animation-delay-200">
-            Join thousands of creators and businesses automating their success
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in animation-delay-400">
-            <Link to="/signup">
-              <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-lg px-8 py-4 hover-scale transition-all">
-                Get Started Free
-              </Button>
-            </Link>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="border-gray-600 hover:bg-gray-700 text-lg px-8 py-4 hover-scale transition-all"
-            >
-              Book a Demo
-            </Button>
+      {/* CTA Section - Enhanced */}
+      <section className="section-padding">
+        <div className="max-w-4xl mx-auto container-padding text-center">
+          <div className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 backdrop-blur-sm p-12 rounded-3xl border border-blue-500/20 animate-fade-in hover-scale transition-all duration-500">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
+              Ready to Transform Your
+              <span className="block bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                Business with AI?
+              </span>
+            </h2>
+            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
+              Join thousands of companies already using OrchestrAI to automate their workflows and boost productivity.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/signup">
+                <Button className="enhanced-button bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-10 py-4 text-lg font-semibold shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40 hover-scale transition-all duration-300 group">
+                  Start Building Today
+                  <Sparkles className="ml-2 w-5 h-5 group-hover:rotate-12 transition-transform" />
+                </Button>
+              </Link>
+              <Link to="/templates">
+                <Button variant="outline" className="border-gray-600 hover:bg-gray-800/50 text-white px-10 py-4 text-lg backdrop-blur-sm hover-scale transition-all duration-300">
+                  Explore Templates
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

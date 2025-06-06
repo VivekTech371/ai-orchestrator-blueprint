@@ -2,261 +2,352 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '../hooks/useAuth';
 import { 
   Plus, 
-  Play, 
-  Pause, 
-  Edit, 
-  Copy, 
-  Trash2, 
-  Activity,
+  Search, 
+  Filter,
+  Grid3X3,
+  List,
   Clock,
-  CheckCircle,
-  AlertCircle,
-  TrendingUp,
   Users,
-  Zap
+  Zap,
+  TrendingUp,
+  Activity,
+  Star,
+  MoreVertical,
+  Play,
+  Pause,
+  Settings,
+  Copy,
+  Archive,
+  Eye,
+  Calendar,
+  BarChart3
 } from 'lucide-react';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 const Dashboard = () => {
-  const { user } = useAuth();
-  const [goalInput, setGoalInput] = useState('');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const stats = [
+    {
+      title: "Active Workflows",
+      value: "24",
+      change: "+12%",
+      icon: Zap,
+      color: "from-blue-500 to-cyan-500",
+      trend: "up"
+    },
+    {
+      title: "Total Executions",
+      value: "1,247",
+      change: "+23%",
+      icon: Activity,
+      color: "from-green-500 to-emerald-500",
+      trend: "up"
+    },
+    {
+      title: "Success Rate",
+      value: "98.5%",
+      change: "+2.1%",
+      icon: TrendingUp,
+      color: "from-purple-500 to-pink-500",
+      trend: "up"
+    },
+    {
+      title: "Team Members",
+      value: "8",
+      change: "+1",
+      icon: Users,
+      color: "from-orange-500 to-red-500",
+      trend: "up"
+    }
+  ];
 
   const workflows = [
     {
       id: 1,
-      title: 'Blog Content Automation',
-      status: 'Live',
-      lastUpdated: '2 hours ago',
-      agentCount: 3,
-      description: 'Automatically generates and publishes blog content'
+      name: "Customer Onboarding",
+      description: "Automated customer registration and welcome sequence",
+      status: "active",
+      lastRun: "2 minutes ago",
+      executions: 45,
+      successRate: 98,
+      tags: ["customer", "automation"]
     },
     {
       id: 2,
-      title: 'Lead Generation Pipeline',
-      status: 'Failed',
-      lastUpdated: '1 day ago',
-      agentCount: 5,
-      description: 'Captures and nurtures leads from multiple sources'
+      name: "Data Processing Pipeline",
+      description: "ETL workflow for daily data synchronization",
+      status: "active",
+      lastRun: "1 hour ago",
+      executions: 124,
+      successRate: 95,
+      tags: ["data", "etl"]
     },
     {
       id: 3,
-      title: 'Social Media Scheduler',
-      status: 'In Review',
-      lastUpdated: '3 days ago',
-      agentCount: 2,
-      description: 'Schedules and posts content across social platforms'
+      name: "Email Campaign Trigger",
+      description: "Behavioral email campaigns based on user actions",
+      status: "paused",
+      lastRun: "3 hours ago",
+      executions: 67,
+      successRate: 92,
+      tags: ["email", "marketing"]
+    },
+    {
+      id: 4,
+      name: "Inventory Management",
+      description: "Stock level monitoring and automatic reordering",
+      status: "active",
+      lastRun: "30 minutes ago",
+      executions: 89,
+      successRate: 99,
+      tags: ["inventory", "monitoring"]
     }
   ];
 
-  const suggestions = [
-    {
-      title: 'Email Campaign Automation',
-      description: 'Create automated email sequences',
-      category: 'Marketing'
-    },
-    {
-      title: 'Customer Support Bot',
-      description: 'Handle customer inquiries automatically',
-      category: 'Support'
-    },
-    {
-      title: 'Data Analysis Pipeline',
-      description: 'Analyze and report on business metrics',
-      category: 'Analytics'
-    }
+  const recentActivity = [
+    { action: "Workflow 'Customer Onboarding' executed successfully", time: "2 min ago", type: "success" },
+    { action: "New team member invited to workspace", time: "15 min ago", type: "info" },
+    { action: "Workflow 'Email Campaign' paused by user", time: "1 hour ago", type: "warning" },
+    { action: "Monthly usage report generated", time: "2 hours ago", type: "info" }
   ];
-
-  const activities = [
-    {
-      type: 'deployment',
-      message: 'Blog Content Automation deployed successfully',
-      time: '2 hours ago'
-    },
-    {
-      type: 'feedback',
-      message: 'Received 5-star rating on Lead Generation Pipeline',
-      time: '1 day ago'
-    },
-    {
-      type: 'install',
-      message: 'Someone installed your Social Media Scheduler template',
-      time: '2 days ago'
-    }
-  ];
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Live': return 'bg-green-500';
-      case 'Failed': return 'bg-red-500';
-      case 'In Review': return 'bg-yellow-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'Live': return <CheckCircle className="w-4 h-4" />;
-      case 'Failed': return <AlertCircle className="w-4 h-4" />;
-      case 'In Review': return <Clock className="w-4 h-4" />;
-      default: return <Clock className="w-4 h-4" />;
-    }
-  };
 
   return (
-    <div className="min-h-screen bg-gray-900 pt-16">
-      <div className="p-6">
-        {/* Welcome Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">
-            Good {new Date().getHours() < 12 ? 'Morning' : 'Afternoon'}, {user?.name}
-          </h1>
-          <p className="text-gray-400">What do you want to automate today?</p>
-          
-          {/* Quick Goal Input */}
-          <div className="mt-6 flex gap-4">
-            <div className="flex-1">
-              <Input
-                placeholder="Describe your automation goal..."
-                value={goalInput}
-                onChange={(e) => setGoalInput(e.target.value)}
-                className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
-              />
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/5 to-cyan-900/5">
+      <div className="max-w-7xl mx-auto container-padding section-padding">
+        {/* Header Section - Enhanced */}
+        <div className="mb-8 animate-fade-in">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                Welcome back, <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Sarah</span>
+              </h1>
+              <p className="text-gray-400 text-lg">Manage your AI workflows and monitor performance</p>
             </div>
-            <Link to="/agent-builder">
-              <Button className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
-                <Plus className="w-4 h-4 mr-2" />
-                Build Now
-              </Button>
-            </Link>
+            
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link to="/agent-builder">
+                <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover-scale transition-all duration-300 w-full sm:w-auto">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Workflow
+                </Button>
+              </Link>
+              <Link to="/templates">
+                <Button variant="outline" className="border-gray-600 hover:bg-gray-800/50 hover-scale transition-all duration-300 w-full sm:w-auto">
+                  Browse Templates
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* My Workflows */}
-            <Card className="bg-gray-800 border-gray-700">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center justify-between">
-                  My Workflows
-                  <Link to="/agent-builder">
-                    <Button size="sm" className="bg-purple-500 hover:bg-purple-600">
-                      <Plus className="w-4 h-4 mr-2" />
-                      New
-                    </Button>
-                  </Link>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {workflows.map((workflow) => (
-                  <div key={workflow.id} className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
-                    <div className="flex items-start justify-between mb-3">
+        {/* Stats Grid - Enhanced */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {stats.map((stat, index) => {
+            const Icon = stat.icon;
+            return (
+              <div key={index} className={`card-hover bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50 animate-fade-in`} style={{ animationDelay: `${index * 100}ms` }}>
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`w-12 h-12 bg-gradient-to-r ${stat.color} rounded-lg flex items-center justify-center shadow-lg`}>
+                    <Icon className="w-6 h-6 text-white" />
+                  </div>
+                  <span className={`text-sm font-medium px-2 py-1 rounded-full ${
+                    stat.trend === 'up' ? 'text-green-400 bg-green-500/20' : 'text-red-400 bg-red-500/20'
+                  }`}>
+                    {stat.change}
+                  </span>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-1">{stat.value}</h3>
+                <p className="text-gray-400 text-sm">{stat.title}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Controls Section - Enhanced */}
+        <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between mb-8 animate-fade-in animation-delay-300">
+          <div className="flex flex-col sm:flex-row gap-4 flex-1">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Search workflows..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 bg-gray-800/60 border-gray-600 text-white focus:border-blue-500 backdrop-blur-sm"
+              />
+            </div>
+            <Button variant="outline" className="border-gray-600 hover:bg-gray-800/50 hover-scale transition-all">
+              <Filter className="w-4 h-4 mr-2" />
+              Filter
+            </Button>
+          </div>
+          
+          <div className="flex items-center gap-2 bg-gray-800/60 backdrop-blur-sm p-1 rounded-lg border border-gray-700/50">
+            <Button
+              variant={viewMode === 'grid' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('grid')}
+              className={viewMode === 'grid' ? 'bg-gradient-to-r from-blue-500 to-cyan-500' : 'hover:bg-gray-700'}
+            >
+              <Grid3X3 className="w-4 h-4" />
+            </Button>
+            <Button
+              variant={viewMode === 'list' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('list')}
+              className={viewMode === 'list' ? 'bg-gradient-to-r from-blue-500 to-cyan-500' : 'hover:bg-gray-700'}
+            >
+              <List className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+          {/* Workflows Section - Enhanced */}
+          <div className="xl:col-span-2">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">Your Workflows</h2>
+              <Button variant="outline" size="sm" className="border-gray-600 hover:bg-gray-800/50">
+                <Eye className="w-4 h-4 mr-2" />
+                View All
+              </Button>
+            </div>
+            
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <LoadingSpinner size="lg" variant="pulse" />
+              </div>
+            ) : (
+              <div className={viewMode === 'grid' ? 'responsive-grid responsive-gap' : 'space-y-4'}>
+                {workflows.map((workflow, index) => (
+                  <div key={workflow.id} className={`card-hover bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50 animate-fade-in group`} style={{ animationDelay: `${index * 100}ms` }}>
+                    <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-white mb-1">{workflow.title}</h3>
-                        <p className="text-sm text-gray-400 mb-2">{workflow.description}</p>
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
-                          <span>Last updated: {workflow.lastUpdated}</span>
-                          <span>{workflow.agentCount} agents</span>
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">
+                            {workflow.name}
+                          </h3>
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            workflow.status === 'active' 
+                              ? 'bg-green-500/20 text-green-400' 
+                              : 'bg-yellow-500/20 text-yellow-400'
+                          }`}>
+                            {workflow.status}
+                          </span>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-3 line-clamp-2">{workflow.description}</p>
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {workflow.tags.map(tag => (
+                            <span key={tag} className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full">
+                              {tag}
+                            </span>
+                          ))}
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge className={`${getStatusColor(workflow.status)} text-white flex items-center space-x-1`}>
-                          {getStatusIcon(workflow.status)}
-                          <span>{workflow.status}</span>
-                        </Badge>
+                      
+                      <Button variant="ghost" size="sm" className="hover:bg-gray-700">
+                        <MoreVertical className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                      <div>
+                        <span className="text-gray-400">Last Run:</span>
+                        <p className="text-white">{workflow.lastRun}</p>
+                      </div>
+                      <div>
+                        <span className="text-gray-400">Executions:</span>
+                        <p className="text-white">{workflow.executions}</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-600">
-                        <Activity className="w-3 h-3 mr-1" />
-                        View Logs
-                      </Button>
-                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-600">
-                        <Edit className="w-3 h-3 mr-1" />
-                        Edit
-                      </Button>
-                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-600">
-                        <Copy className="w-3 h-3 mr-1" />
-                        Duplicate
-                      </Button>
-                      <Button size="sm" variant="outline" className="border-gray-600 hover:bg-gray-600 text-red-400">
-                        <Trash2 className="w-3 h-3 mr-1" />
-                        Delete
-                      </Button>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-400 text-sm">Success Rate:</span>
+                        <span className="text-green-400 font-medium">{workflow.successRate}%</span>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <Button size="sm" variant="ghost" className="hover:bg-gray-700 p-2">
+                          {workflow.status === 'active' ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                        </Button>
+                        <Button size="sm" variant="ghost" className="hover:bg-gray-700 p-2">
+                          <Settings className="w-4 h-4" />
+                        </Button>
+                        <Button size="sm" variant="ghost" className="hover:bg-gray-700 p-2">
+                          <Copy className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
-              </CardContent>
-            </Card>
-
-            {/* Activity Feed */}
-            <Card className="bg-gray-800 border-gray-700">
-              <CardHeader>
-                <CardTitle className="text-white">Activity Feed</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {activities.map((activity, index) => (
-                    <div key={index} className="flex items-center space-x-3">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                      <div className="flex-1">
-                        <p className="text-white text-sm">{activity.message}</p>
-                        <p className="text-gray-500 text-xs">{activity.time}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+            )}
           </div>
 
-          {/* Sidebar */}
+          {/* Sidebar - Enhanced */}
           <div className="space-y-6">
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 gap-4">
-              <Card className="bg-gray-800 border-gray-700">
-                <CardContent className="p-4 text-center">
-                  <TrendingUp className="w-8 h-8 text-green-500 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-white">12</p>
-                  <p className="text-sm text-gray-400">Active Workflows</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-gray-800 border-gray-700">
-                <CardContent className="p-4 text-center">
-                  <Zap className="w-8 h-8 text-purple-500 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-white">847</p>
-                  <p className="text-sm text-gray-400">Automations Run</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Suggestions Panel */}
-            <Card className="bg-gray-800 border-gray-700">
-              <CardHeader>
-                <CardTitle className="text-white">Suggested Templates</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {suggestions.map((suggestion, index) => (
-                  <div key={index} className="bg-gray-700/50 rounded-lg p-3 border border-gray-600">
-                    <h4 className="font-medium text-white mb-1">{suggestion.title}</h4>
-                    <p className="text-sm text-gray-400 mb-2">{suggestion.description}</p>
-                    <div className="flex items-center justify-between">
-                      <Badge variant="outline" className="border-purple-500 text-purple-400">
-                        {suggestion.category}
-                      </Badge>
-                      <Button size="sm" variant="ghost" className="text-purple-400 hover:text-purple-300">
-                        Use Template
-                      </Button>
+            {/* Recent Activity */}
+            <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50 animate-fade-in animation-delay-400">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white">Recent Activity</h3>
+                <Clock className="w-5 h-5 text-gray-400" />
+              </div>
+              <div className="space-y-4">
+                {recentActivity.map((activity, index) => (
+                  <div key={index} className="flex items-start gap-3 pb-3 border-b border-gray-700/50 last:border-b-0 last:pb-0">
+                    <div className={`w-2 h-2 rounded-full mt-2 ${
+                      activity.type === 'success' ? 'bg-green-400' :
+                      activity.type === 'warning' ? 'bg-yellow-400' : 'bg-blue-400'
+                    }`}></div>
+                    <div className="flex-1">
+                      <p className="text-gray-300 text-sm">{activity.action}</p>
+                      <p className="text-gray-500 text-xs mt-1">{activity.time}</p>
                     </div>
                   </div>
                 ))}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50 animate-fade-in animation-delay-500">
+              <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
+              <div className="space-y-3">
+                <Button variant="outline" className="w-full justify-start border-gray-600 hover:bg-gray-700/50 hover-scale transition-all">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Schedule Workflow
+                </Button>
+                <Button variant="outline" className="w-full justify-start border-gray-600 hover:bg-gray-700/50 hover-scale transition-all">
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  View Analytics
+                </Button>
+                <Button variant="outline" className="w-full justify-start border-gray-600 hover:bg-gray-700/50 hover-scale transition-all">
+                  <Archive className="w-4 h-4 mr-2" />
+                  Manage Archive
+                </Button>
+              </div>
+            </div>
+
+            {/* Performance Insights */}
+            <div className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 backdrop-blur-sm p-6 rounded-xl border border-blue-500/20 animate-fade-in animation-delay-600">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                  <Star className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white">Performance Tip</h3>
+                  <p className="text-blue-400 text-sm">Weekly Insight</p>
+                </div>
+              </div>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                Your workflows are performing 23% better this week! Consider optimizing the "Email Campaign" workflow for even better results.
+              </p>
+            </div>
           </div>
         </div>
       </div>
