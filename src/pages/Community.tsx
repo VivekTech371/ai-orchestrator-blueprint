@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -24,14 +23,26 @@ import {
   Code,
   Lightbulb,
   HelpCircle,
-  BookOpen
+  BookOpen,
+  X,
+  SlidersHorizontal
 } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import NewPostModal from '@/components/NewPostModal';
+import CommentsInterface from '@/components/CommentsInterface';
+import ShareInterface from '@/components/ShareInterface';
 
 const Community = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [sortBy, setSortBy] = useState('trending');
+  const [showFilters, setShowFilters] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Modal states
+  const [newPostModal, setNewPostModal] = useState(false);
+  const [commentsModal, setCommentsModal] = useState<{isOpen: boolean, post: any}>({isOpen: false, post: null});
+  const [shareModal, setShareModal] = useState<{isOpen: boolean, post: any}>({isOpen: false, post: null});
 
   const categories = [
     { id: 'all', name: 'All Discussions', icon: MessageSquare, count: 1247 },
@@ -40,6 +51,13 @@ const Community = () => {
     { id: 'showcase', name: 'Showcase', icon: Star, count: 189 },
     { id: 'help', name: 'Help & Support', icon: HelpCircle, count: 298 },
     { id: 'feature-requests', name: 'Feature Requests', icon: Lightbulb, count: 70 }
+  ];
+
+  const sortOptions = [
+    { id: 'trending', name: 'Trending' },
+    { id: 'newest', name: 'Newest' },
+    { id: 'popular', name: 'Most Popular' },
+    { id: 'unanswered', name: 'Unanswered' }
   ];
 
   const featuredPosts = [
@@ -125,6 +143,36 @@ const Community = () => {
     { name: "Lisa Zhang", avatar: "LZ", posts: 45, reputation: 2876, badge: "Contributor" }
   ];
 
+  const filteredPosts = featuredPosts.filter(post => {
+    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  }).sort((a, b) => {
+    switch (sortBy) {
+      case 'newest': return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+      case 'popular': return b.stats.likes - a.stats.likes;
+      case 'unanswered': return a.stats.comments - b.stats.comments;
+      case 'trending': 
+      default: return b.isTrending ? 1 : -1;
+    }
+  });
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory('all');
+    setSortBy('trending');
+  };
+
+  const openComments = (post: any) => {
+    setCommentsModal({isOpen: true, post});
+  };
+
+  const openShare = (post: any) => {
+    setShareModal({isOpen: true, post});
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/5 to-cyan-900/5">
       <div className="max-w-7xl mx-auto container-padding section-padding">
@@ -161,7 +209,7 @@ const Community = () => {
 
         {/* Search and Actions - Enhanced */}
         <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-2xl border border-gray-700/50 mb-8 animate-fade-in animation-delay-300">
-          <div className="flex flex-col lg:flex-row gap-4 items-center">
+          <div className="flex flex-col lg:flex-row gap-4 items-center mb-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
@@ -172,16 +220,51 @@ const Community = () => {
               />
             </div>
             <div className="flex gap-3">
-              <Button variant="outline" className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all duration-300">
-                <Filter className="w-4 h-4 mr-2" />
+              <Button 
+                variant="outline" 
+                onClick={() => setShowFilters(!showFilters)}
+                className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all duration-300"
+              >
+                <SlidersHorizontal className="w-4 h-4 mr-2" />
                 Filter
               </Button>
-              <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all duration-300">
+              <Button 
+                onClick={() => setNewPostModal(true)}
+                className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all duration-300"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 New Post
               </Button>
             </div>
           </div>
+
+          {/* Advanced Filters */}
+          {showFilters && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-700/30 rounded-xl border border-gray-600/50 animate-fade-in">
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Sort By</label>
+                <select 
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+                >
+                  {sortOptions.map(option => (
+                    <option key={option.id} value={option.id}>{option.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-end">
+                <Button 
+                  onClick={clearFilters}
+                  variant="outline" 
+                  className="w-full border-gray-600 hover:bg-gray-700/50"
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  Clear Filters
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
@@ -234,7 +317,7 @@ const Community = () => {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {featuredPosts.map((post, index) => (
+                  {filteredPosts.map((post, index) => (
                     <div key={post.id} className={`card-hover bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-6 group animate-fade-in`} style={{ animationDelay: `${index * 150}ms` }}>
                       {/* Post Header */}
                       <div className="flex items-start justify-between mb-4">
@@ -307,14 +390,20 @@ const Community = () => {
                             <Heart className="w-4 h-4" />
                             <span>{post.stats.likes}</span>
                           </div>
-                          <div className="flex items-center gap-1 hover:text-green-400 transition-colors cursor-pointer">
+                          <button 
+                            onClick={() => openComments(post)}
+                            className="flex items-center gap-1 hover:text-green-400 transition-colors cursor-pointer"
+                          >
                             <MessageSquare className="w-4 h-4" />
                             <span>{post.stats.comments}</span>
-                          </div>
-                          <div className="flex items-center gap-1 hover:text-cyan-400 transition-colors cursor-pointer">
+                          </button>
+                          <button 
+                            onClick={() => openShare(post)}
+                            className="flex items-center gap-1 hover:text-cyan-400 transition-colors cursor-pointer"
+                          >
                             <Share2 className="w-4 h-4" />
                             <span>{post.stats.shares}</span>
-                          </div>
+                          </button>
                         </div>
                         
                         <div className="flex items-center gap-2">
@@ -324,13 +413,35 @@ const Community = () => {
                           <Button size="sm" variant="ghost" className="hover:bg-gray-700 p-2">
                             <Bookmark className="w-4 h-4" />
                           </Button>
-                          <Button size="sm" variant="ghost" className="hover:bg-gray-700 p-2">
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            onClick={() => openShare(post)}
+                            className="hover:bg-gray-700 p-2"
+                          >
                             <Share2 className="w-4 h-4" />
                           </Button>
                         </div>
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {filteredPosts.length === 0 && !isLoading && (
+                <div className="text-center py-16">
+                  <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Search className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-2">No posts found</h3>
+                  <p className="text-gray-400 mb-6">Try adjusting your search or filters to find what you're looking for.</p>
+                  <Button 
+                    onClick={clearFilters}
+                    variant="outline" 
+                    className="border-gray-600 hover:bg-gray-700/50"
+                  >
+                    Clear Filters
+                  </Button>
                 </div>
               )}
             </div>
@@ -375,7 +486,11 @@ const Community = () => {
             <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50 animate-fade-in animation-delay-700">
               <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
               <div className="space-y-3">
-                <Button variant="outline" className="w-full justify-start border-gray-600 hover:bg-gray-700/50 hover-scale transition-all">
+                <Button 
+                  onClick={() => setNewPostModal(true)}
+                  variant="outline" 
+                  className="w-full justify-start border-gray-600 hover:bg-gray-700/50 hover-scale transition-all"
+                >
                   <Plus className="w-4 h-4 mr-2" />
                   Start Discussion
                 </Button>
@@ -424,6 +539,26 @@ const Community = () => {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <NewPostModal
+        isOpen={newPostModal}
+        onClose={() => setNewPostModal(false)}
+      />
+
+      <CommentsInterface
+        isOpen={commentsModal.isOpen}
+        onClose={() => setCommentsModal({isOpen: false, post: null})}
+        itemTitle={commentsModal.post?.title || ''}
+        itemType="post"
+      />
+
+      <ShareInterface
+        isOpen={shareModal.isOpen}
+        onClose={() => setShareModal({isOpen: false, post: null})}
+        itemTitle={shareModal.post?.title || ''}
+        itemType="post"
+      />
     </div>
   );
 };

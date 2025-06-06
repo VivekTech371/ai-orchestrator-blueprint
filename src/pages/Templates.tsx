@@ -21,14 +21,27 @@ import {
   FileText,
   Settings,
   TrendingUp,
-  Plus
+  Plus,
+  X,
+  SlidersHorizontal
 } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import CommentsInterface from '@/components/CommentsInterface';
+import ShareInterface from '@/components/ShareInterface';
+import TemplatePreview from '@/components/TemplatePreview';
 
 const Templates = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedDifficulty, setSelectedDifficulty] = useState('all');
+  const [sortBy, setSortBy] = useState('popular');
+  const [showFilters, setShowFilters] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Modal states
+  const [commentsModal, setCommentsModal] = useState<{isOpen: boolean, template: any}>({isOpen: false, template: null});
+  const [shareModal, setShareModal] = useState<{isOpen: boolean, template: any}>({isOpen: false, template: null});
+  const [previewModal, setPreviewModal] = useState<{isOpen: boolean, template: any}>({isOpen: false, template: null});
 
   const categories = [
     { id: 'all', name: 'All Templates', icon: Settings, count: 45 },
@@ -37,6 +50,20 @@ const Templates = () => {
     { id: 'analytics', name: 'Analytics', icon: BarChart3, count: 6 },
     { id: 'automation', name: 'Automation', icon: Zap, count: 10 },
     { id: 'crm', name: 'CRM', icon: Users, count: 9 }
+  ];
+
+  const difficulties = [
+    { id: 'all', name: 'All Levels' },
+    { id: 'beginner', name: 'Beginner' },
+    { id: 'intermediate', name: 'Intermediate' },
+    { id: 'advanced', name: 'Advanced' }
+  ];
+
+  const sortOptions = [
+    { id: 'popular', name: 'Most Popular' },
+    { id: 'newest', name: 'Newest First' },
+    { id: 'rating', name: 'Highest Rated' },
+    { id: 'downloads', name: 'Most Downloaded' }
   ];
 
   const featuredTemplates = [
@@ -135,8 +162,36 @@ const Templates = () => {
                          template.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          template.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesCategory = selectedCategory === 'all' || template.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    const matchesDifficulty = selectedDifficulty === 'all' || template.difficulty.toLowerCase() === selectedDifficulty;
+    return matchesSearch && matchesCategory && matchesDifficulty;
+  }).sort((a, b) => {
+    switch (sortBy) {
+      case 'newest': return b.id - a.id;
+      case 'rating': return b.rating - a.rating;
+      case 'downloads': return b.downloads - a.downloads;
+      case 'popular': 
+      default: return b.isPopular ? 1 : -1;
+    }
   });
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory('all');
+    setSelectedDifficulty('all');
+    setSortBy('popular');
+  };
+
+  const openComments = (template: any) => {
+    setCommentsModal({isOpen: true, template});
+  };
+
+  const openShare = (template: any) => {
+    setShareModal({isOpen: true, template});
+  };
+
+  const openPreview = (template: any) => {
+    setPreviewModal({isOpen: true, template});
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/5 to-cyan-900/5">
@@ -153,7 +208,7 @@ const Templates = () => {
 
         {/* Search and Filter Section - Enhanced */}
         <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-2xl border border-gray-700/50 mb-8 animate-fade-in animation-delay-200">
-          <div className="flex flex-col lg:flex-row gap-4">
+          <div className="flex flex-col lg:flex-row gap-4 mb-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
@@ -163,11 +218,55 @@ const Templates = () => {
                 className="pl-12 bg-gray-700/50 border-gray-600 text-white focus:border-blue-500 h-12 text-lg"
               />
             </div>
-            <Button variant="outline" className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all duration-300 h-12 px-6">
-              <Filter className="w-5 h-5 mr-2" />
-              Advanced Filter
+            <Button 
+              variant="outline" 
+              onClick={() => setShowFilters(!showFilters)}
+              className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all duration-300 h-12 px-6"
+            >
+              <SlidersHorizontal className="w-5 h-5 mr-2" />
+              Filters
             </Button>
           </div>
+
+          {/* Advanced Filters */}
+          {showFilters && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-700/30 rounded-xl border border-gray-600/50 animate-fade-in">
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Difficulty</label>
+                <select 
+                  value={selectedDifficulty}
+                  onChange={(e) => setSelectedDifficulty(e.target.value)}
+                  className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+                >
+                  {difficulties.map(difficulty => (
+                    <option key={difficulty.id} value={difficulty.id}>{difficulty.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Sort By</label>
+                <select 
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+                >
+                  {sortOptions.map(option => (
+                    <option key={option.id} value={option.id}>{option.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-end">
+                <Button 
+                  onClick={clearFilters}
+                  variant="outline" 
+                  className="w-full border-gray-600 hover:bg-gray-700/50"
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  Clear Filters
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Categories Section - Enhanced */}
@@ -269,8 +368,21 @@ const Templates = () => {
                     <Button className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all duration-300">
                       Use Template
                     </Button>
-                    <Button variant="outline" size="icon" className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all">
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      onClick={() => openPreview(template)}
+                      className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all"
+                    >
                       <Eye className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      onClick={() => openComments(template)}
+                      className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all"
+                    >
+                      <MessageSquare className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
@@ -336,8 +448,34 @@ const Templates = () => {
                     <Button className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all duration-300">
                       Use Template
                     </Button>
-                    <Button variant="outline" size="icon" className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all">
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      onClick={() => openPreview(template)}
+                      className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all"
+                    >
                       <Eye className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => openComments(template)}
+                      className="flex-1 border-gray-600 hover:bg-gray-700/50 hover-scale transition-all text-xs"
+                    >
+                      <MessageSquare className="w-3 h-3 mr-1" />
+                      Comments
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => openShare(template)}
+                      className="flex-1 border-gray-600 hover:bg-gray-700/50 hover-scale transition-all text-xs"
+                    >
+                      <Download className="w-3 h-3 mr-1" />
+                      Share
                     </Button>
                   </div>
                 </div>
@@ -353,10 +491,7 @@ const Templates = () => {
               <h3 className="text-xl font-semibold text-white mb-2">No templates found</h3>
               <p className="text-gray-400 mb-6">Try adjusting your search or filters to find what you're looking for.</p>
               <Button 
-                onClick={() => {
-                  setSearchQuery('');
-                  setSelectedCategory('all');
-                }}
+                onClick={clearFilters}
                 variant="outline" 
                 className="border-gray-600 hover:bg-gray-700/50"
               >
@@ -392,6 +527,27 @@ const Templates = () => {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <CommentsInterface
+        isOpen={commentsModal.isOpen}
+        onClose={() => setCommentsModal({isOpen: false, template: null})}
+        itemTitle={commentsModal.template?.title || ''}
+        itemType="template"
+      />
+
+      <ShareInterface
+        isOpen={shareModal.isOpen}
+        onClose={() => setShareModal({isOpen: false, template: null})}
+        itemTitle={shareModal.template?.title || ''}
+        itemType="template"
+      />
+
+      <TemplatePreview
+        isOpen={previewModal.isOpen}
+        onClose={() => setPreviewModal({isOpen: false, template: null})}
+        template={previewModal.template || {}}
+      />
     </div>
   );
 };

@@ -13,6 +13,7 @@ import Templates from "./pages/Templates";
 import Community from "./pages/Community";
 import Marketplace from "./pages/Marketplace";
 import Settings from "./pages/Settings";
+import Profile from "./pages/Profile";
 import HowItWorks from "./pages/HowItWorks";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -39,6 +40,7 @@ const App = () => (
               <Route path="/community" element={<Community />} />
               <Route path="/marketplace" element={<Marketplace />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
