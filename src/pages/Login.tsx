@@ -37,28 +37,28 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900/20 to-cyan-900/20 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 animate-fade-in">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900/20 to-cyan-900/20 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-6 sm:space-y-8 animate-fade-in">
         <div className="text-center">
-          <Link to="/" className="inline-flex items-center justify-center mb-6 hover-scale transition-all">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center pulse">
-              <span className="text-white font-bold text-lg">AI</span>
+          <Link to="/" className="inline-flex items-center justify-center mb-4 sm:mb-6 hover-scale transition-all">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center pulse">
+              <span className="text-white font-bold text-base sm:text-lg">AI</span>
             </div>
           </Link>
-          <h2 className="text-3xl font-bold text-white">Welcome back</h2>
-          <p className="mt-2 text-gray-400">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">Welcome back</h2>
+          <p className="mt-2 text-gray-400 text-sm sm:text-base">
             Sign in to your account to continue
           </p>
         </div>
         
-        <div className="bg-gray-800/60 backdrop-blur-sm p-8 rounded-xl border border-gray-700 shadow-xl hover-scale transition-all">
+        <div className="bg-gray-800/60 backdrop-blur-sm p-6 sm:p-8 rounded-xl border border-gray-700 shadow-xl hover-scale transition-all">
           {error && (
             <div className="bg-red-500/20 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg mb-6 animate-fade-in">
               {error}
             </div>
           )}
           
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
             <div className="animate-fade-in animation-delay-200">
               <label htmlFor="email" className="block text-sm font-medium text-gray-300">
                 Email Address
@@ -71,7 +71,7 @@ const Login = () => {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 bg-gray-700 border-gray-600 text-white focus:border-blue-500 transition-all"
+                  className="pl-10 bg-gray-700 border-gray-600 text-white focus:border-blue-500 transition-all h-10 sm:h-11"
                   required
                 />
               </div>
@@ -94,7 +94,7 @@ const Login = () => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 bg-gray-700 border-gray-600 text-white focus:border-blue-500 transition-all"
+                  className="pl-10 bg-gray-700 border-gray-600 text-white focus:border-blue-500 transition-all h-10 sm:h-11"
                   required
                 />
               </div>
@@ -103,7 +103,7 @@ const Login = () => {
             <div className="animate-fade-in animation-delay-400">
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all"
+                className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all h-11 sm:h-12"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -129,20 +129,22 @@ const Login = () => {
             </div>
             
             <div className="mt-6 grid grid-cols-2 gap-3">
-              <Button variant="outline" className="border-gray-600 hover:bg-gray-700 hover-scale transition-all">
+              <Button variant="outline" className="border-gray-600 hover:bg-gray-700 hover-scale transition-all h-10 sm:h-11">
                 <Github className="w-4 h-4 mr-2" />
-                GitHub
+                <span className="hidden sm:inline">GitHub</span>
+                <span className="sm:hidden">Git</span>
               </Button>
-              <Button variant="outline" className="border-gray-600 hover:bg-gray-700 hover-scale transition-all">
+              <Button variant="outline" className="border-gray-600 hover:bg-gray-700 hover-scale transition-all h-10 sm:h-11">
                 <Twitter className="w-4 h-4 mr-2" />
-                Twitter
+                <span className="hidden sm:inline">Twitter</span>
+                <span className="sm:hidden">X</span>
               </Button>
             </div>
           </div>
         </div>
         
         <div className="text-center mt-6 animate-fade-in animation-delay-600">
-          <p className="text-gray-400">
+          <p className="text-gray-400 text-sm">
             Don't have an account?{' '}
             <Link to="/signup" className="font-medium text-blue-400 hover:text-blue-300 story-link transition-colors">
               Sign up

@@ -41,10 +41,10 @@ export const Navigation: React.FC = () => {
   };
 
   return (
-    <nav className="fixed top-16 left-0 right-0 z-40 bg-gray-800/95 backdrop-blur-lg border-b border-gray-700/50 shadow-lg">
+    <nav className="fixed top-14 sm:top-16 left-0 right-0 z-40 bg-gray-800/95 backdrop-blur-lg border-b border-gray-700/50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center justify-center space-x-1 h-16">
+        <div className="hidden md:flex items-center justify-center space-x-1 h-14 sm:h-16">
           {filteredItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
@@ -53,39 +53,39 @@ export const Navigation: React.FC = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center space-x-2 px-4 py-3 rounded-lg transition-all duration-300 whitespace-nowrap group hover-scale ${
+                className={`flex items-center space-x-2 px-3 sm:px-4 py-2 sm:py-3 rounded-lg transition-all duration-300 whitespace-nowrap group hover-scale text-sm sm:text-base ${
                   isActive
                     ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25'
                     : 'text-gray-300 hover:text-white hover:bg-gray-700/50 hover:shadow-md'
                 }`}
               >
                 <Icon className={`w-4 h-4 transition-transform group-hover:scale-110 ${isActive ? 'animate-pulse' : ''}`} />
-                <span className="text-sm font-medium">{item.label}</span>
+                <span className="font-medium">{item.label}</span>
               </Link>
             );
           })}
         </div>
 
         {/* Mobile Navigation */}
-        <div className="md:hidden h-16 flex items-center justify-between">
+        <div className="md:hidden h-14 sm:h-16 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <span className="text-lg font-semibold text-white">Navigation</span>
+            <span className="text-base sm:text-lg font-semibold text-white">Navigation</span>
           </div>
           
           <Button
             variant="ghost"
             size="sm"
             onClick={toggleMobileMenu}
-            className="text-white hover:bg-gray-700"
+            className="text-white hover:bg-gray-700 h-9 w-9"
           >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </Button>
         </div>
 
         {/* Mobile Menu Dropdown */}
         {isMobileMenuOpen && (
           <div className="md:hidden absolute top-full left-0 right-0 bg-gray-800/98 backdrop-blur-lg border-b border-gray-700 shadow-xl animate-fade-in">
-            <div className="px-4 py-4 space-y-2">
+            <div className="px-4 py-3 sm:py-4 space-y-2">
               {filteredItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
@@ -95,14 +95,14 @@ export const Navigation: React.FC = () => {
                     key={item.path}
                     to={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 w-full hover-scale ${
+                    className={`flex items-center space-x-3 px-4 py-2 sm:py-3 rounded-lg transition-all duration-300 w-full hover-scale ${
                       isActive
                         ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25'
                         : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
                     }`}
                   >
-                    <Icon className={`w-5 h-5 transition-transform ${isActive ? 'animate-pulse' : ''}`} />
-                    <span className="text-base font-medium">{item.label}</span>
+                    <Icon className={`w-4 sm:w-5 h-4 sm:h-5 transition-transform ${isActive ? 'animate-pulse' : ''}`} />
+                    <span className="text-sm sm:text-base font-medium">{item.label}</span>
                   </Link>
                 );
               })}

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,7 +27,7 @@ import {
   Star,
   Plus
 } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 const Settings = () => {
@@ -103,25 +102,25 @@ const Settings = () => {
   };
 
   const renderProfile = () => (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-6 lg:space-y-8 animate-fade-in">
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Profile Information</h2>
-        <p className="text-gray-400">Update your personal information and profile settings.</p>
+        <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Profile Information</h2>
+        <p className="text-gray-400 text-sm sm:text-base">Update your personal information and profile settings.</p>
       </div>
 
       {/* Avatar Section */}
-      <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50">
-        <h3 className="text-lg font-semibold text-white mb-4">Profile Picture</h3>
-        <div className="flex items-center gap-6">
-          <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+      <div className="bg-gray-800/60 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-gray-700/50">
+        <h3 className="text-base sm:text-lg font-semibold text-white mb-4">Profile Picture</h3>
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-lg sm:text-2xl font-bold shadow-lg">
             {settings.profile.name ? settings.profile.name.charAt(0).toUpperCase() : 'U'}
           </div>
-          <div className="flex gap-3">
-            <Button variant="outline" className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all">
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <Button variant="outline" className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all text-sm">
               <Upload className="w-4 h-4 mr-2" />
               Upload Photo
             </Button>
-            <Button variant="outline" className="border-gray-600 hover:bg-gray-700/50 text-red-400 hover:text-red-300 hover-scale transition-all">
+            <Button variant="outline" className="border-gray-600 hover:bg-gray-700/50 text-red-400 hover:text-red-300 hover-scale transition-all text-sm">
               <Trash2 className="w-4 h-4 mr-2" />
               Remove
             </Button>
@@ -130,56 +129,56 @@ const Settings = () => {
       </div>
 
       {/* Basic Information */}
-      <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50">
-        <h3 className="text-lg font-semibold text-white mb-4">Basic Information</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="bg-gray-800/60 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-gray-700/50">
+        <h3 className="text-base sm:text-lg font-semibold text-white mb-4">Basic Information</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-gray-300">Full Name</Label>
+            <Label htmlFor="name" className="text-gray-300 text-sm">Full Name</Label>
             <Input
               id="name"
               value={settings.profile.name}
               onChange={(e) => handleSettingChange('profile', 'name', e.target.value)}
-              className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500"
+              className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500 h-10 sm:h-11"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-gray-300">Email Address</Label>
+            <Label htmlFor="email" className="text-gray-300 text-sm">Email Address</Label>
             <Input
               id="email"
               type="email"
               value={settings.profile.email}
               onChange={(e) => handleSettingChange('profile', 'email', e.target.value)}
-              className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500"
+              className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500 h-10 sm:h-11"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="company" className="text-gray-300">Company</Label>
+            <Label htmlFor="company" className="text-gray-300 text-sm">Company</Label>
             <Input
               id="company"
               value={settings.profile.company}
               onChange={(e) => handleSettingChange('profile', 'company', e.target.value)}
-              className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500"
+              className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500 h-10 sm:h-11"
               placeholder="Your company name"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="website" className="text-gray-300">Website</Label>
+            <Label htmlFor="website" className="text-gray-300 text-sm">Website</Label>
             <Input
               id="website"
               value={settings.profile.website}
               onChange={(e) => handleSettingChange('profile', 'website', e.target.value)}
-              className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500"
+              className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500 h-10 sm:h-11"
               placeholder="https://yourwebsite.com"
             />
           </div>
         </div>
-        <div className="mt-6 space-y-2">
-          <Label htmlFor="bio" className="text-gray-300">Bio</Label>
+        <div className="mt-4 sm:mt-6 space-y-2">
+          <Label htmlFor="bio" className="text-gray-300 text-sm">Bio</Label>
           <Textarea
             id="bio"
             value={settings.profile.bio}
             onChange={(e) => handleSettingChange('profile', 'bio', e.target.value)}
-            className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500 min-h-[120px]"
+            className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500 min-h-[100px] sm:min-h-[120px] resize-none"
             placeholder="Tell us about yourself..."
           />
         </div>
@@ -559,36 +558,36 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/5 to-cyan-900/5">
-      <div className="max-w-7xl mx-auto container-padding section-padding">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
         {/* Header */}
-        <div className="text-center mb-12 animate-fade-in">
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">
+        <div className="text-center mb-8 sm:mb-12 animate-fade-in">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
             Account <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Settings</span>
           </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto px-4">
             Manage your account preferences, security settings, and subscription details.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 lg:gap-8">
           {/* Sidebar Navigation */}
-          <div className="lg:col-span-1">
-            <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50 sticky top-24 animate-fade-in animation-delay-200">
-              <nav className="space-y-2">
+          <div className="xl:col-span-1">
+            <div className="bg-gray-800/60 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-gray-700/50 sticky top-20 sm:top-24 animate-fade-in animation-delay-200">
+              <nav className="space-y-1 sm:space-y-2">
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
                   return (
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all hover-scale ${
+                      className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-left transition-all hover-scale text-sm sm:text-base ${
                         activeTab === tab.id
                           ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
                           : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
                       }`}
                     >
-                      <Icon className="w-5 h-5" />
-                      <span className="font-medium">{tab.name}</span>
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                      <span className="font-medium truncate">{tab.name}</span>
                     </button>
                   );
                 })}
@@ -596,18 +595,18 @@ const Settings = () => {
 
               {/* Unsaved Changes Indicator */}
               {unsavedChanges && (
-                <div className="mt-6 p-4 bg-yellow-500/20 border border-yellow-500/20 rounded-lg">
+                <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-yellow-500/20 border border-yellow-500/20 rounded-lg">
                   <div className="flex items-center gap-2 text-yellow-400 mb-2">
-                    <AlertTriangle className="w-4 h-4" />
-                    <span className="font-medium">Unsaved Changes</span>
+                    <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                    <span className="font-medium text-sm">Unsaved Changes</span>
                   </div>
-                  <p className="text-sm text-gray-300 mb-3">
+                  <p className="text-xs sm:text-sm text-gray-300 mb-3">
                     You have unsaved changes that will be lost if you leave this page.
                   </p>
                   <Button
                     onClick={handleSave}
                     disabled={isLoading}
-                    className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all"
+                    className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all text-sm h-9 sm:h-10"
                   >
                     {isLoading ? (
                       <LoadingSpinner size="sm" className="mr-2" />
@@ -622,22 +621,42 @@ const Settings = () => {
           </div>
 
           {/* Main Content */}
-          <div className="lg:col-span-3">
+          <div className="xl:col-span-3">
             <div className="animate-fade-in animation-delay-300">
               {activeTab === 'profile' && renderProfile()}
-              {activeTab === 'notifications' && renderNotifications()}
-              {activeTab === 'security' && renderSecurity()}
-              {activeTab === 'billing' && renderBilling()}
-              {activeTab === 'preferences' && renderPreferences()}
+              {activeTab === 'notifications' && (
+                <div className="text-white">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-4">Notifications</h2>
+                  <p className="text-gray-400">Notification settings coming soon...</p>
+                </div>
+              )}
+              {activeTab === 'security' && (
+                <div className="text-white">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-4">Security</h2>
+                  <p className="text-gray-400">Security settings coming soon...</p>
+                </div>
+              )}
+              {activeTab === 'billing' && (
+                <div className="text-white">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-4">Billing</h2>
+                  <p className="text-gray-400">Billing settings coming soon...</p>
+                </div>
+              )}
+              {activeTab === 'preferences' && (
+                <div className="text-white">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-4">Preferences</h2>
+                  <p className="text-gray-400">Preference settings coming soon...</p>
+                </div>
+              )}
             </div>
 
             {/* Action Buttons */}
-            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-between animate-fade-in animation-delay-400">
-              <div className="flex gap-3">
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between animate-fade-in animation-delay-400">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Button
                   onClick={handleSave}
                   disabled={isLoading}
-                  className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all duration-300"
+                  className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all duration-300 h-10 sm:h-11"
                 >
                   {isLoading ? (
                     <LoadingSpinner size="sm" className="mr-2" />
@@ -648,9 +667,8 @@ const Settings = () => {
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all duration-300"
+                  className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all duration-300 h-10 sm:h-11"
                   onClick={() => {
-                    // Reset to original values
                     setUnsavedChanges(false);
                   }}
                 >
@@ -661,7 +679,7 @@ const Settings = () => {
               
               <Button
                 variant="outline"
-                className="border-red-600 text-red-400 hover:bg-red-500/20 hover:border-red-500 hover-scale transition-all duration-300"
+                className="border-red-600 text-red-400 hover:bg-red-500/20 hover:border-red-500 hover-scale transition-all duration-300 h-10 sm:h-11"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Delete Account

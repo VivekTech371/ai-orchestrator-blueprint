@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -21,7 +22,7 @@ const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login } = useAuth(); // Using login instead of signup since signup doesn't exist in AuthContext
+  const { signup } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +36,7 @@ const Signup = () => {
     setError('');
     
     try {
-      await login(email, password); // Using login for now
+      await signup(name, email, password);
       navigate('/dashboard');
     } catch (err) {
       setError('Failed to create account');
@@ -144,7 +145,7 @@ const Signup = () => {
                         requirement.met ? 'text-green-400' : 'text-gray-400'
                       }`}
                     >
-                      {requirement.met && <Check className="w-3 h-3 mr-1 animate-fade-in" />}
+                      {requirement.met && <Check className="w-3 h-3 mr-1 animate-fade-in flex-shrink-0" />}
                       <span className="truncate">{requirement.label}</span>
                     </div>
                   ))}
@@ -184,7 +185,7 @@ const Signup = () => {
               <input 
                 id="agree-terms" 
                 type="checkbox" 
-                className="h-4 w-4 mt-0.5 rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500 transition-all" 
+                className="h-4 w-4 mt-0.5 rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500 transition-all flex-shrink-0" 
                 required
                 disabled={isLoading}
               />
