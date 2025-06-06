@@ -25,7 +25,8 @@ import {
   Check,
   X,
   AlertTriangle,
-  Star
+  Star,
+  Plus
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';

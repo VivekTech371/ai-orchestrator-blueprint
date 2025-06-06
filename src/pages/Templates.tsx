@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -21,7 +20,8 @@ import {
   MessageSquare,
   FileText,
   Settings,
-  Trending
+  TrendingUp,
+  Plus
 } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
@@ -204,7 +204,7 @@ const Templates = () => {
         {/* Featured Templates Section - Enhanced */}
         <div className="mb-12 animate-fade-in animation-delay-400">
           <div className="flex items-center gap-3 mb-6">
-            <Trending className="w-6 h-6 text-blue-400" />
+            <TrendingUp className="w-6 h-6 text-blue-400" />
             <h2 className="text-2xl font-bold text-white">Featured Templates</h2>
             <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white">Popular</Badge>
           </div>
