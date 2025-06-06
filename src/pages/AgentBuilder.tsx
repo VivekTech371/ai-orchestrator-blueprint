@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +6,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   MessageSquare, 
   Sparkles, 
@@ -36,11 +37,23 @@ import {
   RefreshCw,
   Download,
   Upload,
-  Save
+  Save,
+  Shield,
+  Users,
+  Crown,
+  Layers,
+  GitBranch,
+  Gauge,
+  Inbox,
+  Filter,
+  MoreHorizontal
 } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import RealTimeCollaboration from '@/components/RealTimeCollaboration';
+import VersionControl from '@/components/VersionControl';
+import { useAuth } from '@/contexts/AuthContext';
 
-type Step = 'prompt' | 'clarify' | 'suggestions' | 'apis' | 'deploy' | 'monitor';
+type Step = 'prompt' | 'clarify' | 'suggestions' | 'apis' | 'guardrails' | 'collaboration' | 'deploy' | 'monitor';
 
 interface WorkflowSuggestion {
   id: string;
@@ -49,8 +62,14 @@ interface WorkflowSuggestion {
   complexity: 'Simple' | 'Medium' | 'Advanced';
   estimatedTime: string;
   apis: string[];
+  agentTypes: string[];
   preview: {
     steps: string[];
+  };
+  performance: {
+    score: number;
+    reliability: number;
+    cost: string;
   };
 }
 
@@ -59,22 +78,66 @@ interface APIConnection {
   description: string;
   status: 'connected' | 'pending' | 'error';
   required: boolean;
+  oauth?: boolean;
+  scopes?: string[];
+}
+
+interface Guardrail {
+  id: string;
+  name: string;
+  description: string;
+  type: 'input' | 'output' | 'cost' | 'rate';
+  enabled: boolean;
+  config: any;
 }
 
 const AgentBuilder = () => {
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState<Step>('prompt');
   const [userPrompt, setUserPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedWorkflow, setSelectedWorkflow] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<Array<{role: 'user' | 'assistant', content: string}>>([]);
   const [currentQuestion, setCurrentQuestion] = useState('');
+  const [justDoItMode, setJustDoItMode] = useState(false);
+  
+  // New state for advanced features
+  const [collaborationEnabled, setCollaborationEnabled] = useState(false);
+  const [guardrails, setGuardrails] = useState<Guardrail[]>([
+    {
+      id: '1',
+      name: 'Cost Limit',
+      description: 'Maximum cost per execution',
+      type: 'cost',
+      enabled: true,
+      config: { maxCost: 5.00 }
+    },
+    {
+      id: '2',
+      name: 'Rate Limiting',
+      description: 'Maximum executions per hour',
+      type: 'rate',
+      enabled: true,
+      config: { maxPerHour: 100 }
+    },
+    {
+      id: '3',
+      name: 'Content Filter',
+      description: 'AI-powered content moderation',
+      type: 'output',
+      enabled: false,
+      config: { strictness: 'medium' }
+    }
+  ]);
 
   const stepProgress = {
-    prompt: 20,
-    clarify: 40,
-    suggestions: 60,
-    apis: 80,
-    deploy: 90,
+    prompt: 15,
+    clarify: 30,
+    suggestions: 45,
+    apis: 60,
+    guardrails: 75,
+    collaboration: 85,
+    deploy: 95,
     monitor: 100
   };
 
@@ -84,60 +147,112 @@ const AgentBuilder = () => {
     "Generate tweets from my Substack and schedule them",
     "Monitor my competitors' pricing and notify me of changes",
     "Create personalized cold outreach emails for my leads",
-    "Analyze customer feedback and generate weekly reports"
+    "Analyze customer feedback and generate weekly reports",
+    "Auto-respond to customer support tickets",
+    "Generate and post LinkedIn content about my industry"
   ];
 
   const workflowSuggestions: WorkflowSuggestion[] = [
     {
       id: '1',
-      title: 'AI Content Creation Pipeline',
-      description: 'Generate blog posts using AI, publish to your blog, and share on social media',
-      complexity: 'Medium',
-      estimatedTime: '15 mins setup',
-      apis: ['OpenAI', 'WordPress', 'Twitter', 'Buffer'],
+      title: 'Multi-Agent Content Pipeline',
+      description: 'Research agent finds topics, writer creates content, editor reviews, publisher distributes',
+      complexity: 'Advanced',
+      estimatedTime: '20 mins setup',
+      apis: ['OpenAI', 'NewsAPI', 'WordPress', 'Twitter', 'LinkedIn'],
+      agentTypes: ['Research Agent', 'Content Writer', 'Editor Agent', 'Publisher Agent'],
       preview: {
-        steps: ['Generate content ideas', 'Create blog post with AI', 'Publish to WordPress', 'Share on social media']
+        steps: ['Research trending topics', 'Generate content ideas', 'Write blog post', 'Review and edit', 'Publish and share']
+      },
+      performance: {
+        score: 95,
+        reliability: 98,
+        cost: '$0.15/post'
       }
     },
     {
       id: '2',
-      title: 'News Digest Automation',
-      description: 'Collect news from multiple sources, summarize with AI, and send daily email',
-      complexity: 'Simple',
-      estimatedTime: '10 mins setup',
-      apis: ['NewsAPI', 'OpenAI', 'Gmail', 'RSS'],
+      title: 'Smart News Digest with AI Summarization',
+      description: 'Advanced news aggregation with semantic clustering and personalized summarization',
+      complexity: 'Medium',
+      estimatedTime: '12 mins setup',
+      apis: ['NewsAPI', 'OpenAI', 'Gmail', 'RSS', 'Reddit'],
+      agentTypes: ['News Aggregator', 'AI Summarizer', 'Email Agent'],
       preview: {
-        steps: ['Fetch latest news', 'AI summarization', 'Format email', 'Send daily digest']
+        steps: ['Fetch latest news', 'Cluster similar stories', 'AI summarization', 'Personalize content', 'Send digest']
+      },
+      performance: {
+        score: 92,
+        reliability: 96,
+        cost: '$0.08/digest'
       }
     },
     {
       id: '3',
-      title: 'Advanced Multi-Agent Team',
-      description: 'Complex workflow with multiple AI agents working together',
+      title: 'Conversational Agent Team',
+      description: 'Multiple AI agents collaborating to handle complex customer interactions',
       complexity: 'Advanced',
-      estimatedTime: '30 mins setup',
-      apis: ['OpenAI', 'CrewAI', 'Notion', 'Slack', 'Google Sheets'],
+      estimatedTime: '35 mins setup',
+      apis: ['OpenAI', 'CrewAI', 'Notion', 'Slack', 'Zendesk'],
+      agentTypes: ['Intake Agent', 'Specialist Agent', 'Escalation Agent', 'QA Agent'],
       preview: {
-        steps: ['Research agent gathers data', 'Writer agent creates content', 'Editor agent reviews', 'Publisher agent distributes']
+        steps: ['Receive customer query', 'Classify intent', 'Route to specialist', 'Generate response', 'Quality check']
+      },
+      performance: {
+        score: 89,
+        reliability: 94,
+        cost: '$0.25/interaction'
       }
     }
   ];
 
   const apiConnections: APIConnection[] = [
-    { name: 'OpenAI', description: 'For AI content generation', status: 'pending', required: true },
-    { name: 'Gmail', description: 'For sending emails', status: 'pending', required: true },
-    { name: 'NewsAPI', description: 'For fetching news data', status: 'pending', required: false },
-    { name: 'Buffer', description: 'For social media scheduling', status: 'pending', required: false }
+    { 
+      name: 'OpenAI', 
+      description: 'For AI content generation and processing', 
+      status: 'pending', 
+      required: true,
+      oauth: false
+    },
+    { 
+      name: 'Gmail', 
+      description: 'For sending emails and notifications', 
+      status: 'pending', 
+      required: true,
+      oauth: true,
+      scopes: ['gmail.send', 'gmail.readonly']
+    },
+    { 
+      name: 'NewsAPI', 
+      description: 'For fetching news data and articles', 
+      status: 'pending', 
+      required: false,
+      oauth: false
+    },
+    { 
+      name: 'Twitter/X API', 
+      description: 'For social media posting and monitoring', 
+      status: 'pending', 
+      required: false,
+      oauth: true,
+      scopes: ['tweet.write', 'users.read', 'tweet.read']
+    }
   ];
 
   const handlePromptSubmit = async () => {
     if (!userPrompt.trim()) return;
     
     setIsLoading(true);
-    // Simulate AI processing
+    // Simulate AI processing with semantic clustering
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsLoading(false);
-    setCurrentStep('clarify');
+    
+    if (justDoItMode) {
+      // Skip clarification and go straight to suggestions
+      setCurrentStep('suggestions');
+    } else {
+      setCurrentStep('clarify');
+    }
   };
 
   const handleClarificationComplete = () => {
@@ -151,10 +266,16 @@ const AgentBuilder = () => {
 
   const handleDeploy = async () => {
     setIsLoading(true);
-    // Simulate deployment
+    // Simulate deployment with health monitoring setup
     await new Promise(resolve => setTimeout(resolve, 3000));
     setIsLoading(false);
     setCurrentStep('monitor');
+  };
+
+  const toggleGuardrail = (id: string) => {
+    setGuardrails(prev => prev.map(g => 
+      g.id === id ? { ...g, enabled: !g.enabled } : g
+    ));
   };
 
   const renderPromptStep = () => (
@@ -170,6 +291,17 @@ const AgentBuilder = () => {
       </div>
 
       <div className="max-w-2xl mx-auto space-y-6">
+        {/* Just Do It Mode Toggle */}
+        <div className="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl border border-purple-500/20">
+          <Crown className="w-5 h-5 text-purple-400" />
+          <Label className="text-purple-300 font-medium">Just Do It Mode</Label>
+          <Switch 
+            checked={justDoItMode}
+            onCheckedChange={setJustDoItMode}
+          />
+          <span className="text-sm text-gray-400">Skip clarifications, deploy with best defaults</span>
+        </div>
+
         <div className="space-y-4">
           <Textarea
             value={userPrompt}
@@ -186,12 +318,12 @@ const AgentBuilder = () => {
             {isLoading ? (
               <>
                 <LoadingSpinner size="sm" className="mr-3" />
-                Analyzing your request...
+                {justDoItMode ? 'Creating your agent...' : 'Analyzing your request...'}
               </>
             ) : (
               <>
                 <Sparkles className="w-5 h-5 mr-3" />
-                Create My AI Agent
+                {justDoItMode ? 'Deploy Instantly' : 'Create My AI Agent'}
               </>
             )}
           </Button>
@@ -295,41 +427,48 @@ const AgentBuilder = () => {
           <Workflow className="w-10 h-10 text-white" />
         </div>
         <div>
-          <h2 className="text-3xl font-bold text-white mb-2">Choose Your Workflow</h2>
-          <p className="text-gray-400 text-lg">I've created several options based on your requirements</p>
+          <h2 className="text-3xl font-bold text-white mb-2">AI-Powered Workflow Suggestions</h2>
+          <p className="text-gray-400 text-lg">Our AI analyzed your request and generated these optimized workflows</p>
         </div>
       </div>
 
-      <div className="grid gap-6 max-w-4xl mx-auto">
+      <div className="grid gap-6 max-w-5xl mx-auto">
         {workflowSuggestions.map((workflow) => (
           <Card 
             key={workflow.id}
-            className={`bg-gray-800/60 border-2 cursor-pointer transition-all hover:border-gray-600 ${
-              selectedWorkflow === workflow.id ? 'border-blue-500 bg-blue-500/10' : 'border-gray-700'
+            className={`bg-gray-800/60 border-2 cursor-pointer transition-all hover:border-gray-600 hover:shadow-xl ${
+              selectedWorkflow === workflow.id ? 'border-blue-500 bg-blue-500/10 shadow-blue-500/25' : 'border-gray-700'
             }`}
             onClick={() => setSelectedWorkflow(workflow.id)}
           >
             <CardHeader>
               <div className="flex items-start justify-between">
-                <div className="space-y-2">
+                <div className="space-y-3 flex-1">
                   <div className="flex items-center gap-3">
                     <CardTitle className="text-white text-xl">{workflow.title}</CardTitle>
                     <Badge variant={workflow.complexity === 'Simple' ? 'default' : workflow.complexity === 'Medium' ? 'secondary' : 'destructive'}>
                       {workflow.complexity}
                     </Badge>
                   </div>
-                  <CardDescription className="text-gray-400">{workflow.description}</CardDescription>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      {workflow.estimatedTime}
+                  <CardDescription className="text-gray-400 text-base">{workflow.description}</CardDescription>
+                  
+                  {/* Performance Metrics */}
+                  <div className="flex items-center gap-6 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Gauge className="w-4 h-4 text-green-400" />
+                      <span className="text-gray-300">{workflow.performance.score}% Performance</span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Globe className="w-4 h-4" />
-                      {workflow.apis.length} integrations
+                    <div className="flex items-center gap-2">
+                      <Shield className="w-4 h-4 text-blue-400" />
+                      <span className="text-gray-300">{workflow.performance.reliability}% Reliability</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-yellow-400" />
+                      <span className="text-gray-300">{workflow.estimatedTime}</span>
                     </div>
                   </div>
                 </div>
+                
                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
                   selectedWorkflow === workflow.id ? 'border-blue-500 bg-blue-500' : 'border-gray-600'
                 }`}>
@@ -338,29 +477,60 @@ const AgentBuilder = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-sm font-medium text-gray-300 mb-2">Workflow Steps:</h4>
-                  <div className="space-y-2">
-                    {workflow.preview.steps.map((step, index) => (
-                      <div key={index} className="flex items-center gap-3">
-                        <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-xs font-bold text-white">
-                          {index + 1}
+              <div className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Agent Types */}
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-300 mb-3 flex items-center gap-2">
+                      <Bot className="w-4 h-4" />
+                      AI Agents ({workflow.agentTypes.length})
+                    </h4>
+                    <div className="space-y-2">
+                      {workflow.agentTypes.map((agentType, index) => (
+                        <div key={index} className="flex items-center gap-3">
+                          <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-xs font-bold text-white">
+                            {index + 1}
+                          </div>
+                          <span className="text-gray-300 text-sm">{agentType}</span>
                         </div>
-                        <span className="text-gray-300 text-sm">{step}</span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Workflow Steps */}
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-300 mb-3 flex items-center gap-2">
+                      <Layers className="w-4 h-4" />
+                      Process Flow
+                    </h4>
+                    <div className="space-y-2">
+                      {workflow.preview.steps.map((step, index) => (
+                        <div key={index} className="flex items-center gap-3">
+                          <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-xs font-bold text-white">
+                            {index + 1}
+                          </div>
+                          <span className="text-gray-300 text-sm">{step}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
                 
-                <div>
-                  <h4 className="text-sm font-medium text-gray-300 mb-2">Required APIs:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {workflow.apis.map((api) => (
-                      <Badge key={api} variant="outline" className="text-xs">
-                        {api}
-                      </Badge>
-                    ))}
+                {/* APIs and Cost */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-700">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-300 mb-2">Required Integrations</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {workflow.apis.map((api) => (
+                        <Badge key={api} variant="outline" className="text-xs border-gray-600">
+                          {api}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-400">Estimated cost</p>
+                    <p className="text-lg font-bold text-green-400">{workflow.performance.cost}</p>
                   </div>
                 </div>
               </div>
@@ -373,13 +543,129 @@ const AgentBuilder = () => {
         <div className="flex justify-center">
           <Button
             onClick={() => handleWorkflowSelect(selectedWorkflow)}
-            className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 px-8 py-3 text-lg"
+            className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all"
           >
             <ArrowRight className="w-5 h-5 mr-2" />
             Continue with This Workflow
           </Button>
         </div>
       )}
+    </div>
+  );
+
+  const renderGuardrailsStep = () => (
+    <div className="space-y-8">
+      <div className="text-center space-y-4">
+        <div className="w-20 h-20 bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+          <Shield className="w-10 h-10 text-white" />
+        </div>
+        <div>
+          <h2 className="text-3xl font-bold text-white mb-2">Configure Safety Guardrails</h2>
+          <p className="text-gray-400 text-lg">Set up safety measures and limits for your AI agents</p>
+        </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto space-y-6">
+        {guardrails.map((guardrail) => (
+          <Card key={guardrail.id} className="bg-gray-800/60 border-gray-700">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                    guardrail.enabled ? 'bg-green-500/20' : 'bg-gray-600/20'
+                  }`}>
+                    <Shield className={`w-6 h-6 ${guardrail.enabled ? 'text-green-400' : 'text-gray-400'}`} />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-semibold">{guardrail.name}</h3>
+                    <p className="text-gray-400 text-sm">{guardrail.description}</p>
+                  </div>
+                </div>
+                
+                <Switch 
+                  checked={guardrail.enabled}
+                  onCheckedChange={() => toggleGuardrail(guardrail.id)}
+                />
+              </div>
+              
+              {guardrail.enabled && (
+                <div className="mt-4 p-4 bg-gray-700/30 rounded-lg">
+                  {guardrail.type === 'cost' && (
+                    <div className="space-y-3">
+                      <Label className="text-gray-300">Maximum cost per execution</Label>
+                      <Input
+                        type="number"
+                        value={guardrail.config.maxCost}
+                        className="bg-gray-800 border-gray-600 text-white"
+                        step="0.01"
+                      />
+                    </div>
+                  )}
+                  
+                  {guardrail.type === 'rate' && (
+                    <div className="space-y-3">
+                      <Label className="text-gray-300">Maximum executions per hour</Label>
+                      <Input
+                        type="number"
+                        value={guardrail.config.maxPerHour}
+                        className="bg-gray-800 border-gray-600 text-white"
+                      />
+                    </div>
+                  )}
+                  
+                  {guardrail.type === 'output' && (
+                    <div className="space-y-3">
+                      <Label className="text-gray-300">Content filtering strictness</Label>
+                      <select className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+
+        <Button
+          onClick={() => setCurrentStep('collaboration')}
+          className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 h-12"
+        >
+          <ArrowRight className="w-5 h-5 mr-2" />
+          Continue to Collaboration
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderCollaborationStep = () => (
+    <div className="space-y-8">
+      <div className="text-center space-y-4">
+        <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+          <Users className="w-10 h-10 text-white" />
+        </div>
+        <div>
+          <h2 className="text-3xl font-bold text-white mb-2">Team Collaboration</h2>
+          <p className="text-gray-400 text-lg">Enable real-time collaboration and version control</p>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
+        <RealTimeCollaboration workflowId="current" isOwner={true} />
+        <VersionControl />
+      </div>
+
+      <div className="flex justify-center">
+        <Button
+          onClick={() => setCurrentStep('deploy')}
+          className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-8 py-3 text-lg"
+        >
+          <Rocket className="w-5 h-5 mr-2" />
+          Deploy My Workflow
+        </Button>
+      </div>
     </div>
   );
 
@@ -601,6 +887,8 @@ const AgentBuilder = () => {
     { id: 'clarify', label: 'Clarify Details', icon: Bot },
     { id: 'suggestions', label: 'Choose Workflow', icon: Workflow },
     { id: 'apis', label: 'Connect APIs', icon: Key },
+    { id: 'guardrails', label: 'Safety Settings', icon: Shield },
+    { id: 'collaboration', label: 'Team Setup', icon: Users },
     { id: 'deploy', label: 'Deploy', icon: Rocket },
     { id: 'monitor', label: 'Monitor', icon: Monitor }
   ];
@@ -624,6 +912,12 @@ const AgentBuilder = () => {
             </div>
             
             <div className="flex items-center gap-4">
+              {user?.anonymousMode && (
+                <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+                  <Eye className="w-3 h-3 mr-1" />
+                  Anonymous Mode
+                </Badge>
+              )}
               <Button variant="outline" className="border-gray-600 hover:bg-gray-700">
                 <Save className="w-4 h-4 mr-2" />
                 Save Draft
@@ -641,14 +935,14 @@ const AgentBuilder = () => {
       <div className="bg-gray-800/30 border-b border-gray-700/50 px-6 py-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-6 overflow-x-auto">
               {steps.map((step, index) => {
                 const Icon = step.icon;
                 const isActive = index === currentStepIndex;
                 const isCompleted = index < currentStepIndex;
                 
                 return (
-                  <div key={step.id} className="flex items-center gap-2">
+                  <div key={step.id} className="flex items-center gap-2 flex-shrink-0">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
                       isActive ? 'bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg' :
                       isCompleted ? 'bg-green-500' : 'bg-gray-700'
@@ -659,19 +953,19 @@ const AgentBuilder = () => {
                         <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-400'}`} />
                       )}
                     </div>
-                    <span className={`text-sm font-medium ${
+                    <span className={`text-sm font-medium hidden sm:block ${
                       isActive ? 'text-white' : isCompleted ? 'text-green-400' : 'text-gray-400'
                     }`}>
                       {step.label}
                     </span>
                     {index < steps.length - 1 && (
-                      <ChevronRight className="w-4 h-4 text-gray-600 ml-4" />
+                      <ChevronRight className="w-4 h-4 text-gray-600 ml-2 hidden md:block" />
                     )}
                   </div>
                 );
               })}
             </div>
-            <div className="text-sm text-gray-400">
+            <div className="text-sm text-gray-400 hidden sm:block">
               Step {currentStepIndex + 1} of {steps.length}
             </div>
           </div>
@@ -686,6 +980,8 @@ const AgentBuilder = () => {
           {currentStep === 'clarify' && renderClarifyStep()}
           {currentStep === 'suggestions' && renderSuggestionsStep()}
           {currentStep === 'apis' && renderApisStep()}
+          {currentStep === 'guardrails' && renderGuardrailsStep()}
+          {currentStep === 'collaboration' && renderCollaborationStep()}
           {currentStep === 'deploy' && renderDeployStep()}
           {currentStep === 'monitor' && renderMonitorStep()}
         </div>
