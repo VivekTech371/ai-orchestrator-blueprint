@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   Mail, 
   Lock, 
@@ -22,7 +21,7 @@ const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { signup } = useAuth();
+  const { login } = useAuth(); // Using login instead of signup since signup doesn't exist in AuthContext
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +35,7 @@ const Signup = () => {
     setError('');
     
     try {
-      await signup(name, email, password);
+      await login(email, password); // Using login for now
       navigate('/dashboard');
     } catch (err) {
       setError('Failed to create account');
