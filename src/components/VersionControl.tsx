@@ -115,7 +115,7 @@ const VersionControl: React.FC = () => {
               disabled={selectedVersions.length !== 2}
               className="border-gray-600"
             >
-              <Compare className="w-4 h-4 mr-2" />
+              <GitCompare className="w-4 h-4 mr-2" />
               Compare
             </Button>
             <Button variant="outline" size="sm" className="border-gray-600">
@@ -176,7 +176,7 @@ const VersionControl: React.FC = () => {
                   </Button>
                   {!version.isCurrent && (
                     <Button variant="ghost" size="sm" className="h-6 px-2 text-orange-400">
-                      <Revert className="w-3 h-3" />
+                      <RotateCcw className="w-3 h-3" />
                     </Button>
                   )}
                 </div>

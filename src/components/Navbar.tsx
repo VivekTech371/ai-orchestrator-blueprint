@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { User, LogOut, Settings, Plus, Book } from 'lucide-react';
 import {
   DropdownMenu,
