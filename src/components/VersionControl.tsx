@@ -8,8 +8,8 @@ import {
   Clock, 
   User, 
   Download, 
-  Compare,
-  Revert,
+  GitCompare,
+  RotateCcw,
   Tag,
   Plus,
   Eye
