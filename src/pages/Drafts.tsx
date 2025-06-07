@@ -56,7 +56,7 @@ const Drafts = () => {
       progress: 30,
       category: 'Content Management'
     }
-  ];
+  ]);
 
   const deleteDraft = (id: number) => {
     setDrafts(prev => prev.filter(draft => draft.id !== id));
