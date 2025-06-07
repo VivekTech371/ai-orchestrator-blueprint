@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -28,11 +27,12 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  MessageSquare
 } from 'lucide-react';
-import { AgentPerformanceCard } from '@/components/AgentPerformanceCard';
-import { AgentHealthDashboard } from '@/components/AgentHealthDashboard';
-import { MarketplaceSalesDashboard } from '@/components/MarketplaceSalesDashboard';
+import AgentPerformanceCard from '@/components/AgentPerformanceCard';
+import AgentHealthDashboard from '@/components/AgentHealthDashboard';
+import MarketplaceSalesDashboard from '@/components/MarketplaceSalesDashboard';
 
 const Dashboard = () => {
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
