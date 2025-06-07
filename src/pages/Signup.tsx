@@ -54,10 +54,10 @@ const Signup = () => {
   ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900/20 to-cyan-900/20 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-6 sm:space-y-8 animate-fade-in">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900/20 to-cyan-900/20 py-6 sm:py-12 px-3 sm:px-6 lg:px-8">
+      <div className="max-w-sm sm:max-w-md w-full space-y-4 sm:space-y-8 animate-fade-in">
         <div className="text-center">
-          <Link to="/" className="inline-flex items-center justify-center mb-4 sm:mb-6 hover-scale">
+          <Link to="/" className="inline-flex items-center justify-center mb-3 sm:mb-6 hover-scale">
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center glow shadow-lg shadow-blue-500/25">
               <span className="text-white font-bold text-base sm:text-lg">AI</span>
             </div>
@@ -68,14 +68,14 @@ const Signup = () => {
           </p>
         </div>
         
-        <div className="bg-gray-800/60 backdrop-blur-sm p-6 sm:p-8 rounded-xl border border-gray-700 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div className="bg-gray-800/60 backdrop-blur-sm p-4 sm:p-8 rounded-xl border border-gray-700 shadow-xl hover:shadow-2xl transition-all duration-300">
           {error && (
-            <div className="bg-red-500/20 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg mb-6 animate-fade-in text-sm">
+            <div className="bg-red-500/20 border border-red-500/30 text-red-400 px-3 sm:px-4 py-2 sm:py-3 rounded-lg mb-4 sm:mb-6 animate-fade-in text-sm">
               {error}
             </div>
           )}
           
-          <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-3 sm:space-y-6" onSubmit={handleSubmit}>
             {/* Name Field */}
             <div className="animate-fade-in animation-delay-200">
               <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
@@ -89,7 +89,7 @@ const Signup = () => {
                   placeholder="John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="pl-10 bg-gray-700 border-gray-600 text-white focus:border-blue-500 focus:ring-blue-500 transition-all h-10 sm:h-11"
+                  className="pl-10 bg-gray-700 border-gray-600 text-white focus:border-blue-500 focus:ring-blue-500 transition-all h-10 sm:h-11 text-sm sm:text-base"
                   required
                   disabled={isLoading}
                 />
@@ -109,7 +109,7 @@ const Signup = () => {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 bg-gray-700 border-gray-600 text-white focus:border-blue-500 focus:ring-blue-500 transition-all h-10 sm:h-11"
+                  className="pl-10 bg-gray-700 border-gray-600 text-white focus:border-blue-500 focus:ring-blue-500 transition-all h-10 sm:h-11 text-sm sm:text-base"
                   required
                   disabled={isLoading}
                 />
@@ -129,7 +129,7 @@ const Signup = () => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 bg-gray-700 border-gray-600 text-white focus:border-blue-500 focus:ring-blue-500 transition-all h-10 sm:h-11"
+                  className="pl-10 bg-gray-700 border-gray-600 text-white focus:border-blue-500 focus:ring-blue-500 transition-all h-10 sm:h-11 text-sm sm:text-base"
                   required
                   disabled={isLoading}
                 />
@@ -137,7 +137,7 @@ const Signup = () => {
               
               {/* Password Requirements */}
               {password && (
-                <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2">
+                <div className="mt-2 grid grid-cols-1 gap-1">
                   {passwordRequirements.map((requirement) => (
                     <div 
                       key={requirement.id}
@@ -145,7 +145,7 @@ const Signup = () => {
                         requirement.met ? 'text-green-400' : 'text-gray-400'
                       }`}
                     >
-                      {requirement.met && <Check className="w-3 h-3 mr-1 animate-fade-in flex-shrink-0" />}
+                      {requirement.met && <Check className="w-3 h-3 mr-1 animate-fade-in" />}
                       <span className="truncate">{requirement.label}</span>
                     </div>
                   ))}
@@ -166,7 +166,7 @@ const Signup = () => {
                   placeholder="••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={`pl-10 bg-gray-700 border-gray-600 text-white transition-all h-10 sm:h-11 ${
+                  className={`pl-10 bg-gray-700 border-gray-600 text-white transition-all h-10 sm:h-11 text-sm sm:text-base ${
                     confirmPassword && password !== confirmPassword
                       ? 'border-red-500 focus:ring-red-500'
                       : 'focus:border-blue-500 focus:ring-blue-500'
@@ -185,11 +185,11 @@ const Signup = () => {
               <input 
                 id="agree-terms" 
                 type="checkbox" 
-                className="h-4 w-4 mt-0.5 rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500 transition-all flex-shrink-0" 
+                className="h-4 w-4 mt-0.5 rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500 transition-all" 
                 required
                 disabled={isLoading}
               />
-              <label htmlFor="agree-terms" className="ml-2 block text-sm text-gray-300 leading-relaxed">
+              <label htmlFor="agree-terms" className="ml-2 block text-xs sm:text-sm text-gray-300 leading-relaxed">
                 I agree to the <Link to="/terms" className="text-blue-400 hover:text-blue-300 transition-colors underline">Terms</Link> and <Link to="/privacy" className="text-blue-400 hover:text-blue-300 transition-colors underline">Privacy Policy</Link>
               </label>
             </div>
@@ -197,7 +197,7 @@ const Signup = () => {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all animate-fade-in animation-delay-700 h-11 sm:h-12 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
+              className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all animate-fade-in animation-delay-700 h-10 sm:h-12 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 text-sm sm:text-base"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -212,7 +212,7 @@ const Signup = () => {
           </form>
           
           {/* Social Login */}
-          <div className="mt-6 animate-fade-in animation-delay-800">
+          <div className="mt-4 sm:mt-6 animate-fade-in animation-delay-800">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-600"></div>
@@ -222,24 +222,24 @@ const Signup = () => {
               </div>
             </div>
             
-            <div className="mt-6 grid grid-cols-2 gap-3">
+            <div className="mt-4 sm:mt-6 grid grid-cols-2 gap-2 sm:gap-3">
               <Button 
                 variant="outline" 
-                className="border-gray-600 hover:bg-gray-700 hover-scale transition-all h-10 sm:h-11"
+                className="border-gray-600 hover:bg-gray-700 hover-scale transition-all h-9 sm:h-11 text-xs sm:text-sm"
                 disabled={isLoading}
               >
-                <Github className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">GitHub</span>
-                <span className="sm:hidden">Git</span>
+                <Github className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="hidden xs:inline">GitHub</span>
+                <span className="xs:hidden">Git</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="border-gray-600 hover:bg-gray-700 hover-scale transition-all h-10 sm:h-11"
+                className="border-gray-600 hover:bg-gray-700 hover-scale transition-all h-9 sm:h-11 text-xs sm:text-sm"
                 disabled={isLoading}
               >
-                <Twitter className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">Twitter</span>
-                <span className="sm:hidden">X</span>
+                <Twitter className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="hidden xs:inline">Twitter</span>
+                <span className="xs:hidden">X</span>
               </Button>
             </div>
           </div>
@@ -247,7 +247,7 @@ const Signup = () => {
         
         {/* Login Link */}
         <div className="text-center animate-fade-in animation-delay-1000">
-          <p className="text-gray-400 text-sm">
+          <p className="text-gray-400 text-xs sm:text-sm">
             Already have an account?{' '}
             <Link to="/login" className="font-medium text-blue-400 hover:text-blue-300 transition-colors underline">
               Sign in
