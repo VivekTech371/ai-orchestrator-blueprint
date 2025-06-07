@@ -43,7 +43,7 @@ const Dashboard = () => {
     {
       id: '1',
       name: 'Customer Support Bot',
-      status: 'active',
+      status: 'active' as const,
       performance: 92,
       requests: 1847,
       lastActive: '2 minutes ago',
@@ -52,7 +52,7 @@ const Dashboard = () => {
     {
       id: '2',
       name: 'Data Analyzer',
-      status: 'paused',
+      status: 'paused' as const,
       performance: 87,
       requests: 634,
       lastActive: '1 hour ago',
@@ -61,13 +61,34 @@ const Dashboard = () => {
     {
       id: '3',
       name: 'Content Generator',
-      status: 'active',
+      status: 'active' as const,
       performance: 95,
       requests: 2156,
       lastActive: 'Just now',
       revenue: 3420
     }
   ];
+
+  // Mock agent data for AgentPerformanceCard
+  const performanceAgent = {
+    id: '1',
+    name: 'Customer Support Bot',
+    performance: {
+      score: 92,
+      executionTime: 1.2,
+      successRate: 98,
+      costPerRun: 0.05,
+      qualityScore: 95
+    },
+    status: 'active' as const,
+    runs: 1847,
+    health: {
+      uptime: 99.5,
+      errors: 2,
+      avgRuntime: 1.2,
+      apiCosts: 7.8
+    }
+  };
 
   const handleAgentAction = (action: string, agentId: string) => {
     toast({
@@ -241,7 +262,7 @@ const Dashboard = () => {
           <TabsContent value="overview" className="space-y-6">
             {/* Recent Activity & Performance */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <AgentPerformanceCard />
+              <AgentPerformanceCard agent={performanceAgent} />
               <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
                 <CardHeader>
                   <CardTitle className="text-white">Recent Activity</CardTitle>
