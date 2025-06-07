@@ -1,417 +1,489 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Plus, 
-  Zap, 
-  TrendingUp, 
+  Play, 
+  Pause, 
+  Settings, 
+  BarChart3, 
   Users, 
-  Star,
+  Zap, 
+  TrendingUp,
   Activity,
-  Settings,
+  Shield,
   Bell,
-  Search,
-  Filter,
-  Calendar,
-  DollarSign,
-  CheckCircle,
-  AlertCircle,
-  Clock,
+  Download,
+  Upload,
+  Edit,
+  Trash2,
+  Copy,
   Eye,
   MoreHorizontal,
-  ArrowRight,
-  Bookmark,
-  Heart,
-  Share2,
-  Download,
-  Play,
-  Edit
+  CheckCircle,
+  XCircle,
+  Clock,
+  AlertTriangle
 } from 'lucide-react';
-import { useAgent } from '@/contexts/AgentContext';
-import { useAuth } from '@/contexts/AuthContext';
-import AgentPerformanceCard from '@/components/AgentPerformanceCard';
-import AgentInbox from '@/components/AgentInbox';
-import AgentHealthDashboard from '@/components/AgentHealthDashboard';
-import Leaderboard from '@/components/Leaderboard';
-import VersionControl from '@/components/VersionControl';
-import MarketplaceSalesDashboard from '@/components/MarketplaceSalesDashboard';
-import APIKeyVault from '@/components/APIKeyVault';
+import { AgentPerformanceCard } from '@/components/AgentPerformanceCard';
+import { AgentHealthDashboard } from '@/components/AgentHealthDashboard';
+import { MarketplaceSalesDashboard } from '@/components/MarketplaceSalesDashboard';
 
 const Dashboard = () => {
-  const { agents } = useAgent();
-  const { user } = useAuth();
-  const [selectedTab, setSelectedTab] = useState('overview');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: 'Agent deployment successful',
-      message: 'Your customer service agent has been deployed',
-      time: '2 minutes ago',
-      type: 'success',
-      read: false
-    },
-    {
-      id: 2,
-      title: 'High API usage detected',
-      message: 'Your agent is approaching the monthly limit',
-      time: '1 hour ago',
-      type: 'warning',
-      read: false
-    }
-  ]);
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
+  const { toast } = useToast();
 
-  // Calculate dashboard stats
-  const totalAgents = agents.length;
-  const activeAgents = agents.filter(agent => agent.status === 'active').length;
-  const avgPerformance = agents.reduce((sum, agent) => sum + agent.performance.score, 0) / agents.length || 0;
-  const totalRuns = agents.reduce((sum, agent) => sum + agent.runs, 0);
-
-  const recentActivity = [
+  // Mock data
+  const agents = [
     {
-      id: 1,
-      action: 'Agent created',
-      agent: 'Customer Support Bot',
-      time: '5 minutes ago',
-      status: 'success'
+      id: '1',
+      name: 'Customer Support Bot',
+      status: 'active',
+      performance: 92,
+      requests: 1847,
+      lastActive: '2 minutes ago',
+      revenue: 2340
     },
     {
-      id: 2,
-      action: 'Workflow completed',
-      agent: 'Data Processor',
-      time: '10 minutes ago',
-      status: 'success'
+      id: '2',
+      name: 'Data Analyzer',
+      status: 'paused',
+      performance: 87,
+      requests: 634,
+      lastActive: '1 hour ago',
+      revenue: 1250
     },
     {
-      id: 3,
-      action: 'Agent updated',
-      agent: 'Email Assistant',
-      time: '1 hour ago',
-      status: 'info'
+      id: '3',
+      name: 'Content Generator',
+      status: 'active',
+      performance: 95,
+      requests: 2156,
+      lastActive: 'Just now',
+      revenue: 3420
     }
   ];
 
-  const quickActions = [
-    {
-      title: 'Create New Agent',
-      description: 'Build a new AI agent from scratch',
-      icon: Plus,
-      color: 'from-blue-500 to-cyan-500',
-      path: '/agent-builder'
-    },
-    {
-      title: 'Browse Templates',
-      description: 'Use pre-built agent templates',
-      icon: Star,
-      color: 'from-purple-500 to-pink-500',
-      path: '/templates'
-    },
-    {
-      title: 'View Analytics',
-      description: 'Check agent performance metrics',
-      icon: TrendingUp,
-      color: 'from-green-500 to-emerald-500',
-      path: '/dashboard?tab=health'
-    },
-    {
-      title: 'Manage Settings',
-      description: 'Configure your account settings',
-      icon: Settings,
-      color: 'from-orange-500 to-red-500',
-      path: '/settings'
-    }
-  ];
+  const handleAgentAction = (action: string, agentId: string) => {
+    toast({
+      title: `Agent ${action}`,
+      description: `Successfully ${action.toLowerCase()}d agent ${agentId}`,
+    });
+  };
 
-  const markNotificationAsRead = (id: number) => {
-    setNotifications(prev => 
-      prev.map(notif => 
-        notif.id === id ? { ...notif, read: true } : notif
-      )
-    );
+  const handleCreateAgent = () => {
+    window.location.href = '/agent-builder';
+  };
+
+  const handleExportData = () => {
+    toast({
+      title: "Exporting data",
+      description: "Your dashboard data is being prepared for download.",
+    });
+    // Simulate export
+    setTimeout(() => {
+      toast({
+        title: "Export complete",
+        description: "Your data has been exported successfully.",
+      });
+    }, 2000);
+  };
+
+  const handleImportData = () => {
+    toast({
+      title: "Import data",
+      description: "File upload dialog would open here.",
+    });
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'bg-green-500';
+      case 'paused':
+        return 'bg-yellow-500';
+      case 'error':
+        return 'bg-red-500';
+      default:
+        return 'bg-gray-500';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'active':
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case 'paused':
+        return <Clock className="w-4 h-4 text-yellow-500" />;
+      case 'error':
+        return <XCircle className="w-4 h-4 text-red-500" />;
+      default:
+        return <AlertTriangle className="w-4 h-4 text-gray-500" />;
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/5 to-cyan-900/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
-                Welcome back, {user?.name?.split(' ')[0] || 'User'}! 👋
-              </h1>
-              <p className="text-gray-400 text-base sm:text-lg">
-                Here's what's happening with your AI agents today
-              </p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link to="/notifications">
-                <Button variant="outline" className="w-full sm:w-auto border-gray-600 hover:bg-gray-700 relative">
-                  <Bell className="w-4 h-4 mr-2" />
-                  Notifications
-                  {notifications.filter(n => !n.read).length > 0 && (
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs"></span>
-                  )}
-                </Button>
-              </Link>
-              <Link to="/agent-builder">
-                <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Agent
-                </Button>
-              </Link>
-            </div>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+              Welcome back! 👋
+            </h1>
+            <p className="text-gray-300 text-lg">
+              Here's what's happening with your AI agents today.
+            </p>
           </div>
-
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-            <Card className="bg-gray-800/60 border-gray-700 hover:border-gray-600 transition-all">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
-                    <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-xs sm:text-sm text-gray-400">Total Agents</p>
-                    <p className="text-lg sm:text-2xl font-bold text-white">{totalAgents}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gray-800/60 border-gray-700 hover:border-gray-600 transition-all">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
-                    <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-xs sm:text-sm text-gray-400">Active Agents</p>
-                    <p className="text-lg sm:text-2xl font-bold text-white">{activeAgents}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gray-800/60 border-gray-700 hover:border-gray-600 transition-all">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
-                    <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-xs sm:text-sm text-gray-400">Avg Performance</p>
-                    <p className="text-lg sm:text-2xl font-bold text-white">{avgPerformance.toFixed(1)}%</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gray-800/60 border-gray-700 hover:border-gray-600 transition-all">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg">
-                    <Star className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-xs sm:text-sm text-gray-400">Total Runs</p>
-                    <p className="text-lg sm:text-2xl font-bold text-white">{totalRuns.toLocaleString()}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {quickActions.map((action, index) => {
-              const Icon = action.icon;
-              return (
-                <Link key={index} to={action.path}>
-                  <Card className="bg-gray-800/60 border-gray-700 hover:border-gray-600 transition-all duration-300 hover-scale cursor-pointer group">
-                    <CardContent className="p-4 sm:p-6">
-                      <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r ${action.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                        <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                      </div>
-                      <h3 className="text-white font-semibold mb-2 text-sm sm:text-base group-hover:text-blue-400 transition-colors">
-                        {action.title}
-                      </h3>
-                      <p className="text-gray-400 text-xs sm:text-sm">
-                        {action.description}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <Button onClick={handleImportData} variant="outline" className="border-gray-600 hover:bg-gray-800">
+              <Upload className="w-4 h-4 mr-2" />
+              Import
+            </Button>
+            <Button onClick={handleExportData} variant="outline" className="border-gray-600 hover:bg-gray-800">
+              <Download className="w-4 h-4 mr-2" />
+              Export
+            </Button>
+            <Button onClick={handleCreateAgent} className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600">
+              <Plus className="w-4 h-4 mr-2" />
+              Create Agent
+            </Button>
           </div>
         </div>
 
-        {/* Main Dashboard Content */}
-        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-6">
-          <TabsList className="bg-gray-800/60 border border-gray-700 w-full lg:w-auto overflow-x-auto">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-gray-300 text-sm font-medium">Active Agents</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <span className="text-2xl font-bold text-white">
+                  {agents.filter(a => a.status === 'active').length}
+                </span>
+                <Activity className="w-5 h-5 text-green-400" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-gray-300 text-sm font-medium">Total Requests</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <span className="text-2xl font-bold text-white">
+                  {agents.reduce((sum, agent) => sum + agent.requests, 0).toLocaleString()}
+                </span>
+                <TrendingUp className="w-5 h-5 text-blue-400" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-gray-300 text-sm font-medium">Revenue</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <span className="text-2xl font-bold text-white">
+                  ${agents.reduce((sum, agent) => sum + agent.revenue, 0).toLocaleString()}
+                </span>
+                <BarChart3 className="w-5 h-5 text-green-400" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-gray-300 text-sm font-medium">Avg Performance</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <span className="text-2xl font-bold text-white">
+                  {Math.round(agents.reduce((sum, agent) => sum + agent.performance, 0) / agents.length)}%
+                </span>
+                <Zap className="w-5 h-5 text-yellow-400" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content Tabs */}
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="bg-gray-800/60 border-gray-700">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-blue-500">
               Overview
             </TabsTrigger>
-            <TabsTrigger value="agents" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+            <TabsTrigger value="agents" className="data-[state=active]:bg-blue-500">
               Agents
             </TabsTrigger>
-            <TabsTrigger value="health" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+            <TabsTrigger value="health" className="data-[state=active]:bg-blue-500">
               Health
             </TabsTrigger>
-            <TabsTrigger value="marketplace" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+            <TabsTrigger value="marketplace" className="data-[state=active]:bg-blue-500">
               Marketplace
             </TabsTrigger>
-            <TabsTrigger value="security" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+            <TabsTrigger value="security" className="data-[state=active]:bg-blue-500">
               Security
             </TabsTrigger>
-            <TabsTrigger value="community" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+            <TabsTrigger value="community" className="data-[state=active]:bg-blue-500">
               Community
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-              {/* Agent Performance Cards */}
-              <div className="xl:col-span-2 space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <h2 className="text-xl sm:text-2xl font-bold text-white">Your Agents</h2>
-                  <div className="flex gap-2">
-                    <Link to="/agents">
-                      <Button variant="outline" className="border-gray-600 text-sm">
-                        <Eye className="w-4 h-4 mr-2" />
-                        View All
-                      </Button>
-                    </Link>
+            {/* Recent Activity & Performance */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <AgentPerformanceCard />
+              <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-white">Recent Activity</CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Latest updates from your agents
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {[
+                      { action: 'Agent deployed', agent: 'Customer Support Bot', time: '2 minutes ago', status: 'success' },
+                      { action: 'Performance alert', agent: 'Data Analyzer', time: '1 hour ago', status: 'warning' },
+                      { action: 'New template used', agent: 'Content Generator', time: '3 hours ago', status: 'info' }
+                    ].map((activity, index) => (
+                      <div key={index} className="flex items-center gap-3 p-3 bg-gray-700/30 rounded-lg">
+                        <div className={`w-2 h-2 rounded-full ${
+                          activity.status === 'success' ? 'bg-green-400' :
+                          activity.status === 'warning' ? 'bg-yellow-400' : 'bg-blue-400'
+                        }`} />
+                        <div className="flex-1">
+                          <p className="text-white text-sm">{activity.action}</p>
+                          <p className="text-gray-400 text-xs">{activity.agent} • {activity.time}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
-                
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                  {agents.slice(0, 4).map((agent) => (
-                    <AgentPerformanceCard key={agent.id} agent={agent} />
-                  ))}
-                </div>
-
-                {/* Recent Activity */}
-                <Card className="bg-gray-800/60 border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="text-white text-lg sm:text-xl">Recent Activity</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {recentActivity.map((activity) => (
-                        <div key={activity.id} className="flex items-center gap-4 p-3 bg-gray-700/50 rounded-lg">
-                          <div className={`w-2 h-2 rounded-full ${
-                            activity.status === 'success' ? 'bg-green-400' : 
-                            activity.status === 'warning' ? 'bg-yellow-400' : 'bg-blue-400'
-                          }`}></div>
-                          <div className="flex-1">
-                            <p className="text-white text-sm font-medium">{activity.action}</p>
-                            <p className="text-gray-400 text-xs">{activity.agent}</p>
-                          </div>
-                          <span className="text-gray-400 text-xs">{activity.time}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Sidebar */}
-              <div className="space-y-6">
-                <AgentInbox />
-                
-                {/* Recent Notifications */}
-                <Card className="bg-gray-800/60 border-gray-700">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-white text-base sm:text-lg">Notifications</CardTitle>
-                    <Link to="/notifications">
-                      <Button variant="outline" size="sm" className="border-gray-600 text-xs">
-                        View All
-                      </Button>
-                    </Link>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {notifications.slice(0, 3).map((notification) => (
-                        <div key={notification.id} className="p-3 bg-gray-700/50 rounded-lg">
-                          <div className="flex items-start justify-between mb-2">
-                            <h4 className="text-white text-sm font-medium">{notification.title}</h4>
-                            {!notification.read && (
-                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                            )}
-                          </div>
-                          <p className="text-gray-400 text-xs mb-2">{notification.message}</p>
-                          <div className="flex items-center justify-between">
-                            <span className="text-gray-500 text-xs">{notification.time}</span>
-                            <Button 
-                              size="sm" 
-                              variant="outline" 
-                              onClick={() => markNotificationAsRead(notification.id)}
-                              className="border-gray-600 hover:bg-gray-700 text-xs"
-                            >
-                              Mark Read
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <VersionControl />
-              </div>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
 
           <TabsContent value="agents" className="space-y-6">
-            {/* Search and Filter */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Search agents..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-              <Button variant="outline" className="border-gray-600 hover:bg-gray-700">
-                <Filter className="w-4 h-4 mr-2" />
-                Filter
-              </Button>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-              {agents.filter(agent => 
-                agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                agent.description.toLowerCase().includes(searchTerm.toLowerCase())
-              ).map((agent) => (
-                <AgentPerformanceCard key={agent.id} agent={agent} />
-              ))}
-            </div>
+            {/* Agent Management */}
+            <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="text-white">Your Agents</CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Manage and monitor your AI agents
+                    </CardDescription>
+                  </div>
+                  <Button onClick={handleCreateAgent} className="bg-gradient-to-r from-blue-500 to-cyan-500">
+                    <Plus className="w-4 h-4 mr-2" />
+                    New Agent
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {agents.map((agent) => (
+                    <div key={agent.id} className="p-4 bg-gray-700/30 rounded-lg border border-gray-600">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-3 h-3 rounded-full ${getStatusColor(agent.status)}`} />
+                          <h3 className="text-white font-medium">{agent.name}</h3>
+                          <Badge variant="outline" className="text-xs">
+                            {agent.status}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleAgentAction('view', agent.id)}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleAgentAction('edit', agent.id)}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleAgentAction('clone', agent.id)}
+                          >
+                            <Copy className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleAgentAction(agent.status === 'active' ? 'pause' : 'start', agent.id)}
+                          >
+                            {agent.status === 'active' ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleAgentAction('delete', agent.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <p className="text-gray-400">Performance</p>
+                          <p className="text-white font-medium">{agent.performance}%</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-400">Requests</p>
+                          <p className="text-white font-medium">{agent.requests.toLocaleString()}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-400">Revenue</p>
+                          <p className="text-white font-medium">${agent.revenue}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-400">Last Active</p>
+                          <p className="text-white font-medium">{agent.lastActive}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
-          <TabsContent value="health" className="space-y-6">
+          <TabsContent value="health">
             <AgentHealthDashboard />
           </TabsContent>
 
-          <TabsContent value="marketplace" className="space-y-6">
+          <TabsContent value="marketplace">
             <MarketplaceSalesDashboard />
           </TabsContent>
 
           <TabsContent value="security" className="space-y-6">
-            <APIKeyVault />
+            <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Shield className="w-5 h-5" />
+                  Security Overview
+                </CardTitle>
+                <CardDescription className="text-gray-400">
+                  Monitor and manage your account security
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
+                    <div>
+                      <h3 className="text-white font-medium">Two-Factor Authentication</h3>
+                      <p className="text-gray-400 text-sm">Add an extra layer of security</p>
+                    </div>
+                    <Button onClick={() => toast({ title: "2FA", description: "Two-factor authentication settings opened" })}>
+                      Enable
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
+                    <div>
+                      <h3 className="text-white font-medium">API Keys</h3>
+                      <p className="text-gray-400 text-sm">Manage your API access keys</p>
+                    </div>
+                    <Button onClick={() => toast({ title: "API Keys", description: "API key management opened" })} variant="outline">
+                      Manage
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
+                    <div>
+                      <h3 className="text-white font-medium">Login History</h3>
+                      <p className="text-gray-400 text-sm">View recent login activity</p>
+                    </div>
+                    <Button onClick={() => toast({ title: "Login History", description: "Login history opened" })} variant="outline">
+                      View
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="community" className="space-y-6">
-            <Leaderboard />
+            <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  Community Engagement
+                </CardTitle>
+                <CardDescription className="text-gray-400">
+                  Connect with other AI builders
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h3 className="text-white font-medium">Quick Actions</h3>
+                    <div className="space-y-3">
+                      <Button 
+                        onClick={() => window.location.href = '/community'} 
+                        className="w-full justify-start" 
+                        variant="outline"
+                      >
+                        <Users className="w-4 h-4 mr-2" />
+                        Browse Community
+                      </Button>
+                      <Button 
+                        onClick={() => toast({ title: "Share Agent", description: "Agent sharing dialog opened" })} 
+                        className="w-full justify-start" 
+                        variant="outline"
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        Share an Agent
+                      </Button>
+                      <Button 
+                        onClick={() => window.location.href = '/feedback'} 
+                        className="w-full justify-start" 
+                        variant="outline"
+                      >
+                        <MessageSquare className="w-4 h-4 mr-2" />
+                        Give Feedback
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <h3 className="text-white font-medium">Your Stats</h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400">Community Rank</span>
+                        <Badge className="bg-gold-500/20 text-yellow-400">Gold</Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400">Shared Agents</span>
+                        <span className="text-white">12</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400">Downloads</span>
+                        <span className="text-white">1,247</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400">Community Score</span>
+                        <span className="text-white">4.8/5.0</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>

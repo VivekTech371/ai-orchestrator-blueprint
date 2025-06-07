@@ -1,302 +1,391 @@
 
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToast } from '@/hooks/use-toast';
+import { LikeButton } from '@/components/LikeButton';
 import { 
   User, 
-  Mail, 
-  Calendar, 
   MapPin, 
-  Link as LinkIcon, 
-  Settings, 
+  Calendar, 
   Star, 
-  Heart, 
-  MessageSquare, 
-  Share2,
+  Download, 
+  Share, 
+  Flag,
+  MessageSquare,
+  Users,
   Award,
   Zap,
-  Trophy,
-  Edit3,
-  Save,
-  X
+  TrendingUp,
+  Heart,
+  Eye,
+  GitFork
 } from 'lucide-react';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 const Profile = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [profile, setProfile] = useState({
-    name: 'Sarah Chen',
-    email: 'sarah.chen@example.com',
-    bio: 'AI automation enthusiast and workflow designer. Love creating efficient systems that make work easier.',
+  const { userId } = useParams();
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(1247);
+  const { toast } = useToast();
+
+  // Mock user data
+  const user = {
+    id: userId || '1',
+    name: 'Alex Thompson',
+    username: '@alexthompson',
+    avatar: '/placeholder.svg',
+    bio: 'AI enthusiast and developer. Building the future one agent at a time. Love creating workflows that solve real-world problems.',
     location: 'San Francisco, CA',
-    website: 'https://sarahchen.dev',
-    joinDate: 'January 2024',
-    avatar: 'SC'
-  });
+    joinDate: 'March 2023',
+    website: 'alexthompson.dev',
+    stats: {
+      agents: 24,
+      downloads: 15420,
+      followers: followerCount,
+      following: 189,
+      likes: 3240
+    },
+    badges: [
+      { name: 'Early Adopter', color: 'bg-blue-500' },
+      { name: 'Top Creator', color: 'bg-gold-500' },
+      { name: 'Community Helper', color: 'bg-green-500' }
+    ]
+  };
 
-  const [editProfile, setEditProfile] = useState(profile);
-
-  const stats = [
-    { label: 'Posts', value: 89, icon: MessageSquare },
-    { label: 'Workflows', value: 34, icon: Zap },
-    { label: 'Reputation', value: 2847, icon: Star },
-    { label: 'Followers', value: 156, icon: Heart }
-  ];
-
-  const achievements = [
-    { title: 'Expert Contributor', description: 'Created 50+ helpful posts', icon: Award, color: 'from-purple-500 to-pink-500' },
-    { title: 'Workflow Master', description: 'Shared 25+ automation workflows', icon: Zap, color: 'from-blue-500 to-cyan-500' },
-    { title: 'Community Helper', description: 'Helped 100+ community members', icon: Trophy, color: 'from-green-500 to-emerald-500' }
-  ];
-
-  const recentActivity = [
+  const agents = [
     {
-      type: 'post',
-      title: 'Building a Complete Customer Support Automation',
-      timestamp: '2 hours ago',
-      stats: { likes: 89, comments: 23 }
+      id: '1',
+      name: 'Smart Customer Support',
+      description: 'Advanced AI agent for handling customer inquiries with natural language processing.',
+      downloads: 2340,
+      likes: 189,
+      rating: 4.8,
+      category: 'Customer Service',
+      featured: true
     },
     {
-      type: 'workflow',
-      title: 'E-commerce Order Processing Pipeline',
-      timestamp: '1 day ago',
-      stats: { likes: 45, downloads: 234 }
+      id: '2',
+      name: 'Data Analysis Assistant',
+      description: 'Powerful analytics agent that processes and visualizes complex datasets.',
+      downloads: 1856,
+      likes: 156,
+      rating: 4.6,
+      category: 'Analytics',
+      featured: false
     },
     {
-      type: 'comment',
-      title: 'Commented on "Tutorial: Creating Your First AI Agent"',
-      timestamp: '2 days ago',
-      stats: { likes: 12 }
+      id: '3',
+      name: 'Content Creator Pro',
+      description: 'AI-powered content generation tool for blogs, social media, and marketing.',
+      downloads: 3201,
+      likes: 278,
+      rating: 4.9,
+      category: 'Content',
+      featured: true
     }
   ];
 
-  const handleSave = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setProfile(editProfile);
-      setIsEditing(false);
-      setIsLoading(false);
-    }, 1000);
+  const activities = [
+    {
+      type: 'created',
+      item: 'Smart Customer Support',
+      time: '2 days ago'
+    },
+    {
+      type: 'updated',
+      item: 'Data Analysis Assistant',
+      time: '1 week ago'
+    },
+    {
+      type: 'shared',
+      item: 'Content Creator Pro',
+      time: '2 weeks ago'
+    }
+  ];
+
+  const handleFollow = () => {
+    setIsFollowing(!isFollowing);
+    setFollowerCount(prev => isFollowing ? prev - 1 : prev + 1);
+    toast({
+      title: isFollowing ? "Unfollowed" : "Following",
+      description: `You are ${isFollowing ? 'no longer following' : 'now following'} ${user.name}`,
+    });
   };
 
-  const handleCancel = () => {
-    setEditProfile(profile);
-    setIsEditing(false);
+  const handleMessage = () => {
+    toast({
+      title: "Message sent",
+      description: "Opening message composer...",
+    });
+  };
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast({
+      title: "Profile link copied",
+      description: "The profile link has been copied to your clipboard.",
+    });
+  };
+
+  const handleReport = () => {
+    toast({
+      title: "Report user",
+      description: "Opening report dialog...",
+    });
+  };
+
+  const handleAgentAction = (action: string, agentName: string) => {
+    toast({
+      title: `Agent ${action}`,
+      description: `${action} "${agentName}"`,
+    });
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/5 to-cyan-900/5">
-      <div className="max-w-6xl mx-auto container-padding section-padding">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Profile Header */}
-        <div className="bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-8 mb-8 animate-fade-in">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
-            <div className="w-32 h-32 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-xl">
-              {profile.avatar}
-            </div>
-            
-            <div className="flex-1 min-w-0">
-              {isEditing ? (
-                <div className="space-y-4">
-                  <Input
-                    value={editProfile.name}
-                    onChange={(e) => setEditProfile({...editProfile, name: e.target.value})}
-                    className="text-2xl font-bold bg-gray-700/50 border-gray-600 text-white"
-                    placeholder="Your name"
-                  />
-                  <Input
-                    value={editProfile.bio}
-                    onChange={(e) => setEditProfile({...editProfile, bio: e.target.value})}
-                    className="bg-gray-700/50 border-gray-600 text-white"
-                    placeholder="Bio"
-                  />
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Input
-                      value={editProfile.location}
-                      onChange={(e) => setEditProfile({...editProfile, location: e.target.value})}
-                      className="bg-gray-700/50 border-gray-600 text-white"
-                      placeholder="Location"
-                    />
-                    <Input
-                      value={editProfile.website}
-                      onChange={(e) => setEditProfile({...editProfile, website: e.target.value})}
-                      className="bg-gray-700/50 border-gray-600 text-white"
-                      placeholder="Website"
-                    />
-                  </div>
+        <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700 mb-8">
+          <CardContent className="p-6 sm:p-8">
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Avatar and Basic Info */}
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
+                  <User className="w-12 h-12 sm:w-16 sm:h-16 text-white" />
                 </div>
-              ) : (
-                <div>
-                  <h1 className="text-3xl font-bold text-white mb-2">{profile.name}</h1>
-                  <p className="text-gray-300 text-lg mb-4 leading-relaxed">{profile.bio}</p>
-                  <div className="flex flex-wrap gap-4 text-sm text-gray-400">
-                    <div className="flex items-center gap-1">
-                      <Mail className="w-4 h-4" />
-                      <span>{profile.email}</span>
-                    </div>
+                <div className="text-center sm:text-left">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">{user.name}</h1>
+                  <p className="text-blue-400 text-lg mb-3">{user.username}</p>
+                  <p className="text-gray-300 max-w-md mb-4">{user.bio}</p>
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
                     <div className="flex items-center gap-1">
                       <MapPin className="w-4 h-4" />
-                      <span>{profile.location}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <LinkIcon className="w-4 h-4" />
-                      <a href={profile.website} className="text-blue-400 hover:text-blue-300 transition-colors">
-                        {profile.website}
-                      </a>
+                      {user.location}
                     </div>
                     <div className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
-                      <span>Joined {profile.joinDate}</span>
+                      Joined {user.joinDate}
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
-            
-            <div className="flex gap-3">
-              {isEditing ? (
-                <>
-                  <Button 
-                    onClick={handleSave} 
-                    disabled={isLoading}
-                    className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
-                  >
-                    {isLoading ? <LoadingSpinner size="sm" /> : <Save className="w-4 h-4 mr-2" />}
-                    Save
-                  </Button>
-                  <Button onClick={handleCancel} variant="outline" className="border-gray-600 hover:bg-gray-700/50">
-                    <X className="w-4 h-4 mr-2" />
-                    Cancel
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button 
-                    onClick={() => setIsEditing(true)}
-                    className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
-                  >
-                    <Edit3 className="w-4 h-4 mr-2" />
-                    Edit Profile
-                  </Button>
-                  <Button variant="outline" className="border-gray-600 hover:bg-gray-700/50">
-                    <Settings className="w-4 h-4" />
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
+              </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+              {/* Actions */}
+              <div className="flex-1 flex flex-col sm:flex-row justify-end gap-3">
+                <Button onClick={handleMessage} variant="outline" className="border-gray-600 hover:bg-gray-700">
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  Message
+                </Button>
+                <Button onClick={handleShare} variant="outline" className="border-gray-600 hover:bg-gray-700">
+                  <Share className="w-4 h-4 mr-2" />
+                  Share
+                </Button>
+                <Button onClick={handleFollow} className={`${
+                  isFollowing 
+                    ? 'bg-gray-600 hover:bg-gray-700' 
+                    : 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600'
+                }`}>
+                  <Users className="w-4 h-4 mr-2" />
+                  {isFollowing ? 'Following' : 'Follow'}
+                </Button>
+                <Button onClick={handleReport} variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+                  <Flag className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in animation-delay-200">
-              {stats.map((stat, index) => {
-                const Icon = stat.icon;
-                return (
-                  <Card key={index} className="bg-gray-800/60 backdrop-blur-sm border-gray-700/50 hover:border-gray-600 transition-all duration-300 hover-scale">
-                    <CardContent className="p-4 text-center">
-                      <Icon className="w-6 h-6 text-blue-400 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-white">{stat.value}</div>
-                      <p className="text-gray-400 text-sm">{stat.label}</p>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mt-8 pt-6 border-t border-gray-700">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-white">{user.stats.agents}</div>
+                <div className="text-gray-400 text-sm">Agents</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-white">{user.stats.downloads.toLocaleString()}</div>
+                <div className="text-gray-400 text-sm">Downloads</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-white">{user.stats.followers.toLocaleString()}</div>
+                <div className="text-gray-400 text-sm">Followers</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-white">{user.stats.following}</div>
+                <div className="text-gray-400 text-sm">Following</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-white">{user.stats.likes.toLocaleString()}</div>
+                <div className="text-gray-400 text-sm">Likes</div>
+              </div>
             </div>
 
-            {/* Recent Activity */}
-            <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700/50 animate-fade-in animation-delay-300">
+            {/* Badges */}
+            <div className="flex flex-wrap gap-2 mt-6">
+              {user.badges.map((badge, index) => (
+                <Badge key={index} className={`${badge.color} text-white`}>
+                  <Award className="w-3 h-3 mr-1" />
+                  {badge.name}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Content Tabs */}
+        <Tabs defaultValue="agents" className="space-y-6">
+          <TabsList className="bg-gray-800/60 border-gray-700">
+            <TabsTrigger value="agents" className="data-[state=active]:bg-blue-500">
+              Agents ({agents.length})
+            </TabsTrigger>
+            <TabsTrigger value="activity" className="data-[state=active]:bg-blue-500">
+              Activity
+            </TabsTrigger>
+            <TabsTrigger value="followers" className="data-[state=active]:bg-blue-500">
+              Followers
+            </TabsTrigger>
+            <TabsTrigger value="following" className="data-[state=active]:bg-blue-500">
+              Following
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="agents" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {agents.map((agent) => (
+                <Card key={agent.id} className="bg-gray-800/60 backdrop-blur-sm border-gray-700 hover:border-gray-600 transition-all duration-300">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle className="text-white text-lg mb-2 flex items-center gap-2">
+                          {agent.name}
+                          {agent.featured && (
+                            <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
+                              Featured
+                            </Badge>
+                          )}
+                        </CardTitle>
+                        <Badge variant="outline" className="text-xs mb-3">
+                          {agent.category}
+                        </Badge>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-gray-300 text-sm leading-relaxed">
+                      {agent.description}
+                    </p>
+                    
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-1 text-yellow-400">
+                          <Star className="w-4 h-4 fill-current" />
+                          <span>{agent.rating}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-blue-400">
+                          <Download className="w-4 h-4" />
+                          <span>{agent.downloads.toLocaleString()}</span>
+                        </div>
+                      </div>
+                      <LikeButton 
+                        itemId={agent.id}
+                        initialLiked={false}
+                        initialCount={agent.likes}
+                        size="sm"
+                        showCount={true}
+                      />
+                    </div>
+                    
+                    <div className="flex gap-2 pt-2">
+                      <Button 
+                        onClick={() => handleAgentAction('view', agent.name)}
+                        size="sm" 
+                        className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        View
+                      </Button>
+                      <Button 
+                        onClick={() => handleAgentAction('fork', agent.name)}
+                        size="sm" 
+                        variant="outline" 
+                        className="border-gray-600 hover:bg-gray-700"
+                      >
+                        <GitFork className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        onClick={() => handleAgentAction('download', agent.name)}
+                        size="sm" 
+                        variant="outline" 
+                        className="border-gray-600 hover:bg-gray-700"
+                      >
+                        <Download className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="activity" className="space-y-6">
+            <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
               <CardHeader>
                 <CardTitle className="text-white">Recent Activity</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {recentActivity.map((activity, index) => (
-                  <div key={index} className="flex items-start gap-4 p-4 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer">
-                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
-                      <MessageSquare className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-white font-medium line-clamp-1">{activity.title}</h4>
-                      <p className="text-gray-400 text-sm">{activity.timestamp}</p>
-                      <div className="flex items-center gap-4 mt-2 text-sm text-gray-400">
-                        <div className="flex items-center gap-1">
-                          <Heart className="w-4 h-4" />
-                          <span>{activity.stats.likes}</span>
-                        </div>
-                        {activity.stats.comments && (
-                          <div className="flex items-center gap-1">
-                            <MessageSquare className="w-4 h-4" />
-                            <span>{activity.stats.comments}</span>
-                          </div>
-                        )}
-                        {activity.stats.downloads && (
-                          <div className="flex items-center gap-1">
-                            <Share2 className="w-4 h-4" />
-                            <span>{activity.stats.downloads}</span>
-                          </div>
-                        )}
+              <CardContent>
+                <div className="space-y-4">
+                  {activities.map((activity, index) => (
+                    <div key={index} className="flex items-center gap-4 p-4 bg-gray-700/30 rounded-lg">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
+                        {activity.type === 'created' && <Zap className="w-5 h-5 text-white" />}
+                        {activity.type === 'updated' && <TrendingUp className="w-5 h-5 text-white" />}
+                        {activity.type === 'shared' && <Share className="w-5 h-5 text-white" />}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white">
+                          {activity.type === 'created' && 'Created a new agent: '}
+                          {activity.type === 'updated' && 'Updated agent: '}
+                          {activity.type === 'shared' && 'Shared agent: '}
+                          <span className="font-medium">{activity.item}</span>
+                        </p>
+                        <p className="text-gray-400 text-sm">{activity.time}</p>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </CardContent>
             </Card>
-          </div>
+          </TabsContent>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Achievements */}
-            <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700/50 animate-fade-in animation-delay-400">
+          <TabsContent value="followers" className="space-y-6">
+            <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
               <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Trophy className="w-5 h-5 text-yellow-400" />
-                  Achievements
-                </CardTitle>
+                <CardTitle className="text-white">Followers ({user.stats.followers.toLocaleString()})</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {achievements.map((achievement, index) => {
-                  const Icon = achievement.icon;
-                  return (
-                    <div key={index} className="flex items-start gap-3 p-3 bg-gray-700/30 rounded-lg">
-                      <div className={`w-10 h-10 bg-gradient-to-r ${achievement.color} rounded-lg flex items-center justify-center`}>
-                        <Icon className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <h4 className="text-white font-medium text-sm">{achievement.title}</h4>
-                        <p className="text-gray-400 text-xs">{achievement.description}</p>
-                      </div>
-                    </div>
-                  );
-                })}
+              <CardContent>
+                <div className="text-center py-8">
+                  <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-400">Follower list would be displayed here</p>
+                </div>
               </CardContent>
             </Card>
+          </TabsContent>
 
-            {/* Quick Actions */}
-            <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700/50 animate-fade-in animation-delay-500">
+          <TabsContent value="following" className="space-y-6">
+            <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
               <CardHeader>
-                <CardTitle className="text-white">Quick Actions</CardTitle>
+                <CardTitle className="text-white">Following ({user.stats.following})</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <Button variant="outline" className="w-full justify-start border-gray-600 hover:bg-gray-700/50">
-                  <MessageSquare className="w-4 h-4 mr-2" />
-                  New Post
-                </Button>
-                <Button variant="outline" className="w-full justify-start border-gray-600 hover:bg-gray-700/50">
-                  <Zap className="w-4 h-4 mr-2" />
-                  Share Workflow
-                </Button>
-                <Button variant="outline" className="w-full justify-start border-gray-600 hover:bg-gray-700/50">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Account Settings
-                </Button>
+              <CardContent>
+                <div className="text-center py-8">
+                  <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-400">Following list would be displayed here</p>
+                </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 import { 
   HelpCircle, 
   Mail, 
@@ -15,7 +15,8 @@ import {
   Users,
   Lightbulb,
   AlertCircle,
-  Search
+  Search,
+  ExternalLink
 } from 'lucide-react';
 
 const Contact = () => {
@@ -29,6 +30,7 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +41,11 @@ const Contact = () => {
     
     setIsSubmitting(false);
     setSubmitted(true);
+    
+    toast({
+      title: "Message sent successfully!",
+      description: "We'll get back to you within 24 hours.",
+    });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -48,6 +55,41 @@ const Contact = () => {
     }));
   };
 
+  const handleLiveChat = () => {
+    toast({
+      title: "Live Chat",
+      description: "Opening chat support...",
+    });
+    // Simulate opening chat
+    console.log("Opening live chat...");
+  };
+
+  const handleEmailSupport = () => {
+    window.location.href = `mailto:support@orchestrai.com?subject=Support Request&body=Hello, I need help with...`;
+  };
+
+  const handlePhoneSupport = () => {
+    window.location.href = 'tel:+1-555-0123';
+  };
+
+  const handleStatusPage = () => {
+    toast({
+      title: "Status Page",
+      description: "Opening system status page...",
+    });
+    // Simulate opening status page
+    window.open('https://status.orchestrai.com', '_blank');
+  };
+
+  const handleHelpResource = (category: string) => {
+    toast({
+      title: `Opening ${category}`,
+      description: "Redirecting to help documentation...",
+    });
+    // Simulate navigation to help docs
+    console.log(`Opening help resource: ${category}`);
+  };
+
   const contactMethods = [
     {
       icon: MessageSquare,
@@ -55,7 +97,8 @@ const Contact = () => {
       description: 'Get instant help from our support team',
       availability: 'Available 24/7',
       action: 'Start Chat',
-      color: 'from-blue-500 to-cyan-500'
+      color: 'from-blue-500 to-cyan-500',
+      onClick: handleLiveChat
     },
     {
       icon: Mail,
@@ -63,7 +106,8 @@ const Contact = () => {
       description: 'Send us a detailed message',
       availability: 'Response within 24h',
       action: 'Send Email',
-      color: 'from-green-500 to-emerald-500'
+      color: 'from-green-500 to-emerald-500',
+      onClick: handleEmailSupport
     },
     {
       icon: Phone,
@@ -71,7 +115,8 @@ const Contact = () => {
       description: 'Speak directly with our experts',
       availability: 'Mon-Fri, 9AM-6PM EST',
       action: 'Call Now',
-      color: 'from-purple-500 to-pink-500'
+      color: 'from-purple-500 to-pink-500',
+      onClick: handlePhoneSupport
     }
   ];
 
@@ -164,7 +209,10 @@ const Contact = () => {
                   <Clock className="w-4 h-4 text-green-400" />
                   <span className="text-xs text-green-400">{method.availability}</span>
                 </div>
-                <Button className={`w-full bg-gradient-to-r ${method.color} hover:opacity-90`}>
+                <Button 
+                  onClick={method.onClick}
+                  className={`w-full bg-gradient-to-r ${method.color} hover:opacity-90 transition-all duration-300`}
+                >
                   {method.action}
                 </Button>
               </div>
@@ -188,7 +236,7 @@ const Contact = () => {
                       value={formData.name}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none transition-colors"
                       placeholder="Your full name"
                     />
                   </div>
@@ -200,7 +248,7 @@ const Contact = () => {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none transition-colors"
                       placeholder="your@email.com"
                     />
                   </div>
@@ -213,7 +261,7 @@ const Contact = () => {
                       name="category"
                       value={formData.category}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none transition-colors"
                     >
                       <option value="general">General Inquiry</option>
                       <option value="technical">Technical Support</option>
@@ -228,7 +276,7 @@ const Contact = () => {
                       name="priority"
                       value={formData.priority}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none transition-colors"
                     >
                       <option value="low">Low</option>
                       <option value="normal">Normal</option>
@@ -246,7 +294,7 @@ const Contact = () => {
                     value={formData.subject}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none transition-colors"
                     placeholder="Brief description of your inquiry"
                   />
                 </div>
@@ -259,7 +307,7 @@ const Contact = () => {
                     onChange={handleInputChange}
                     required
                     rows={6}
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none resize-none"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none resize-none transition-colors"
                     placeholder="Please provide as much detail as possible..."
                   />
                 </div>
@@ -267,7 +315,7 @@ const Contact = () => {
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 py-3"
+                  className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 py-3 transition-all duration-300"
                 >
                   {isSubmitting ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2" />
@@ -289,7 +337,11 @@ const Contact = () => {
                 {faqCategories.map((category, index) => {
                   const Icon = category.icon;
                   return (
-                    <div key={index} className="flex items-center gap-3 p-3 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer">
+                    <button
+                      key={index}
+                      onClick={() => handleHelpResource(category.title)}
+                      className="flex items-center gap-3 p-3 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer w-full text-left"
+                    >
                       <Icon className="w-5 h-5 text-blue-400" />
                       <div className="flex-1">
                         <h4 className="text-white font-medium text-sm">{category.title}</h4>
@@ -298,7 +350,7 @@ const Contact = () => {
                       <Badge variant="outline" className="border-gray-600 text-gray-400 text-xs">
                         {category.articles}
                       </Badge>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
@@ -330,7 +382,12 @@ const Contact = () => {
                   </div>
                 </div>
               </div>
-              <Button variant="outline" className="w-full mt-4 border-gray-600 hover:bg-gray-700 text-sm">
+              <Button 
+                onClick={handleStatusPage}
+                variant="outline" 
+                className="w-full mt-4 border-gray-600 hover:bg-gray-700 text-sm transition-colors"
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
                 View Status Page
               </Button>
             </div>

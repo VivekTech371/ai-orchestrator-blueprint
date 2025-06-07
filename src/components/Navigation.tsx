@@ -15,7 +15,8 @@ import {
   Edit,
   MessageSquare,
   ChevronDown,
-  X
+  X,
+  Menu
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -37,7 +38,6 @@ export const Navigation: React.FC = () => {
     { icon: FileText, label: 'Templates', path: '/templates' },
     { icon: Users, label: 'Community', path: '/community' },
     { icon: ShoppingBag, label: 'Marketplace', path: '/marketplace' },
-    { icon: MessageSquare, label: 'Contact', path: '/contact' },
   ];
 
   const authenticatedItems = [
@@ -48,9 +48,16 @@ export const Navigation: React.FC = () => {
     { icon: SettingsIcon, label: 'Settings', path: '/settings' },
   ];
 
-  const allItems = user ? [...publicItems, ...authenticatedItems] : publicItems;
-  const primaryItems = allItems.slice(0, 6);
-  const moreItems = allItems.slice(6);
+  const contactItems = [
+    { icon: MessageSquare, label: 'Contact', path: '/contact' },
+  ];
+
+  const allItems = user 
+    ? [...publicItems, ...authenticatedItems, ...contactItems]
+    : [...publicItems, ...contactItems];
+
+  const primaryItems = allItems.slice(0, 5);
+  const moreItems = allItems.slice(5);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -58,8 +65,8 @@ export const Navigation: React.FC = () => {
     <nav className="fixed top-14 sm:top-16 left-0 right-0 z-40 bg-gray-900/98 backdrop-blur-xl border-b border-gray-800/60 shadow-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center justify-center h-14">
-          <div className="flex items-center space-x-1 overflow-x-auto">
+        <div className="hidden lg:flex items-center justify-center h-12">
+          <div className="flex items-center space-x-1">
             {primaryItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.path);
@@ -69,7 +76,7 @@ export const Navigation: React.FC = () => {
                   key={item.path}
                   to={item.path}
                   className={cn(
-                    'flex items-center space-x-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap group',
+                    'flex items-center space-x-2 px-3 py-2 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap group',
                     active
                       ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25'
                       : 'text-gray-300 hover:text-white hover:bg-gray-800/80'
@@ -89,7 +96,7 @@ export const Navigation: React.FC = () => {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="flex items-center space-x-2 px-4 py-2.5 text-gray-300 hover:text-white hover:bg-gray-800/80 font-medium text-sm"
+                    className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800/80 font-medium text-sm"
                   >
                     <span>More</span>
                     <ChevronDown className="w-4 h-4" />
@@ -126,9 +133,10 @@ export const Navigation: React.FC = () => {
 
         {/* Mobile Navigation */}
         <div className="lg:hidden">
-          <div className="flex items-center justify-between h-14">
-            <div className="flex items-center space-x-4 overflow-x-auto">
-              {primaryItems.slice(0, 4).map((item) => {
+          <div className="flex items-center justify-between h-12">
+            {/* Mobile Menu Items */}
+            <div className="flex items-center space-x-2 overflow-x-auto scrollbar-hide">
+              {primaryItems.slice(0, 3).map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
                 
@@ -145,13 +153,14 @@ export const Navigation: React.FC = () => {
                   >
                     <Icon className="w-4 h-4" />
                     <span className="text-xs font-medium truncate w-full text-center">
-                      {item.label}
+                      {item.label.split(' ')[0]}
                     </span>
                   </Link>
                 );
               })}
             </div>
             
+            {/* Mobile Menu Toggle */}
             <Button
               variant="ghost"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -160,11 +169,7 @@ export const Navigation: React.FC = () => {
               {isMobileMenuOpen ? (
                 <X className="w-5 h-5" />
               ) : (
-                <div className="flex flex-col space-y-1">
-                  <div className="w-4 h-0.5 bg-current"></div>
-                  <div className="w-4 h-0.5 bg-current"></div>
-                  <div className="w-4 h-0.5 bg-current"></div>
-                </div>
+                <Menu className="w-5 h-5" />
               )}
             </Button>
           </div>
@@ -173,7 +178,7 @@ export const Navigation: React.FC = () => {
           {isMobileMenuOpen && (
             <div className="absolute top-full left-0 right-0 bg-gray-900/98 backdrop-blur-xl border-b border-gray-800 shadow-xl">
               <div className="px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
-                {allItems.slice(4).map((item) => {
+                {allItems.slice(3).map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.path);
                   
