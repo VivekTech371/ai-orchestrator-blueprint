@@ -47,7 +47,8 @@ import {
   Inbox,
   Filter,
   MoreHorizontal,
-  ChevronDown
+  ChevronDown,
+  ChevronLeft
 } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import RealTimeCollaboration from '@/components/RealTimeCollaboration';
@@ -103,6 +104,7 @@ const AgentBuilder = () => {
   const [justDoItMode, setJustDoItMode] = useState(false);
   const [collaborationEnabled, setCollaborationEnabled] = useState(false);
   const [isMobileStepsOpen, setIsMobileStepsOpen] = useState(false);
+  const [isStepsExpanded, setIsStepsExpanded] = useState(true);
   
   const [guardrails, setGuardrails] = useState<Guardrail[]>([
     {
@@ -274,6 +276,19 @@ const AgentBuilder = () => {
     setGuardrails(prev => prev.map(g => 
       g.id === id ? { ...g, enabled: !g.enabled } : g
     ));
+  };
+
+  const goToStep = (step: Step) => {
+    setCurrentStep(step);
+    setIsMobileStepsOpen(false);
+  };
+
+  const goToPreviousStep = () => {
+    const steps: Step[] = ['prompt', 'clarify', 'suggestions', 'apis', 'guardrails', 'collaboration', 'deploy', 'monitor'];
+    const currentIndex = steps.indexOf(currentStep);
+    if (currentIndex > 0) {
+      setCurrentStep(steps[currentIndex - 1]);
+    }
   };
 
   const renderPromptStep = () => (
@@ -882,26 +897,26 @@ const AgentBuilder = () => {
   );
 
   const steps = [
-    { id: 'prompt', label: 'Describe Goal', icon: MessageSquare },
-    { id: 'clarify', label: 'Clarify Details', icon: Bot },
-    { id: 'suggestions', label: 'Choose Workflow', icon: Workflow },
-    { id: 'apis', label: 'Connect APIs', icon: Key },
-    { id: 'guardrails', label: 'Safety Settings', icon: Shield },
-    { id: 'collaboration', label: 'Team Setup', icon: Users },
-    { id: 'deploy', label: 'Deploy', icon: Rocket },
-    { id: 'monitor', label: 'Monitor', icon: Monitor }
+    { id: 'prompt', label: 'Describe Goal', icon: MessageSquare, description: 'Tell us what you want to automate' },
+    { id: 'clarify', label: 'Clarify Details', icon: Bot, description: 'Refine your requirements' },
+    { id: 'suggestions', label: 'Choose Workflow', icon: Workflow, description: 'Select the best AI workflow' },
+    { id: 'apis', label: 'Connect APIs', icon: Key, description: 'Link your services and tools' },
+    { id: 'guardrails', label: 'Safety Settings', icon: Shield, description: 'Configure limits and protections' },
+    { id: 'collaboration', label: 'Team Setup', icon: Users, description: 'Enable team collaboration' },
+    { id: 'deploy', label: 'Deploy', icon: Rocket, description: 'Launch your AI agent' },
+    { id: 'monitor', label: 'Monitor', icon: Monitor, description: 'Track performance and activity' }
   ];
 
   const currentStepIndex = steps.findIndex(step => step.id === currentStep);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/5 to-cyan-900/5">
-      {/* Mobile-Optimized Header */}
-      <div className="bg-gray-800/60 backdrop-blur-sm border-b border-gray-700/50 px-4 sm:px-6 py-4 sm:py-6">
+      {/* Enhanced Header */}
+      <div className="bg-gray-800/80 backdrop-blur-lg border-b border-gray-700/50 px-4 sm:px-6 py-4 sm:py-6 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg animate-pulse">
                 <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
               <div>
@@ -911,133 +926,268 @@ const AgentBuilder = () => {
             </div>
             
             <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto">
+              {currentStepIndex > 0 && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={goToPreviousStep}
+                  className="border-gray-600 hover:bg-gray-700 text-xs whitespace-nowrap"
+                >
+                  <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  Back
+                </Button>
+              )}
               {user?.anonymousMode && (
                 <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 text-xs whitespace-nowrap">
                   <Eye className="w-3 h-3 mr-1" />
-                  Anonymous Mode
+                  Anonymous
                 </Badge>
               )}
               <Button variant="outline" size="sm" className="border-gray-600 hover:bg-gray-700 text-xs whitespace-nowrap">
                 <Save className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                Save Draft
-              </Button>
-              <Button variant="outline" size="sm" className="border-gray-600 hover:bg-gray-700 text-xs whitespace-nowrap">
-                <Upload className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                Import
+                Save
               </Button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Responsive Progress Bar */}
-      <div className="bg-gray-800/30 border-b border-gray-700/50 px-4 sm:px-6 py-3 sm:py-4">
+      {/* Enhanced Progress Section */}
+      <div className="bg-gray-800/40 backdrop-blur-sm border-b border-gray-700/30 px-4 sm:px-6 py-4 sm:py-6">
         <div className="max-w-7xl mx-auto">
-          {/* Mobile: Dropdown Style Progress */}
-          <div className="md:hidden">
+          {/* Mobile: Improved Collapsible Steps */}
+          <div className="lg:hidden">
             <button
               onClick={() => setIsMobileStepsOpen(!isMobileStepsOpen)}
-              className="w-full flex items-center justify-between p-3 bg-gray-800/60 rounded-lg border border-gray-700"
+              className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-gray-800/80 to-gray-700/80 rounded-xl border border-gray-600/50 hover:border-gray-500/50 transition-all duration-300 shadow-lg"
             >
-              <div className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg`}>
-                  {React.createElement(steps[currentStepIndex].icon, { className: "w-4 h-4 text-white" })}
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
+                    {React.createElement(steps[currentStepIndex].icon, { className: "w-5 h-5 text-white" })}
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                    <span className="text-xs font-bold text-white">{currentStepIndex + 1}</span>
+                  </div>
                 </div>
                 <div className="text-left">
-                  <div className="text-white font-medium text-sm">{steps[currentStepIndex].label}</div>
-                  <div className="text-gray-400 text-xs">Step {currentStepIndex + 1} of {steps.length}</div>
+                  <div className="text-white font-semibold text-base">{steps[currentStepIndex].label}</div>
+                  <div className="text-gray-400 text-sm">{steps[currentStepIndex].description}</div>
+                  <div className="text-gray-500 text-xs">Step {currentStepIndex + 1} of {steps.length}</div>
                 </div>
               </div>
-              <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isMobileStepsOpen ? 'rotate-180' : ''}`} />
+              <div className="flex items-center gap-2">
+                <div className="text-sm text-gray-400">{Math.round(stepProgress[currentStep])}%</div>
+                <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isMobileStepsOpen ? 'rotate-180' : ''}`} />
+              </div>
             </button>
             
             {isMobileStepsOpen && (
-              <div className="mt-2 bg-gray-800/60 rounded-lg border border-gray-700 p-2 animate-fade-in">
-                {steps.map((step, index) => {
-                  const Icon = step.icon;
-                  const isActive = index === currentStepIndex;
-                  const isCompleted = index < currentStepIndex;
-                  
-                  return (
-                    <div key={step.id} className={`flex items-center gap-3 p-2 rounded transition-all ${
-                      isActive ? 'bg-blue-500/20' : 'opacity-60'
-                    }`}>
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${
-                        isActive ? 'bg-gradient-to-r from-blue-500 to-cyan-500' :
-                        isCompleted ? 'bg-green-500' : 'bg-gray-700'
-                      }`}>
-                        {isCompleted ? (
-                          <Check className="w-3 h-3 text-white" />
-                        ) : (
-                          <Icon className="w-3 h-3 text-white" />
+              <div className="mt-4 bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-700/50 p-3 animate-fade-in shadow-xl">
+                <div className="grid grid-cols-1 gap-2">
+                  {steps.map((step, index) => {
+                    const Icon = step.icon;
+                    const isActive = index === currentStepIndex;
+                    const isCompleted = index < currentStepIndex;
+                    const isAccessible = index <= currentStepIndex;
+                    
+                    return (
+                      <button
+                        key={step.id}
+                        onClick={() => isAccessible && goToStep(step.id as Step)}
+                        disabled={!isAccessible}
+                        className={`flex items-center gap-4 p-3 rounded-lg transition-all duration-300 ${
+                          isActive 
+                            ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30' 
+                            : isCompleted 
+                              ? 'bg-green-500/10 border border-green-500/20 hover:bg-green-500/20' 
+                              : isAccessible
+                                ? 'hover:bg-gray-700/30 border border-transparent'
+                                : 'opacity-50 cursor-not-allowed border border-transparent'
+                        }`}
+                      >
+                        <div className="relative">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
+                            isActive 
+                              ? 'bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg' 
+                              : isCompleted 
+                                ? 'bg-green-500 shadow-md' 
+                                : 'bg-gray-600'
+                          }`}>
+                            {isCompleted ? (
+                              <Check className="w-4 h-4 text-white" />
+                            ) : (
+                              <Icon className="w-4 h-4 text-white" />
+                            )}
+                          </div>
+                          {isActive && (
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 animate-ping opacity-20"></div>
+                          )}
+                          <div className={`absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                            isActive 
+                              ? 'bg-white text-blue-600' 
+                              : isCompleted 
+                                ? 'bg-green-600 text-white' 
+                                : 'bg-gray-500 text-gray-300'
+                          }`}>
+                            {index + 1}
+                          </div>
+                        </div>
+                        <div className="flex-1 text-left">
+                          <div className={`font-medium text-sm ${
+                            isActive ? 'text-white' : isCompleted ? 'text-green-400' : 'text-gray-400'
+                          }`}>
+                            {step.label}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1 max-w-[100px] leading-tight">
+                            {step.description}
+                          </div>
+                        </div>
+                        {isActive && (
+                          <div className="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full">
+                            Current
+                          </div>
                         )}
-                      </div>
-                      <span className={`text-xs font-medium ${
-                        isActive ? 'text-white' : isCompleted ? 'text-green-400' : 'text-gray-400'
-                      }`}>
-                        {step.label}
-                      </span>
-                    </div>
-                  );
-                })}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
 
-          {/* Desktop: Horizontal Progress */}
-          <div className="hidden md:block">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-6 overflow-x-auto">
-                {steps.map((step, index) => {
-                  const Icon = step.icon;
-                  const isActive = index === currentStepIndex;
-                  const isCompleted = index < currentStepIndex;
-                  
-                  return (
-                    <div key={step.id} className="flex items-center gap-2 flex-shrink-0">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                        isActive ? 'bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg' :
-                        isCompleted ? 'bg-green-500' : 'bg-gray-700'
-                      }`}>
-                        {isCompleted ? (
-                          <Check className="w-5 h-5 text-white" />
-                        ) : (
-                          <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-400'}`} />
+          {/* Desktop: Enhanced Horizontal Steps */}
+          <div className="hidden lg:block">
+            <div className="flex items-center justify-between mb-6">
+              <button
+                onClick={() => setIsStepsExpanded(!isStepsExpanded)}
+                className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+              >
+                <ChevronDown className={`w-4 h-4 transition-transform ${isStepsExpanded ? 'rotate-180' : ''}`} />
+                <span className="text-sm font-medium">
+                  {isStepsExpanded ? 'Collapse' : 'Expand'} Steps
+                </span>
+              </button>
+              <div className="text-sm text-gray-400 flex items-center gap-2">
+                <Clock className="w-4 h-4" />
+                Step {currentStepIndex + 1} of {steps.length} • {Math.round(stepProgress[currentStep])}% Complete
+              </div>
+            </div>
+
+            {isStepsExpanded && (
+              <div className="relative animate-fade-in">
+                <div className="flex items-center justify-between overflow-x-auto pb-2">
+                  {steps.map((step, index) => {
+                    const Icon = step.icon;
+                    const isActive = index === currentStepIndex;
+                    const isCompleted = index < currentStepIndex;
+                    const isAccessible = index <= currentStepIndex;
+                    
+                    return (
+                      <div key={step.id} className="flex items-center flex-shrink-0">
+                        <button
+                          onClick={() => isAccessible && goToStep(step.id as Step)}
+                          disabled={!isAccessible}
+                          className={`flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300 min-w-[120px] ${
+                            isActive 
+                              ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 shadow-lg' 
+                              : isCompleted 
+                                ? 'bg-green-500/10 border border-green-500/20 hover:bg-green-500/20' 
+                                : isAccessible
+                                  ? 'hover:bg-gray-700/30 border border-transparent'
+                                  : 'opacity-50 cursor-not-allowed border border-transparent'
+                          }`}
+                        >
+                          <div className="relative">
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
+                              isActive 
+                                ? 'bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg scale-110' 
+                                : isCompleted 
+                                  ? 'bg-green-500 shadow-md' 
+                                  : 'bg-gray-600'
+                            }`}>
+                              {isCompleted ? (
+                                <Check className="w-6 h-6 text-white" />
+                              ) : (
+                                <Icon className="w-6 h-6 text-white" />
+                              )}
+                            </div>
+                            {isActive && (
+                              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 animate-ping opacity-20"></div>
+                            )}
+                            <div className={`absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                              isActive 
+                                ? 'bg-white text-blue-600' 
+                                : isCompleted 
+                                  ? 'bg-green-600 text-white' 
+                                  : 'bg-gray-500 text-gray-300'
+                            }`}>
+                              {index + 1}
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <div className={`font-semibold text-sm ${
+                              isActive ? 'text-white' : isCompleted ? 'text-green-400' : 'text-gray-400'
+                            }`}>
+                              {step.label}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1 max-w-[100px] leading-tight">
+                              {step.description}
+                            </div>
+                          </div>
+                        </button>
+                        {index < steps.length - 1 && (
+                          <div className={`w-8 h-0.5 mx-2 transition-colors duration-300 ${
+                            isCompleted ? 'bg-green-500' : 'bg-gray-600'
+                          }`}>
+                            <div className={`h-full transition-all duration-500 ${
+                              isCompleted ? 'w-full bg-green-400' : 'w-0'
+                            }`}></div>
+                          </div>
                         )}
                       </div>
-                      <span className={`text-sm font-medium ${
-                        isActive ? 'text-white' : isCompleted ? 'text-green-400' : 'text-gray-400'
-                      }`}>
-                        {step.label}
-                      </span>
-                      {index < steps.length - 1 && (
-                        <ChevronRight className="w-4 h-4 text-gray-600 ml-2" />
-                      )}
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-              <div className="text-sm text-gray-400">
-                Step {currentStepIndex + 1} of {steps.length}
+            )}
+          </div>
+          
+          {/* Enhanced Progress Bar */}
+          <div className="mt-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-400">Overall Progress</span>
+              <span className="text-sm font-medium text-white">{Math.round(stepProgress[currentStep])}%</span>
+            </div>
+            <div className="relative">
+              <Progress 
+                value={stepProgress[currentStep]} 
+                className="h-3 bg-gray-700/50 rounded-full overflow-hidden"
+              />
+              <div 
+                className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all duration-500 ease-out shadow-lg"
+                style={{ width: `${stepProgress[currentStep]}%` }}
+              >
+                <div className="absolute inset-0 bg-white/20 animate-pulse rounded-full"></div>
               </div>
             </div>
           </div>
-          
-          <Progress value={stepProgress[currentStep]} className="h-2" />
         </div>
       </div>
 
-      {/* Main Content - Responsive Container */}
+      {/* Main Content */}
       <div className="px-4 sm:px-6 py-8 sm:py-12">
         <div className="max-w-7xl mx-auto">
-          {currentStep === 'prompt' && renderPromptStep()}
-          {currentStep === 'clarify' && renderClarifyStep()}
-          {currentStep === 'suggestions' && renderSuggestionsStep()}
-          {currentStep === 'apis' && renderApisStep()}
-          {currentStep === 'guardrails' && renderGuardrailsStep()}
-          {currentStep === 'collaboration' && renderCollaborationStep()}
-          {currentStep === 'deploy' && renderDeployStep()}
-          {currentStep === 'monitor' && renderMonitorStep()}
+          <div className="animate-fade-in">
+            {currentStep === 'prompt' && renderPromptStep()}
+            {currentStep === 'clarify' && renderClarifyStep()}
+            {currentStep === 'suggestions' && renderSuggestionsStep()}
+            {currentStep === 'apis' && renderApisStep()}
+            {currentStep === 'guardrails' && renderGuardrailsStep()}
+            {currentStep === 'collaboration' && renderCollaborationStep()}
+            {currentStep === 'deploy' && renderDeployStep()}
+            {currentStep === 'monitor' && renderMonitorStep()}
+          </div>
         </div>
       </div>
     </div>
