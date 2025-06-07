@@ -16,7 +16,8 @@ import {
   Download,
   QrCode,
   Users,
-  Globe
+  Globe,
+  X
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -151,22 +152,22 @@ const ShareInterface: React.FC<ShareInterfaceProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-      <div className="bg-gray-800 rounded-2xl border border-gray-700 max-w-md w-full overflow-hidden animate-scale-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+      <div className="bg-gray-800 rounded-2xl border border-gray-700 w-full max-w-md max-h-[90vh] overflow-y-auto animate-scale-in">
         {/* Header */}
-        <div className="p-6 border-b border-gray-700">
+        <div className="p-4 sm:p-6 border-b border-gray-700 flex-shrink-0">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-white">Share</h2>
-            <Button variant="ghost" onClick={onClose} className="hover:bg-gray-700 p-2">
-              ×
+            <h2 className="text-lg sm:text-xl font-bold text-white">Share</h2>
+            <Button variant="ghost" onClick={onClose} className="hover:bg-gray-700 p-2 h-auto">
+              <X className="w-4 h-4" />
             </Button>
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-              <Share2 className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
+              <Share2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <div>
-              <h3 className="text-white font-medium line-clamp-1">{itemTitle}</h3>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-white font-medium text-sm sm:text-base truncate">{itemTitle}</h3>
               <Badge variant="outline" className="border-gray-600 text-gray-400 text-xs mt-1">
                 {itemType}
               </Badge>
@@ -175,24 +176,24 @@ const ShareInterface: React.FC<ShareInterfaceProps> = ({
         </div>
 
         {/* Share Options */}
-        <div className="p-6">
-          <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="p-4 sm:p-6 flex-1 overflow-y-auto">
+          <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
             {shareOptions.map((option, index) => {
               const Icon = option.icon;
               return (
                 <button
                   key={index}
                   onClick={option.action}
-                  className="flex flex-col items-center gap-2 p-4 bg-gray-700/50 rounded-xl hover:bg-gray-700 transition-all duration-300 hover-scale group"
+                  className="flex flex-col items-center gap-2 p-3 sm:p-4 bg-gray-700/50 rounded-xl hover:bg-gray-700 transition-all duration-300 hover-scale group"
                 >
-                  <div className={`w-12 h-12 bg-gradient-to-r ${option.color} rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg`}>
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r ${option.color} rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg`}>
                     {option.name === 'Copy Link' && copied ? (
-                      <Check className="w-6 h-6 text-white" />
+                      <Check className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     ) : (
-                      <Icon className="w-6 h-6 text-white" />
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     )}
                   </div>
-                  <span className="text-gray-300 text-xs font-medium">{option.name}</span>
+                  <span className="text-gray-300 text-xs font-medium text-center leading-tight">{option.name}</span>
                 </button>
               );
             })}
@@ -205,12 +206,12 @@ const ShareInterface: React.FC<ShareInterfaceProps> = ({
               <Input
                 value={shareData.url}
                 readOnly
-                className="bg-gray-700/50 border-gray-600 text-gray-300 text-sm"
+                className="bg-gray-700/50 border-gray-600 text-gray-300 text-sm flex-1 min-w-0"
               />
               <Button
                 onClick={copyToClipboard}
                 variant="outline"
-                className="border-gray-600 hover:bg-gray-700/50 px-3"
+                className="border-gray-600 hover:bg-gray-700/50 px-3 flex-shrink-0"
               >
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               </Button>
@@ -229,11 +230,11 @@ const ShareInterface: React.FC<ShareInterfaceProps> = ({
           </div>
 
           {/* Additional Options */}
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2 mb-6">
             <Button
               onClick={generateQRCode}
               variant="outline"
-              className="flex-1 border-gray-600 hover:bg-gray-700/50"
+              className="flex-1 border-gray-600 hover:bg-gray-700/50 text-sm"
             >
               <QrCode className="w-4 h-4 mr-2" />
               QR Code
@@ -241,7 +242,7 @@ const ShareInterface: React.FC<ShareInterfaceProps> = ({
             <Button
               onClick={downloadAsFile}
               variant="outline"
-              className="flex-1 border-gray-600 hover:bg-gray-700/50"
+              className="flex-1 border-gray-600 hover:bg-gray-700/50 text-sm"
             >
               <Download className="w-4 h-4 mr-2" />
               Download
@@ -249,12 +250,12 @@ const ShareInterface: React.FC<ShareInterfaceProps> = ({
           </div>
 
           {/* Privacy Note */}
-          <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+          <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
             <div className="flex items-start gap-2">
               <Globe className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
               <div>
                 <p className="text-blue-400 text-xs font-medium">Public Share</p>
-                <p className="text-gray-400 text-xs">Anyone with this link can view this {itemType}</p>
+                <p className="text-gray-400 text-xs leading-relaxed">Anyone with this link can view this {itemType}</p>
               </div>
             </div>
           </div>

@@ -22,6 +22,11 @@ const Profile = lazy(() => import('@/pages/Profile'));
 const Settings = lazy(() => import('@/pages/Settings'));
 const HowItWorks = lazy(() => import('@/pages/HowItWorks'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
+const Notifications = lazy(() => import('@/pages/Notifications'));
+const Drafts = lazy(() => import('@/pages/Drafts'));
+const Bookmarks = lazy(() => import('@/pages/Bookmarks'));
+const Contact = lazy(() => import('@/pages/Contact'));
+const Feedback = lazy(() => import('@/pages/Feedback'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -71,6 +76,11 @@ function App() {
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/how-it-works" element={<HowItWorks />} />
+                  <Route path="/notifications" element={<Notifications />} />
+                  <Route path="/drafts" element={<Drafts />} />
+                  <Route path="/bookmarks" element={<Bookmarks />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/feedback" element={<Feedback />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
