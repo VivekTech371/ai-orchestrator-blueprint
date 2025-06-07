@@ -10,136 +10,194 @@ import {
   ShoppingBag, 
   Settings as SettingsIcon,
   HelpCircle,
-  Menu,
-  X,
   Bell,
   Bookmark,
   Edit,
-  MessageSquare
+  MessageSquare,
+  ChevronDown,
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export const Navigation: React.FC = () => {
   const { user } = useAuth();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const navigationItems = [
-    { icon: Home, label: 'Home', path: '/', showWhen: 'always' },
-    { icon: HelpCircle, label: 'How It Works', path: '/how-it-works', showWhen: 'always' },
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', showWhen: 'authenticated' },
-    { icon: FileText, label: 'Templates', path: '/templates', showWhen: 'always' },
-    { icon: Users, label: 'Community', path: '/community', showWhen: 'always' },
-    { icon: ShoppingBag, label: 'Marketplace', path: '/marketplace', showWhen: 'always' },
-    { icon: Edit, label: 'Drafts', path: '/drafts', showWhen: 'authenticated' },
-    { icon: Bookmark, label: 'Bookmarks', path: '/bookmarks', showWhen: 'authenticated' },
-    { icon: Bell, label: 'Notifications', path: '/notifications', showWhen: 'authenticated' },
-    { icon: MessageSquare, label: 'Contact', path: '/contact', showWhen: 'always' },
-    { icon: SettingsIcon, label: 'Settings', path: '/settings', showWhen: 'authenticated' },
+  const publicItems = [
+    { icon: Home, label: 'Home', path: '/' },
+    { icon: HelpCircle, label: 'How It Works', path: '/how-it-works' },
+    { icon: FileText, label: 'Templates', path: '/templates' },
+    { icon: Users, label: 'Community', path: '/community' },
+    { icon: ShoppingBag, label: 'Marketplace', path: '/marketplace' },
+    { icon: MessageSquare, label: 'Contact', path: '/contact' },
   ];
 
-  const filteredItems = navigationItems.filter(item => {
-    if (item.showWhen === 'always') return true;
-    if (item.showWhen === 'authenticated') return !!user;
-    return false;
-  });
+  const authenticatedItems = [
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+    { icon: Edit, label: 'Drafts', path: '/drafts' },
+    { icon: Bookmark, label: 'Bookmarks', path: '/bookmarks' },
+    { icon: Bell, label: 'Notifications', path: '/notifications' },
+    { icon: SettingsIcon, label: 'Settings', path: '/settings' },
+  ];
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  const allItems = user ? [...publicItems, ...authenticatedItems] : publicItems;
+  const primaryItems = allItems.slice(0, 6);
+  const moreItems = allItems.slice(6);
+
+  const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed top-14 sm:top-16 left-0 right-0 z-40 bg-gray-800/95 backdrop-blur-lg border-b border-gray-700/50 shadow-lg">
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6">
+    <nav className="fixed top-14 sm:top-16 left-0 right-0 z-40 bg-gray-900/98 backdrop-blur-xl border-b border-gray-800/60 shadow-xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center justify-center space-x-1 h-14 sm:h-16 overflow-x-auto">
-          {filteredItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
+        <div className="hidden lg:flex items-center justify-center h-14">
+          <div className="flex items-center space-x-1 overflow-x-auto">
+            {primaryItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.path);
+              
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={cn(
+                    'flex items-center space-x-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap group',
+                    active
+                      ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25'
+                      : 'text-gray-300 hover:text-white hover:bg-gray-800/80'
+                  )}
+                >
+                  <Icon className={cn(
+                    'w-4 h-4 transition-transform duration-300',
+                    active ? 'scale-110' : 'group-hover:scale-110'
+                  )} />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
             
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center space-x-2 px-2 xl:px-3 py-2 sm:py-3 rounded-lg transition-all duration-300 whitespace-nowrap group hover-scale text-xs xl:text-sm ${
-                  isActive
-                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25'
-                    : 'text-gray-300 hover:text-white hover:bg-gray-700/50 hover:shadow-md'
-                }`}
-              >
-                <Icon className={`w-3 h-3 xl:w-4 xl:h-4 transition-transform group-hover:scale-110 ${isActive ? 'animate-pulse' : ''}`} />
-                <span className="font-medium hidden xl:inline">{item.label}</span>
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* Tablet Navigation */}
-        <div className="hidden md:flex lg:hidden items-center justify-center space-x-1 h-14 sm:h-16 overflow-x-auto">
-          {filteredItems.slice(0, 8).map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
-            
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex flex-col items-center space-y-1 px-2 py-2 rounded-lg transition-all duration-300 group hover-scale text-xs ${
-                  isActive
-                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25'
-                    : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
-                }`}
-              >
-                <Icon className={`w-3 h-3 transition-transform group-hover:scale-110 ${isActive ? 'animate-pulse' : ''}`} />
-                <span className="font-medium truncate max-w-[50px]">{item.label}</span>
-              </Link>
-            );
-          })}
+            {moreItems.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="flex items-center space-x-2 px-4 py-2.5 text-gray-300 hover:text-white hover:bg-gray-800/80 font-medium text-sm"
+                  >
+                    <span>More</span>
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="bg-gray-900/98 backdrop-blur-xl border-gray-800 w-48"
+                >
+                  {moreItems.map((item) => {
+                    const Icon = item.icon;
+                    const active = isActive(item.path);
+                    
+                    return (
+                      <DropdownMenuItem key={item.path} asChild>
+                        <Link
+                          to={item.path}
+                          className={cn(
+                            'flex items-center space-x-3 w-full px-3 py-2',
+                            active ? 'bg-blue-500/20 text-blue-400' : 'text-gray-300 hover:text-white'
+                          )}
+                        >
+                          <Icon className="w-4 h-4" />
+                          <span>{item.label}</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
         </div>
 
         {/* Mobile Navigation */}
-        <div className="md:hidden h-14 sm:h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <span className="text-sm sm:text-base font-semibold text-white">Navigation</span>
-          </div>
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={toggleMobileMenu}
-            className="text-white hover:bg-gray-700 h-8 w-8 sm:h-9 sm:w-9"
-          >
-            {isMobileMenuOpen ? <X className="w-4 h-4 sm:w-5 sm:h-5" /> : <Menu className="w-4 h-4 sm:w-5 sm:h-5" />}
-          </Button>
-        </div>
-
-        {/* Mobile Menu Dropdown */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-gray-800/98 backdrop-blur-lg border-b border-gray-700 shadow-xl animate-fade-in z-50 max-h-[70vh] overflow-y-auto">
-            <div className="px-2 sm:px-4 py-3 sm:py-4 space-y-1 sm:space-y-2">
-              {filteredItems.map((item) => {
+        <div className="lg:hidden">
+          <div className="flex items-center justify-between h-14">
+            <div className="flex items-center space-x-4 overflow-x-auto">
+              {primaryItems.slice(0, 4).map((item) => {
                 const Icon = item.icon;
-                const isActive = location.pathname === item.path;
+                const active = isActive(item.path);
                 
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center space-x-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg transition-all duration-300 w-full hover-scale ${
-                      isActive
-                        ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25'
-                        : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
-                    }`}
+                    className={cn(
+                      'flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-300 min-w-[60px]',
+                      active
+                        ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
+                        : 'text-gray-400 hover:text-white hover:bg-gray-800/80'
+                    )}
                   >
-                    <Icon className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform flex-shrink-0 ${isActive ? 'animate-pulse' : ''}`} />
-                    <span className="text-sm sm:text-base font-medium">{item.label}</span>
+                    <Icon className="w-4 h-4" />
+                    <span className="text-xs font-medium truncate w-full text-center">
+                      {item.label}
+                    </span>
                   </Link>
                 );
               })}
             </div>
+            
+            <Button
+              variant="ghost"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 text-gray-300 hover:text-white hover:bg-gray-800/80"
+            >
+              {isMobileMenuOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <div className="flex flex-col space-y-1">
+                  <div className="w-4 h-0.5 bg-current"></div>
+                  <div className="w-4 h-0.5 bg-current"></div>
+                  <div className="w-4 h-0.5 bg-current"></div>
+                </div>
+              )}
+            </Button>
           </div>
-        )}
+
+          {/* Mobile Menu Dropdown */}
+          {isMobileMenuOpen && (
+            <div className="absolute top-full left-0 right-0 bg-gray-900/98 backdrop-blur-xl border-b border-gray-800 shadow-xl">
+              <div className="px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
+                {allItems.slice(4).map((item) => {
+                  const Icon = item.icon;
+                  const active = isActive(item.path);
+                  
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={cn(
+                        'flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 w-full',
+                        active
+                          ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
+                          : 'text-gray-300 hover:text-white hover:bg-gray-800/80'
+                      )}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span className="font-medium">{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );
