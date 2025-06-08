@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import WorkingButton from '@/components/WorkingButton';
 import { 
   Bookmark, 
   Heart, 
@@ -165,10 +165,14 @@ const Bookmarks = () => {
               <span className={`font-semibold ${bookmark.price === 'Free' ? 'text-green-400' : 'text-blue-400'} ${compact ? 'text-sm' : 'text-base'}`}>
                 {bookmark.price}
               </span>
-              <Button size="sm" className="bg-blue-500 hover:bg-blue-600 text-xs">
+              <WorkingButton 
+                size="sm" 
+                action="view"
+                className="bg-blue-500 hover:bg-blue-600 text-xs"
+              >
                 <Eye className="w-3 h-3 mr-1" />
                 View
-              </Button>
+              </WorkingButton>
             </div>
           </div>
         </div>

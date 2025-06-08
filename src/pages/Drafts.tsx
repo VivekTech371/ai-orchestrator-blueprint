@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import WorkingButton from '@/components/WorkingButton';
 import { 
   FileText, 
   Clock, 
@@ -217,20 +218,22 @@ const Drafts = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Button 
+                  <WorkingButton 
                     size="sm" 
+                    action="continue"
                     className="flex-1 bg-blue-500 hover:bg-blue-600 text-xs"
                   >
                     <Edit className="w-3 h-3 mr-1" />
                     Continue
-                  </Button>
-                  <Button 
+                  </WorkingButton>
+                  <WorkingButton 
                     size="sm" 
                     variant="outline"
+                    action="view"
                     className="border-gray-600 hover:bg-gray-700 text-xs"
                   >
                     <Eye className="w-3 h-3" />
-                  </Button>
+                  </WorkingButton>
                   <Button 
                     size="sm" 
                     variant="outline"
