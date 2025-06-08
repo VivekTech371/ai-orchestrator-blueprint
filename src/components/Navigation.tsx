@@ -16,7 +16,8 @@ import {
   MessageSquare,
   ChevronDown,
   X,
-  Menu
+  Menu,
+  Zap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -33,40 +34,40 @@ export const Navigation: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const publicItems = [
-    { icon: Home, label: 'Home', path: '/' },
-    { icon: HelpCircle, label: 'How It Works', path: '/how-it-works' },
-    { icon: FileText, label: 'Templates', path: '/templates' },
-    { icon: Users, label: 'Community', path: '/community' },
-    { icon: ShoppingBag, label: 'Marketplace', path: '/marketplace' },
+    { icon: Home, label: 'Home', path: '/', gradient: 'from-blue-500 to-blue-600' },
+    { icon: HelpCircle, label: 'How It Works', path: '/how-it-works', gradient: 'from-purple-500 to-purple-600' },
+    { icon: FileText, label: 'Templates', path: '/templates', gradient: 'from-green-500 to-green-600' },
+    { icon: Users, label: 'Community', path: '/community', gradient: 'from-orange-500 to-orange-600' },
+    { icon: ShoppingBag, label: 'Marketplace', path: '/marketplace', gradient: 'from-pink-500 to-pink-600' },
   ];
 
   const authenticatedItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-    { icon: Edit, label: 'Drafts', path: '/drafts' },
-    { icon: Bookmark, label: 'Bookmarks', path: '/bookmarks' },
-    { icon: Bell, label: 'Notifications', path: '/notifications' },
-    { icon: SettingsIcon, label: 'Settings', path: '/settings' },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', gradient: 'from-indigo-500 to-indigo-600' },
+    { icon: Edit, label: 'Drafts', path: '/drafts', gradient: 'from-amber-500 to-amber-600' },
+    { icon: Bookmark, label: 'Bookmarks', path: '/bookmarks', gradient: 'from-teal-500 to-teal-600' },
+    { icon: Bell, label: 'Notifications', path: '/notifications', gradient: 'from-red-500 to-red-600' },
+    { icon: SettingsIcon, label: 'Settings', path: '/settings', gradient: 'from-gray-500 to-gray-600' },
   ];
 
   const contactItems = [
-    { icon: MessageSquare, label: 'Contact', path: '/contact' },
+    { icon: MessageSquare, label: 'Contact', path: '/contact', gradient: 'from-cyan-500 to-cyan-600' },
   ];
 
   const allItems = user 
     ? [...publicItems, ...authenticatedItems, ...contactItems]
     : [...publicItems, ...contactItems];
 
-  const primaryItems = allItems.slice(0, 5);
-  const moreItems = allItems.slice(5);
+  const primaryItems = allItems.slice(0, 6);
+  const moreItems = allItems.slice(6);
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed top-14 sm:top-16 left-0 right-0 z-40 bg-gray-900/98 backdrop-blur-xl border-b border-gray-800/60 shadow-xl">
+    <nav className="fixed top-14 sm:top-16 left-0 right-0 z-40 bg-gray-900/95 backdrop-blur-xl border-b border-gray-800/50 shadow-2xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center justify-center h-12">
-          <div className="flex items-center space-x-1 max-w-full overflow-visible">
+        <div className="hidden lg:flex items-center justify-center h-14">
+          <div className="flex items-center space-x-2 max-w-full">
             {primaryItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.path);
@@ -76,19 +77,34 @@ export const Navigation: React.FC = () => {
                   key={item.path}
                   to={item.path}
                   className={cn(
-                    'flex items-center space-x-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap group relative overflow-hidden',
+                    'group relative flex items-center space-x-3 px-5 py-3 rounded-xl font-medium text-sm transition-all duration-300 whitespace-nowrap overflow-hidden',
                     active
-                      ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25 scale-105'
-                      : 'text-gray-300 hover:text-white hover:bg-gray-800/80 hover:scale-105'
+                      ? `bg-gradient-to-r ${item.gradient} text-white shadow-lg scale-105 shadow-blue-500/25`
+                      : 'text-gray-300 hover:text-white hover:bg-gray-800/60 hover:scale-102'
                   )}
                 >
-                  <Icon className={cn(
-                    'w-4 h-4 transition-all duration-300',
-                    active ? 'scale-110' : 'group-hover:scale-110'
-                  )} />
-                  <span className="relative z-10">{item.label}</span>
+                  <div className={cn(
+                    'relative z-10 p-1.5 rounded-lg transition-all duration-300',
+                    active ? 'bg-white/20' : 'group-hover:bg-white/10'
+                  )}>
+                    <Icon className={cn(
+                      'w-4 h-4 transition-all duration-300',
+                      active ? 'scale-110' : 'group-hover:scale-110'
+                    )} />
+                  </div>
+                  <span className="relative z-10 font-semibold">{item.label}</span>
+                  
+                  {/* Animated background for non-active items */}
                   {!active && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
+                    <div className={cn(
+                      'absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl',
+                      item.gradient
+                    )}></div>
+                  )}
+                  
+                  {/* Active indicator */}
+                  {active && (
+                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-white/40 rounded-full"></div>
                   )}
                 </Link>
               );
@@ -99,31 +115,41 @@ export const Navigation: React.FC = () => {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="flex items-center space-x-2 px-4 py-2.5 text-gray-300 hover:text-white hover:bg-gray-800/80 font-medium text-sm transition-all duration-300 hover:scale-105"
+                    className="group flex items-center space-x-2 px-5 py-3 text-gray-300 hover:text-white hover:bg-gray-800/60 font-medium text-sm transition-all duration-300 hover:scale-102 rounded-xl"
                   >
-                    <span>More</span>
+                    <div className="p-1.5 rounded-lg group-hover:bg-white/10 transition-all duration-300">
+                      <Zap className="w-4 h-4" />
+                    </div>
+                    <span className="font-semibold">More</span>
                     <ChevronDown className="w-4 h-4 transition-transform duration-300 group-data-[state=open]:rotate-180" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="bg-gray-900/98 backdrop-blur-xl border-gray-800 w-48 shadow-xl"
+                  className="bg-gray-900/95 backdrop-blur-xl border-gray-800/50 w-56 shadow-2xl rounded-xl p-2"
                 >
                   {moreItems.map((item) => {
                     const Icon = item.icon;
                     const active = isActive(item.path);
                     
                     return (
-                      <DropdownMenuItem key={item.path} asChild>
+                      <DropdownMenuItem key={item.path} asChild className="p-0">
                         <Link
                           to={item.path}
                           className={cn(
-                            'flex items-center space-x-3 w-full px-3 py-2.5 transition-all duration-300',
-                            active ? 'bg-blue-500/20 text-blue-400' : 'text-gray-300 hover:text-white hover:bg-gray-800/60'
+                            'flex items-center space-x-3 w-full px-4 py-3 transition-all duration-300 rounded-lg',
+                            active 
+                              ? `bg-gradient-to-r ${item.gradient} text-white` 
+                              : 'text-gray-300 hover:text-white hover:bg-gray-800/60'
                           )}
                         >
-                          <Icon className="w-4 h-4" />
-                          <span>{item.label}</span>
+                          <div className={cn(
+                            'p-1 rounded transition-all duration-300',
+                            active ? 'bg-white/20' : 'group-hover:bg-white/10'
+                          )}>
+                            <Icon className="w-4 h-4" />
+                          </div>
+                          <span className="font-medium">{item.label}</span>
                         </Link>
                       </DropdownMenuItem>
                     );
@@ -138,7 +164,7 @@ export const Navigation: React.FC = () => {
         <div className="lg:hidden">
           <div className="flex items-center justify-between h-12">
             {/* Mobile Menu Items - Horizontal Scroll */}
-            <div className="flex items-center space-x-2 flex-1 overflow-x-auto scrollbar-hide pb-1">
+            <div className="flex items-center space-x-2 flex-1 overflow-x-auto scrollbar-hide">
               {primaryItems.slice(0, 4).map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
@@ -148,14 +174,19 @@ export const Navigation: React.FC = () => {
                     key={item.path}
                     to={item.path}
                     className={cn(
-                      'flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-300 min-w-[60px] flex-shrink-0',
+                      'flex flex-col items-center space-y-1 p-3 rounded-xl transition-all duration-300 min-w-[70px] flex-shrink-0 relative overflow-hidden',
                       active
-                        ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white scale-105'
-                        : 'text-gray-400 hover:text-white hover:bg-gray-800/80'
+                        ? `bg-gradient-to-r ${item.gradient} text-white scale-105`
+                        : 'text-gray-400 hover:text-white hover:bg-gray-800/60'
                     )}
                   >
-                    <Icon className="w-4 h-4" />
-                    <span className="text-xs font-medium truncate w-full text-center">
+                    <div className={cn(
+                      'p-1 rounded-lg transition-all duration-300',
+                      active ? 'bg-white/20' : 'hover:bg-white/10'
+                    )}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <span className="text-xs font-semibold truncate w-full text-center">
                       {item.label.split(' ')[0]}
                     </span>
                   </Link>
@@ -167,7 +198,7 @@ export const Navigation: React.FC = () => {
             <Button
               variant="ghost"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 text-gray-300 hover:text-white hover:bg-gray-800/80 ml-2 flex-shrink-0"
+              className="p-3 text-gray-300 hover:text-white hover:bg-gray-800/60 ml-2 flex-shrink-0 rounded-xl transition-all duration-300"
             >
               {isMobileMenuOpen ? (
                 <X className="w-5 h-5" />
@@ -179,8 +210,8 @@ export const Navigation: React.FC = () => {
 
           {/* Mobile Menu Dropdown */}
           {isMobileMenuOpen && (
-            <div className="absolute top-full left-0 right-0 bg-gray-900/98 backdrop-blur-xl border-b border-gray-800 shadow-xl animate-in slide-in-from-top-2 duration-300">
-              <div className="px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 bg-gray-900/95 backdrop-blur-xl border-b border-gray-800/50 shadow-2xl">
+              <div className="px-4 py-4 space-y-2 max-h-[70vh] overflow-y-auto">
                 {allItems.slice(4).map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.path);
@@ -191,14 +222,19 @@ export const Navigation: React.FC = () => {
                       to={item.path}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={cn(
-                        'flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 w-full',
+                        'flex items-center space-x-4 px-4 py-4 rounded-xl transition-all duration-300 w-full relative overflow-hidden',
                         active
-                          ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
-                          : 'text-gray-300 hover:text-white hover:bg-gray-800/80'
+                          ? `bg-gradient-to-r ${item.gradient} text-white`
+                          : 'text-gray-300 hover:text-white hover:bg-gray-800/60'
                       )}
                     >
-                      <Icon className="w-5 h-5" />
-                      <span className="font-medium">{item.label}</span>
+                      <div className={cn(
+                        'p-2 rounded-lg transition-all duration-300',
+                        active ? 'bg-white/20' : 'hover:bg-white/10'
+                      )}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <span className="font-semibold text-base">{item.label}</span>
                     </Link>
                   );
                 })}
@@ -207,17 +243,6 @@ export const Navigation: React.FC = () => {
           )}
         </div>
       </div>
-      
-      {/* Custom scrollbar styles */}
-      <style jsx>{`
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </nav>
   );
 };

@@ -1,547 +1,347 @@
-
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import WorkingButton from '@/components/WorkingButton';
+import LikeButton from '@/components/LikeButton';
 import { 
+  ShoppingBag, 
   Search, 
   Filter, 
   Star, 
   Download, 
-  ShoppingCart,
-  Eye,
-  Heart,
+  Eye, 
   TrendingUp,
-  Award,
-  Zap,
-  Shield,
-  Clock,
-  Users,
   DollarSign,
-  Package,
-  CheckCircle,
-  ArrowRight,
-  Sparkles,
-  Globe,
-  Code,
-  Smartphone,
-  Mail,
-  BarChart3
+  Users,
+  Clock
 } from 'lucide-react';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 const Marketplace = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedPricing, setSelectedPricing] = useState('all');
-  const [isLoading, setIsLoading] = useState(false);
+  const [priceFilter, setPriceFilter] = useState('all');
 
   const categories = [
-    { id: 'all', name: 'All Categories', icon: Package, count: 156 },
-    { id: 'automation', name: 'Automation', icon: Zap, count: 45 },
-    { id: 'analytics', name: 'Analytics', icon: BarChart3, count: 28 },
-    { id: 'ecommerce', name: 'E-commerce', icon: ShoppingCart, count: 34 },
-    { id: 'marketing', name: 'Marketing', icon: Mail, count: 29 },
-    { id: 'mobile', name: 'Mobile', icon: Smartphone, count: 20 }
+    { id: 'all', label: 'All Categories' },
+    { id: 'customer-service', label: 'Customer Service' },
+    { id: 'sales', label: 'Sales & Marketing' },
+    { id: 'data-analysis', label: 'Data Analysis' },
+    { id: 'automation', label: 'Automation' },
+    { id: 'finance', label: 'Finance' }
   ];
 
-  const pricingFilters = [
-    { id: 'all', name: 'All Prices' },
-    { id: 'free', name: 'Free' },
-    { id: 'premium', name: 'Premium' },
-    { id: 'enterprise', name: 'Enterprise' }
-  ];
-
-  const featuredItems = [
+  const agents = [
     {
       id: 1,
-      title: "Advanced Customer Analytics Suite",
-      description: "Comprehensive customer behavior analysis with AI-powered insights, predictive modeling, and automated reporting dashboards.",
-      price: 49.99,
-      originalPrice: 79.99,
-      category: "analytics",
-      rating: 4.9,
-      reviews: 247,
-      downloads: 3421,
-      author: {
-        name: "DataFlow Solutions",
-        avatar: "DS",
-        verified: true
-      },
-      tags: ["analytics", "ai", "reporting", "dashboard"],
-      features: ["Real-time Analytics", "AI Predictions", "Custom Reports", "API Integration"],
-      isFeatured: true,
-      isOnSale: true,
-      discount: 38,
-      thumbnail: "/api/placeholder/400/300"
+      title: 'Advanced Customer Support AI',
+      description: 'Intelligent customer support agent with multi-language support and sentiment analysis.',
+      author: 'TechCorp Solutions',
+      price: 99,
+      originalPrice: 149,
+      rating: 4.8,
+      reviews: 124,
+      downloads: 1247,
+      category: 'customer-service',
+      tags: ['AI', 'Support', 'Multilingual'],
+      featured: true,
+      isLiked: false,
+      likes: 89
     },
     {
       id: 2,
-      title: "E-commerce Automation Pro",
-      description: "Complete e-commerce workflow automation including inventory management, order processing, and customer communication.",
-      price: 79.99,
-      originalPrice: null,
-      category: "ecommerce",
-      rating: 4.8,
-      reviews: 189,
+      title: 'Sales Lead Qualifier Bot',
+      description: 'Automatically qualify and score sales leads based on predefined criteria.',
+      author: 'SalesMax Inc',
+      price: 0,
+      rating: 4.6,
+      reviews: 89,
       downloads: 2156,
-      author: {
-        name: "Commerce Tech",
-        avatar: "CT",
-        verified: true
-      },
-      tags: ["ecommerce", "automation", "inventory", "orders"],
-      features: ["Order Automation", "Inventory Sync", "Customer Emails", "Multi-store Support"],
-      isFeatured: true,
-      isOnSale: false,
-      discount: 0,
-      thumbnail: "/api/placeholder/400/300"
+      category: 'sales',
+      tags: ['Sales', 'CRM', 'Automation'],
+      featured: false,
+      isLiked: true,
+      likes: 156
     },
     {
       id: 3,
-      title: "Marketing Campaign Manager",
-      description: "Streamline your marketing efforts with automated campaign creation, A/B testing, and performance optimization.",
-      price: 0,
-      originalPrice: null,
-      category: "marketing",
-      rating: 4.7,
-      reviews: 312,
-      downloads: 5643,
-      author: {
-        name: "Marketing Masters",
-        avatar: "MM",
-        verified: true
-      },
-      tags: ["marketing", "campaigns", "ab-testing", "free"],
-      features: ["Campaign Builder", "A/B Testing", "Performance Tracking", "Email Integration"],
-      isFeatured: true,
-      isOnSale: false,
-      discount: 0,
-      thumbnail: "/api/placeholder/400/300"
-    }
-  ];
-
-  const allItems = [
-    ...featuredItems,
+      title: 'Data Analysis & Reporting Agent',
+      description: 'Comprehensive data analysis agent for generating reports and insights.',
+      author: 'DataWise Analytics',
+      price: 49,
+      rating: 4.5,
+      reviews: 67,
+      downloads: 894,
+      category: 'data-analysis',
+      tags: ['Data', 'Analytics', 'Reporting'],
+      featured: false,
+      isLiked: false,
+      likes: 72
+    },
     {
       id: 4,
-      title: "Mobile App Workflow Builder",
-      description: "Create powerful mobile app workflows with native integrations and cross-platform compatibility.",
-      price: 29.99,
-      originalPrice: null,
-      category: "mobile",
-      rating: 4.6,
-      reviews: 156,
-      downloads: 1243,
-      author: {
-        name: "Mobile Innovators",
-        avatar: "MI",
-        verified: false
-      },
-      tags: ["mobile", "cross-platform", "integrations"],
-      features: ["Native APIs", "Cross-platform", "Push Notifications", "App Store Ready"],
-      isFeatured: false,
-      isOnSale: false,
-      discount: 0,
-      thumbnail: "/api/placeholder/400/300"
+      title: 'Automated Workflow Manager',
+      description: 'Streamline your business processes with this automated workflow management agent.',
+      author: 'AutoFlow Systems',
+      price: 79,
+      rating: 4.7,
+      reviews: 102,
+      downloads: 1532,
+      category: 'automation',
+      tags: ['Workflow', 'Automation', 'Management'],
+      featured: true,
+      isLiked: true,
+      likes: 112
     },
     {
       id: 5,
-      title: "Security Compliance Toolkit",
-      description: "Ensure your workflows meet industry standards with automated security checks and compliance reporting.",
-      price: 149.99,
-      originalPrice: 199.99,
-      category: "automation",
+      title: 'Financial Analysis AI Agent',
+      description: 'Analyze financial data, generate reports, and provide investment recommendations.',
+      author: 'FinInsight Solutions',
+      price: 129,
+      originalPrice: 199,
       rating: 4.9,
-      reviews: 89,
-      downloads: 567,
-      author: {
-        name: "SecureFlow Inc.",
-        avatar: "SF",
-        verified: true
-      },
-      tags: ["security", "compliance", "enterprise", "audit"],
-      features: ["Security Scans", "Compliance Reports", "Audit Logs", "Enterprise Support"],
-      isFeatured: false,
-      isOnSale: true,
-      discount: 25,
-      thumbnail: "/api/placeholder/400/300"
+      reviews: 156,
+      downloads: 987,
+      category: 'finance',
+      tags: ['Finance', 'Analysis', 'Investment'],
+      featured: false,
+      isLiked: false,
+      likes: 134
+    },
+    {
+      id: 6,
+      title: 'Basic Customer Support AI',
+      description: 'Simple customer support agent with basic question answering capabilities.',
+      author: 'SupportAI',
+      price: 0,
+      rating: 4.2,
+      reviews: 45,
+      downloads: 3456,
+      category: 'customer-service',
+      tags: ['AI', 'Support', 'Basic'],
+      featured: false,
+      isLiked: true,
+      likes: 234
     }
   ];
 
-  const marketplaceStats = [
-    { label: "Total Downloads", value: "2.5M+", icon: Download, growth: "+18%" },
-    { label: "Active Developers", value: "1.2K", icon: Users, growth: "+12%" },
-    { label: "Published Items", value: "156", icon: Package, growth: "+25%" },
-    { label: "Average Rating", value: "4.8★", icon: Star, growth: "+3%" }
-  ];
-
-  const topSellers = [
-    { name: "DataFlow Solutions", items: 12, revenue: "$45K", avatar: "DS" },
-    { name: "Commerce Tech", items: 8, revenue: "$32K", avatar: "CT" },
-    { name: "Automation Pro", items: 15, revenue: "$28K", avatar: "AP" },
-    { name: "AI Workflows", items: 6, revenue: "$21K", avatar: "AW" }
-  ];
-
-  const filteredItems = allItems.filter(item => {
-    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         item.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
-    const matchesPricing = selectedPricing === 'all' || 
-                          (selectedPricing === 'free' && item.price === 0) ||
-                          (selectedPricing === 'premium' && item.price > 0 && item.price < 100) ||
-                          (selectedPricing === 'enterprise' && item.price >= 100);
-    return matchesSearch && matchesCategory && matchesPricing;
+  const filteredAgents = agents.filter(agent => {
+    const matchesSearch = agent.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         agent.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || agent.category === selectedCategory;
+    const matchesPrice = priceFilter === 'all' || 
+                        (priceFilter === 'free' && agent.price === 0) ||
+                        (priceFilter === 'paid' && agent.price > 0);
+    
+    return matchesSearch && matchesCategory && matchesPrice;
   });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/5 to-cyan-900/5">
-      <div className="max-w-7xl mx-auto container-padding section-padding">
-        {/* Header Section - Enhanced */}
-        <div className="text-center mb-12 animate-fade-in">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Workflow <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Marketplace</span>
-          </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Discover premium workflows, integrations, and automation tools created by our community of experts. 
-            Accelerate your projects with ready-to-use solutions.
-          </p>
-        </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Header */}
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                AI Agent Marketplace
+              </h1>
+              <p className="text-gray-400">
+                Discover, purchase, and deploy powerful AI agents
+              </p>
+            </div>
+            
+            <WorkingButton 
+              action="startSelling"
+              className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+            >
+              <DollarSign className="w-4 h-4 mr-2" />
+              Start Selling
+            </WorkingButton>
+          </div>
 
-        {/* Marketplace Stats - Enhanced */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12 animate-fade-in animation-delay-200">
-          {marketplaceStats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <div key={index} className="card-hover bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50 text-center group">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
-                  <Icon className="w-6 h-6 text-white" />
-                </div>
-                <div className="text-2xl font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">
-                  {stat.value}
-                </div>
-                <p className="text-gray-400 text-sm mb-2">{stat.label}</p>
-                <span className="text-green-400 text-xs font-medium">
-                  {stat.growth}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Search and Filters - Enhanced */}
-        <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-2xl border border-gray-700/50 mb-8 animate-fade-in animation-delay-300">
-          <div className="flex flex-col lg:flex-row gap-4">
+          {/* Search and Filters */}
+          <div className="flex flex-col lg:flex-row gap-4 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <Input
-                placeholder="Search workflows, integrations, tools..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 bg-gray-700/50 border-gray-600 text-white focus:border-blue-500 h-12 text-lg"
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search AI agents..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
               />
             </div>
-            <div className="flex flex-wrap gap-3">
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-gray-700/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:border-blue-500 focus:outline-none"
-              >
-                {categories.map(category => (
-                  <option key={category.id} value={category.id}>
-                    {category.name} ({category.count})
-                  </option>
-                ))}
-              </select>
-              <select
-                value={selectedPricing}
-                onChange={(e) => setSelectedPricing(e.target.value)}
-                className="bg-gray-700/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:border-blue-500 focus:outline-none"
-              >
-                {pricingFilters.map(filter => (
-                  <option key={filter.id} value={filter.id}>
-                    {filter.name}
-                  </option>
-                ))}
-              </select>
-              <Button variant="outline" className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all duration-300 h-12 px-6">
-                <Filter className="w-4 h-4 mr-2" />
-                More Filters
-              </Button>
+            
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+            >
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.label}
+                </option>
+              ))}
+            </select>
+            
+            <select
+              value={priceFilter}
+              onChange={(e) => setPriceFilter(e.target.value)}
+              className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+            >
+              <option value="all">All Prices</option>
+              <option value="free">Free</option>
+              <option value="paid">Paid</option>
+            </select>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
+              <div className="flex items-center gap-3">
+                <ShoppingBag className="w-5 h-5 text-blue-400" />
+                <div>
+                  <p className="text-sm text-gray-400">Total Agents</p>
+                  <p className="text-lg font-semibold text-white">{agents.length}</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
+              <div className="flex items-center gap-3">
+                <Download className="w-5 h-5 text-green-400" />
+                <div>
+                  <p className="text-sm text-gray-400">Downloads</p>
+                  <p className="text-lg font-semibold text-white">12.5k</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
+              <div className="flex items-center gap-3">
+                <Users className="w-5 h-5 text-purple-400" />
+                <div>
+                  <p className="text-sm text-gray-400">Creators</p>
+                  <p className="text-lg font-semibold text-white">234</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
+              <div className="flex items-center gap-3">
+                <TrendingUp className="w-5 h-5 text-orange-400" />
+                <div>
+                  <p className="text-sm text-gray-400">This Month</p>
+                  <p className="text-lg font-semibold text-white">+47%</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Featured Items - Enhanced */}
-        <div className="mb-12 animate-fade-in animation-delay-400">
-          <div className="flex items-center gap-3 mb-8">
-            <Sparkles className="w-6 h-6 text-blue-400" />
-            <h2 className="text-3xl font-bold text-white">Featured Items</h2>
-            <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white">Editor's Choice</Badge>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredItems.map((item, index) => (
-              <div key={item.id} className={`card-hover bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-gray-700/50 overflow-hidden group animate-fade-in`} style={{ animationDelay: `${index * 150}ms` }}>
-                {/* Item Image */}
-                <div className="relative h-48 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center border-b border-gray-700/50">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10"></div>
-                  <div className="relative z-10 text-center">
-                    <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-                      <Package className="w-8 h-8 text-white" />
-                    </div>
-                    <p className="text-gray-300 text-sm">Preview Available</p>
-                  </div>
-                  
-                  {/* Badges */}
-                  <div className="absolute top-3 left-3 flex flex-col gap-2">
-                    {item.isFeatured && (
-                      <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
-                        <Star className="w-3 h-3 mr-1" />
-                        Featured
-                      </Badge>
-                    )}
-                    {item.isOnSale && (
-                      <Badge className="bg-gradient-to-r from-red-500 to-pink-500 text-white">
-                        -{item.discount}% OFF
-                      </Badge>
-                    )}
-                  </div>
-                  
-                  {/* Price Badge */}
-                  <div className="absolute top-3 right-3">
-                    <div className="bg-gray-900/80 backdrop-blur-sm px-3 py-1 rounded-full">
-                      {item.price === 0 ? (
-                        <span className="text-green-400 font-semibold">FREE</span>
-                      ) : (
-                        <div className="text-white">
-                          <span className="text-lg font-bold">${item.price}</span>
-                          {item.originalPrice && (
-                            <span className="text-sm text-gray-400 line-through ml-1">
-                              ${item.originalPrice}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
+        {/* Agents Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredAgents.map((agent) => (
+            <div key={agent.id} className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700 hover:border-gray-600 transition-all duration-300 group">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  {agent.featured && (
+                    <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-semibold">
+                      Featured
+                    </Badge>
+                  )}
+                  <Badge variant="outline" className="border-blue-500/30 text-blue-400 text-xs">
+                    {categories.find(c => c.id === agent.category)?.label}
+                  </Badge>
                 </div>
-
-                {/* Item Content */}
-                <div className="p-6">
-                  {/* Author */}
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-xs font-semibold">
-                      {item.author.avatar}
-                    </div>
-                    <span className="text-gray-400 text-sm">{item.author.name}</span>
-                    {item.author.verified && (
-                      <CheckCircle className="w-4 h-4 text-blue-400" />
-                    )}
-                  </div>
-                  
-                  {/* Title & Rating */}
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors line-clamp-1 flex-1">
-                      {item.title}
-                    </h3>
-                    <div className="flex items-center gap-1 text-yellow-400 ml-3">
-                      <Star className="w-4 h-4 fill-current" />
-                      <span className="text-sm">{item.rating}</span>
-                      <span className="text-xs text-gray-500">({item.reviews})</span>
-                    </div>
-                  </div>
-                  
-                  {/* Description */}
-                  <p className="text-gray-400 text-sm mb-4 line-clamp-2 leading-relaxed">
-                    {item.description}
-                  </p>
-                  
-                  {/* Features */}
-                  <div className="grid grid-cols-2 gap-2 mb-4 text-xs">
-                    {item.features.slice(0, 4).map((feature, i) => (
-                      <div key={i} className="flex items-center gap-1 text-gray-400">
-                        <CheckCircle className="w-3 h-3 text-green-400 flex-shrink-0" />
-                        <span className="truncate">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {item.tags.slice(0, 3).map(tag => (
-                      <Badge key={tag} variant="outline" className="border-gray-600 text-gray-400 text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                  
-                  {/* Stats */}
-                  <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
-                    <div className="flex items-center gap-1">
-                      <Download className="w-4 h-4" />
-                      <span>{item.downloads}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Eye className="w-4 h-4" />
-                      <span>Preview</span>
-                    </div>
-                  </div>
-                  
-                  {/* Actions */}
-                  <div className="flex gap-2">
-                    <Button className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all duration-300">
-                      {item.price === 0 ? 'Download' : 'Purchase'}
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                    <Button variant="outline" size="icon" className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all">
-                      <Heart className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
+                
+                <LikeButton 
+                  itemId={agent.id.toString()}
+                  initialLiked={agent.isLiked}
+                  initialCount={agent.likes}
+                  size="sm"
+                />
               </div>
-            ))}
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
-          {/* Main Content */}
-          <div className="xl:col-span-3">
-            {/* All Items */}
-            <div className="animate-fade-in animation-delay-500">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white">
-                  All Items {selectedCategory !== 'all' && `(${categories.find(c => c.id === selectedCategory)?.name})`}
-                </h2>
-                <p className="text-gray-400">
-                  {filteredItems.length} item{filteredItems.length !== 1 ? 's' : ''} found
-                </p>
-              </div>
+              <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">
+                {agent.title}
+              </h3>
               
-              {isLoading ? (
-                <div className="flex items-center justify-center py-16">
-                  <LoadingSpinner size="lg" variant="pulse" />
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {filteredItems.map((item, index) => (
-                    <div key={item.id} className={`card-hover bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6 group animate-fade-in`} style={{ animationDelay: `${index * 100}ms` }}>
-                      <div className="flex gap-4">
-                        {/* Thumbnail */}
-                        <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <Package className="w-8 h-8 text-blue-400" />
-                        </div>
-                        
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between mb-2">
-                            <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors line-clamp-1">
-                              {item.title}
-                            </h3>
-                            <div className="flex items-center gap-1 text-yellow-400 ml-3">
-                              <Star className="w-4 h-4 fill-current" />
-                              <span className="text-sm">{item.rating}</span>
-                            </div>
-                          </div>
-                          
-                          <p className="text-gray-400 text-sm mb-3 line-clamp-2">
-                            {item.description}
-                          </p>
-                          
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <div className="w-5 h-5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-xs">
-                                {item.author.avatar}
-                              </div>
-                              <span className="text-gray-400 text-sm">{item.author.name}</span>
-                            </div>
-                            
-                            <div className="text-right">
-                              {item.price === 0 ? (
-                                <span className="text-green-400 font-semibold">FREE</span>
-                              ) : (
-                                <div>
-                                  <span className="text-white font-bold">${item.price}</span>
-                                  {item.originalPrice && (
-                                    <span className="text-sm text-gray-400 line-through ml-1">
-                                      ${item.originalPrice}
-                                    </span>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+              <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+                {agent.description}
+              </p>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Top Sellers */}
-            <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50 animate-fade-in animation-delay-600">
-              <div className="flex items-center gap-3 mb-4">
-                <TrendingUp className="w-5 h-5 text-blue-400" />
-                <h3 className="text-lg font-semibold text-white">Top Sellers</h3>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-1">
+                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                  <span className="text-sm text-white font-medium">{agent.rating}</span>
+                  <span className="text-xs text-gray-500">({agent.reviews})</span>
+                </div>
+                <span className="text-gray-500">•</span>
+                <span className="text-xs text-gray-500">{agent.downloads} downloads</span>
               </div>
-              <div className="space-y-4">
-                {topSellers.map((seller, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                        {seller.avatar}
-                      </div>
-                      <div>
-                        <h4 className="text-white font-medium text-sm">{seller.name}</h4>
-                        <p className="text-gray-400 text-xs">{seller.items} items</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-green-400 font-semibold text-sm">{seller.revenue}</p>
-                    </div>
-                  </div>
+
+              <div className="flex flex-wrap gap-1 mb-4">
+                {agent.tags.map((tag) => (
+                  <Badge key={tag} variant="outline" className="border-gray-600 text-gray-400 text-xs">
+                    {tag}
+                  </Badge>
                 ))}
               </div>
-            </div>
 
-            {/* Become a Seller */}
-            <div className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 backdrop-blur-sm p-6 rounded-xl border border-blue-500/20 animate-fade-in animation-delay-700">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-white" />
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-left">
+                  <div className="flex items-center gap-2">
+                    {agent.price === 0 ? (
+                      <span className="text-green-400 font-bold text-lg">Free</span>
+                    ) : (
+                      <>
+                        <span className="text-white font-bold text-lg">${agent.price}</span>
+                        {agent.originalPrice && (
+                          <span className="text-gray-500 line-through text-sm">${agent.originalPrice}</span>
+                        )}
+                      </>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500">by {agent.author}</p>
                 </div>
-                <h3 className="text-lg font-semibold text-white">Become a Seller</h3>
               </div>
-              <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                Share your workflows with the community and earn revenue from your creations.
-              </p>
-              <ul className="space-y-2 text-sm text-gray-300 mb-4">
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>70% revenue share</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Global marketplace reach</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Marketing support</span>
-                </li>
-              </ul>
-              <Button className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all duration-300">
-                Start Selling
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
+
+              <div className="flex items-center gap-2">
+                {agent.price === 0 ? (
+                  <WorkingButton 
+                    action="download"
+                    className="flex-1 bg-green-500 hover:bg-green-600 text-sm"
+                  >
+                    <Download className="w-3 h-3 mr-1" />
+                    Download
+                  </WorkingButton>
+                ) : (
+                  <WorkingButton 
+                    action="purchase"
+                    className="flex-1 bg-blue-500 hover:bg-blue-600 text-sm"
+                  >
+                    <ShoppingBag className="w-3 h-3 mr-1" />
+                    Purchase
+                  </WorkingButton>
+                )}
+                <WorkingButton 
+                  action="view"
+                  variant="outline"
+                  className="border-gray-600 hover:bg-gray-700 text-sm"
+                >
+                  <Eye className="w-3 h-3" />
+                </WorkingButton>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
+
+        {filteredAgents.length === 0 && (
+          <div className="text-center py-16">
+            <ShoppingBag className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-white mb-2">No agents found</h3>
+            <p className="text-gray-400">Try adjusting your search criteria or filters.</p>
+          </div>
+        )}
       </div>
     </div>
   );
