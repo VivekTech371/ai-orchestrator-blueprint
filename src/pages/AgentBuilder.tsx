@@ -299,59 +299,48 @@ const AgentBuilder = () => {
               })}
             </div>
 
-            {/* Mobile Steps - Horizontal Scroll */}
+            {/* Mobile Steps */}
             <div className="lg:hidden">
-              <div className="flex space-x-4 overflow-x-auto pb-4">
-                <style>{`
-                  .mobile-steps-container {
-                    scrollbar-width: none;
-                    -ms-overflow-style: none;
-                  }
-                  .mobile-steps-container::-webkit-scrollbar {
-                    display: none;
-                  }
-                `}</style>
-                <div className="mobile-steps-container flex space-x-4 overflow-x-auto pb-4 min-w-full">
-                  {steps.map((step) => {
-                    const Icon = step.icon;
-                    const isCompleted = isStepCompleted(step.id);
-                    const isActive = isStepActive(step.id);
-                    const isAccessible = isStepAccessible(step.id);
-                    
-                    return (
-                      <button
-                        key={step.id}
-                        onClick={() => handleStepClick(step.id)}
-                        disabled={!isAccessible}
-                        className={cn(
-                          "flex-shrink-0 flex items-center space-x-3 p-4 rounded-xl transition-all duration-300 min-w-[200px]",
-                          isActive 
-                            ? `bg-gradient-to-r ${step.gradient} text-white scale-105 shadow-lg` 
-                            : isCompleted
-                              ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                              : !isAccessible
-                                ? "bg-gray-800 text-gray-500 opacity-50 cursor-not-allowed"
-                                : "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer"
+              <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-none">
+                {steps.map((step) => {
+                  const Icon = step.icon;
+                  const isCompleted = isStepCompleted(step.id);
+                  const isActive = isStepActive(step.id);
+                  const isAccessible = isStepAccessible(step.id);
+                  
+                  return (
+                    <button
+                      key={step.id}
+                      onClick={() => handleStepClick(step.id)}
+                      disabled={!isAccessible}
+                      className={cn(
+                        "flex-shrink-0 flex items-center space-x-3 p-4 rounded-xl transition-all duration-300 min-w-[200px]",
+                        isActive 
+                          ? `bg-gradient-to-r ${step.gradient} text-white scale-105 shadow-lg` 
+                          : isCompleted
+                            ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                            : !isAccessible
+                              ? "bg-gray-800 text-gray-500 opacity-50 cursor-not-allowed"
+                              : "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer"
+                      )}
+                    >
+                      <div className={cn(
+                        "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
+                        isActive ? "bg-white/20" : "bg-gray-700"
+                      )}>
+                        {isCompleted ? (
+                          <CheckCircle className="w-5 h-5 text-green-400" />
+                        ) : (
+                          <Icon className="w-5 h-5" />
                         )}
-                      >
-                        <div className={cn(
-                          "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
-                          isActive ? "bg-white/20" : "bg-gray-700"
-                        )}>
-                          {isCompleted ? (
-                            <CheckCircle className="w-5 h-5 text-green-400" />
-                          ) : (
-                            <Icon className="w-5 h-5" />
-                          )}
-                        </div>
-                        <div className="text-left">
-                          <h3 className="font-semibold text-sm">{step.title}</h3>
-                          <p className="text-xs opacity-80">{step.description}</p>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
+                      </div>
+                      <div className="text-left">
+                        <h3 className="font-semibold text-sm">{step.title}</h3>
+                        <p className="text-xs opacity-80">{step.description}</p>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>

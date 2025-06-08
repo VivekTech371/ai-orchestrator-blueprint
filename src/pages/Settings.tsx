@@ -4,300 +4,66 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import WorkingButton from '@/components/WorkingButton';
 import { 
-  Settings as SettingsIcon, 
   User, 
+  Mail, 
+  Lock, 
   Bell, 
-  Shield, 
   CreditCard, 
-  Palette, 
-  Key,
-  Globe,
+  Shield, 
+  Globe, 
+  Smartphone,
   Download,
   Trash2,
-  ChevronRight
+  Eye,
+  Settings as SettingsIcon,
+  Key,
+  Palette,
+  ExternalLink
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 const Settings = () => {
   const [activeSection, setActiveSection] = useState('profile');
 
-  const settingsSections = [
-    {
-      id: 'profile',
-      title: 'Profile Settings',
-      description: 'Manage your account information',
-      icon: User,
-      action: 'preferences'
-    },
-    {
-      id: 'notifications',
-      title: 'Notification Preferences',
-      description: 'Configure your notification settings',
-      icon: Bell,
-      action: 'notification'
-    },
-    {
-      id: 'security',
-      title: 'Security & Privacy',
-      description: 'Manage your account security',
-      icon: Shield,
-      action: 'security'
-    },
-    {
-      id: 'billing',
-      title: 'Billing & Subscription',
-      description: 'View and manage your subscription',
-      icon: CreditCard,
-      action: 'billing'
-    },
-    {
-      id: 'appearance',
-      title: 'Appearance',
-      description: 'Customize your interface',
-      icon: Palette,
-      action: 'preferences'
-    },
-    {
-      id: 'api',
-      title: 'API Keys',
-      description: 'Manage your API access',
-      icon: Key,
-      action: 'security'
-    }
+  const sections = [
+    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'account', label: 'Account', icon: SettingsIcon },
+    { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'security', label: 'Security', icon: Shield },
+    { id: 'billing', label: 'Billing', icon: CreditCard },
+    { id: 'preferences', label: 'Preferences', icon: Globe }
   ];
-
-  const renderSectionContent = () => {
-    switch (activeSection) {
-      case 'profile':
-        return (
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-xl font-semibold text-white mb-4">Profile Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
-                  <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" defaultValue="John Doe" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
-                  <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" defaultValue="john@example.com" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Username</label>
-                  <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" defaultValue="johndoe" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Location</label>
-                  <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" placeholder="City, Country" />
-                </div>
-              </div>
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Bio</label>
-                <textarea className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none h-24" placeholder="Tell us about yourself..." />
-              </div>
-            </div>
-            
-            <div className="flex justify-end">
-              <Button className="bg-blue-500 hover:bg-blue-600">
-                Save Changes
-              </Button>
-            </div>
-          </div>
-        );
-
-      case 'notifications':
-        return (
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-xl font-semibold text-white mb-4">Notification Preferences</h3>
-              <div className="space-y-4">
-                {[
-                  { title: 'Email Notifications', description: 'Receive notifications via email' },
-                  { title: 'Push Notifications', description: 'Get push notifications in your browser' },
-                  { title: 'Agent Updates', description: 'Notifications about your agents' },
-                  { title: 'Community Activity', description: 'Updates from the community' },
-                  { title: 'Marketing Emails', description: 'Promotional emails and newsletters' }
-                ].map((setting, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-800/60 rounded-lg border border-gray-700">
-                    <div>
-                      <h4 className="font-medium text-white">{setting.title}</h4>
-                      <p className="text-sm text-gray-400">{setting.description}</p>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" className="sr-only peer" defaultChecked={index < 3} />
-                      <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div className="flex justify-end">
-              <WorkingButton 
-                action="notification"
-                className="bg-blue-500 hover:bg-blue-600"
-              >
-                Save Preferences
-              </WorkingButton>
-            </div>
-          </div>
-        );
-
-      case 'security':
-        return (
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-xl font-semibold text-white mb-4">Security Settings</h3>
-              <div className="space-y-4">
-                <div className="p-4 bg-gray-800/60 rounded-lg border border-gray-700">
-                  <h4 className="font-medium text-white mb-2">Change Password</h4>
-                  <p className="text-sm text-gray-400 mb-4">Update your password to keep your account secure</p>
-                  <WorkingButton 
-                    action="security"
-                    variant="outline"
-                    className="border-gray-600 hover:bg-gray-700"
-                  >
-                    Change Password
-                  </WorkingButton>
-                </div>
-                
-                <div className="p-4 bg-gray-800/60 rounded-lg border border-gray-700">
-                  <h4 className="font-medium text-white mb-2">Two-Factor Authentication</h4>
-                  <p className="text-sm text-gray-400 mb-4">Add an extra layer of security to your account</p>
-                  <WorkingButton 
-                    action="security"
-                    className="bg-green-500 hover:bg-green-600"
-                  >
-                    Enable 2FA
-                  </WorkingButton>
-                </div>
-                
-                <div className="p-4 bg-gray-800/60 rounded-lg border border-gray-700">
-                  <h4 className="font-medium text-white mb-2">Active Sessions</h4>
-                  <p className="text-sm text-gray-400 mb-4">Manage your active login sessions</p>
-                  <WorkingButton 
-                    action="security"
-                    variant="outline"
-                    className="border-gray-600 hover:bg-gray-700"
-                  >
-                    View Sessions
-                  </WorkingButton>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'billing':
-        return (
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-xl font-semibold text-white mb-4">Billing & Subscription</h3>
-              
-              <div className="bg-gray-800/60 rounded-lg border border-gray-700 p-6 mb-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h4 className="font-semibold text-white">Current Plan</h4>
-                    <p className="text-gray-400">Pro Plan - $29/month</p>
-                  </div>
-                  <Badge className="bg-green-500 text-white">Active</Badge>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-white">100</p>
-                    <p className="text-sm text-gray-400">Agents Created</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-white">∞</p>
-                    <p className="text-sm text-gray-400">API Calls</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-white">5TB</p>
-                    <p className="text-sm text-gray-400">Storage</p>
-                  </div>
-                </div>
-                
-                <div className="flex gap-3">
-                  <WorkingButton 
-                    action="billing"
-                    variant="outline"
-                    className="flex-1 border-gray-600 hover:bg-gray-700"
-                  >
-                    Manage Subscription
-                  </WorkingButton>
-                  <WorkingButton 
-                    action="billing"
-                    variant="outline"
-                    className="flex-1 border-gray-600 hover:bg-gray-700"
-                  >
-                    View Invoices
-                  </WorkingButton>
-                </div>
-              </div>
-              
-              <div className="p-4 bg-gray-800/60 rounded-lg border border-gray-700">
-                <h4 className="font-medium text-white mb-2">Payment Method</h4>
-                <p className="text-sm text-gray-400 mb-4">•••• •••• •••• 4242 (Expires 12/25)</p>
-                <WorkingButton 
-                  action="billing"
-                  variant="outline"
-                  className="border-gray-600 hover:bg-gray-700"
-                >
-                  Update Payment Method
-                </WorkingButton>
-              </div>
-            </div>
-          </div>
-        );
-
-      default:
-        return (
-          <div className="text-center py-16">
-            <SettingsIcon className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">Settings Section</h3>
-            <p className="text-gray-400">Content for this section is coming soon...</p>
-          </div>
-        );
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/5 to-cyan-900/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-            Settings
-          </h1>
-          <p className="text-gray-400">
-            Manage your account preferences and configuration
-          </p>
+          <h1 className="text-3xl font-bold text-white mb-2">Settings</h1>
+          <p className="text-gray-400">Manage your account preferences and configurations</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Settings Navigation */}
+          {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-gray-800/60 rounded-xl border border-gray-700 p-4">
-              <h3 className="text-lg font-semibold text-white mb-4">Settings</h3>
+            <div className="bg-gray-800/60 p-4 rounded-2xl border border-gray-700 sticky top-8">
               <nav className="space-y-2">
-                {settingsSections.map((section) => {
+                {sections.map((section) => {
                   const Icon = section.icon;
                   return (
                     <button
                       key={section.id}
                       onClick={() => setActiveSection(section.id)}
-                      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 text-left ${
+                      className={cn(
+                        'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
                         activeSection === section.id
                           ? 'bg-blue-500 text-white'
-                          : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                      }`}
+                          : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                      )}
                     >
-                      <Icon className="w-5 h-5 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate">{section.title}</p>
-                        <p className="text-xs opacity-75 truncate">{section.description}</p>
-                      </div>
-                      <ChevronRight className="w-4 h-4 flex-shrink-0" />
+                      <Icon className="w-4 h-4" />
+                      <span>{section.label}</span>
                     </button>
                   );
                 })}
@@ -305,39 +71,258 @@ const Settings = () => {
             </div>
           </div>
 
-          {/* Settings Content */}
-          <div className="lg:col-span-3">
-            <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
-              {renderSectionContent()}
-            </div>
-          </div>
-        </div>
+          {/* Content */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Profile Section */}
+            {activeSection === 'profile' && (
+              <div className="space-y-6">
+                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
+                  <h3 className="text-xl font-semibold text-white mb-4">Profile Information</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+                      <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" defaultValue="John Doe" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                      <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" defaultValue="john@example.com" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Job Title</label>
+                      <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" placeholder="e.g., AI Engineer" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Company</label>
+                      <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" placeholder="e.g., Tech Corp" />
+                    </div>
+                  </div>
+                  <div className="mt-6">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Bio</label>
+                    <textarea className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none h-24" placeholder="Tell us about yourself..." />
+                  </div>
+                  <div className="flex justify-end mt-6">
+                    <Button className="bg-blue-500 hover:bg-blue-600">Save Changes</Button>
+                  </div>
+                </div>
+              </div>
+            )}
 
-        {/* Danger Zone */}
-        <div className="mt-8 bg-red-900/20 border border-red-500/30 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-red-400 mb-4">Danger Zone</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-medium text-white">Export Data</h4>
-                <p className="text-sm text-gray-400">Download all your data in JSON format</p>
+            {/* Account Section */}
+            {activeSection === 'account' && (
+              <div className="space-y-6">
+                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
+                  <h3 className="text-xl font-semibold text-white mb-4">Account Settings</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Palette className="w-5 h-5 text-blue-400" />
+                        <div>
+                          <h4 className="font-medium text-white">Appearance</h4>
+                          <p className="text-sm text-gray-400">Customize theme, colors, and layout</p>
+                        </div>
+                      </div>
+                      <Link to="/appearance">
+                        <Button variant="outline" className="border-gray-600 hover:bg-gray-700">
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          Configure
+                        </Button>
+                      </Link>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Key className="w-5 h-5 text-green-400" />
+                        <div>
+                          <h4 className="font-medium text-white">API Keys</h4>
+                          <p className="text-sm text-gray-400">Manage your API keys and integrations</p>
+                        </div>
+                      </div>
+                      <Link to="/api-keys">
+                        <Button variant="outline" className="border-gray-600 hover:bg-gray-700">
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          Manage
+                        </Button>
+                      </Link>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Download className="w-5 h-5 text-purple-400" />
+                        <div>
+                          <h4 className="font-medium text-white">Export Data</h4>
+                          <p className="text-sm text-gray-400">Download your workflows and data</p>
+                        </div>
+                      </div>
+                      <WorkingButton action="export" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        Export
+                      </WorkingButton>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 bg-red-900/20 border border-red-700 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Trash2 className="w-5 h-5 text-red-400" />
+                        <div>
+                          <h4 className="font-medium text-white">Delete Account</h4>
+                          <p className="text-sm text-gray-400">Permanently delete your account and all data</p>
+                        </div>
+                      </div>
+                      <WorkingButton action="delete" variant="outline" className="border-red-600 text-red-400 hover:bg-red-600/10">
+                        Delete
+                      </WorkingButton>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <Button variant="outline" className="border-gray-600 hover:bg-gray-700">
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-medium text-red-400">Delete Account</h4>
-                <p className="text-sm text-gray-400">Permanently delete your account and all data</p>
+            )}
+
+            {/* Notifications Section */}
+            {activeSection === 'notifications' && (
+              <div className="space-y-6">
+                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
+                  <h3 className="text-xl font-semibold text-white mb-4">Notification Preferences</h3>
+                  <div className="space-y-4">
+                    {[
+                      { id: 'email', label: 'Email Notifications', desc: 'Receive updates via email' },
+                      { id: 'push', label: 'Push Notifications', desc: 'Browser notifications' },
+                      { id: 'workflow', label: 'Workflow Updates', desc: 'Notifications about your workflows' },
+                      { id: 'community', label: 'Community Activity', desc: 'Comments, likes, and mentions' },
+                      { id: 'marketing', label: 'Marketing Emails', desc: 'Product updates and tips' }
+                    ].map((item) => (
+                      <div key={item.id} className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                        <div>
+                          <h4 className="font-medium text-white">{item.label}</h4>
+                          <p className="text-sm text-gray-400">{item.desc}</p>
+                        </div>
+                        <WorkingButton action="notification" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                          Configure
+                        </WorkingButton>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <Button variant="outline" className="border-red-500/30 text-red-400 hover:bg-red-900/30">
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete Account
-              </Button>
-            </div>
+            )}
+
+            {/* Security Section */}
+            {activeSection === 'security' && (
+              <div className="space-y-6">
+                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
+                  <h3 className="text-xl font-semibold text-white mb-4">Security Settings</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Change Password</h4>
+                        <p className="text-sm text-gray-400">Update your account password</p>
+                      </div>
+                      <WorkingButton action="security" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        Change
+                      </WorkingButton>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Two-Factor Authentication</h4>
+                        <p className="text-sm text-gray-400">Add an extra layer of security</p>
+                      </div>
+                      <WorkingButton action="security" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        Enable
+                      </WorkingButton>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Active Sessions</h4>
+                        <p className="text-sm text-gray-400">Manage your logged-in devices</p>
+                      </div>
+                      <WorkingButton action="security" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        <Eye className="w-4 h-4 mr-2" />
+                        View
+                      </WorkingButton>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Billing Section */}
+            {activeSection === 'billing' && (
+              <div className="space-y-6">
+                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
+                  <h3 className="text-xl font-semibold text-white mb-4">Billing Information</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Subscription</h4>
+                        <p className="text-sm text-gray-400">Manage your subscription plan</p>
+                      </div>
+                      <WorkingButton action="billing" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        Manage
+                      </WorkingButton>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Payment Methods</h4>
+                        <p className="text-sm text-gray-400">Update your payment information</p>
+                      </div>
+                      <WorkingButton action="billing" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        Update
+                      </WorkingButton>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Billing History</h4>
+                        <p className="text-sm text-gray-400">View your payment history</p>
+                      </div>
+                      <WorkingButton action="billing" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        View
+                      </WorkingButton>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Preferences Section */}
+            {activeSection === 'preferences' && (
+              <div className="space-y-6">
+                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
+                  <h3 className="text-xl font-semibold text-white mb-4">User Preferences</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Language</h4>
+                        <p className="text-sm text-gray-400">Choose your preferred language</p>
+                      </div>
+                      <WorkingButton action="preferences" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        English
+                      </WorkingButton>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Timezone</h4>
+                        <p className="text-sm text-gray-400">Set your local timezone</p>
+                      </div>
+                      <WorkingButton action="preferences" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        UTC-5
+                      </WorkingButton>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Privacy Settings</h4>
+                        <p className="text-sm text-gray-400">Control your privacy preferences</p>
+                      </div>
+                      <WorkingButton action="preferences" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        Configure
+                      </WorkingButton>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -16,7 +16,10 @@ import {
   MessageSquare,
   ChevronDown,
   X,
-  Menu
+  Menu,
+  CreditCard,
+  Search,
+  Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -38,6 +41,7 @@ export const Navigation: React.FC = () => {
     { icon: FileText, label: 'Templates', path: '/templates' },
     { icon: Users, label: 'Community', path: '/community' },
     { icon: ShoppingBag, label: 'Marketplace', path: '/marketplace' },
+    { icon: Search, label: 'Browse Workflows', path: '/browse-workflows' },
   ];
 
   const authenticatedItems = [
@@ -45,6 +49,7 @@ export const Navigation: React.FC = () => {
     { icon: Edit, label: 'Drafts', path: '/drafts' },
     { icon: Bookmark, label: 'Bookmarks', path: '/bookmarks' },
     { icon: Bell, label: 'Notifications', path: '/notifications' },
+    { icon: CreditCard, label: 'Payments', path: '/payments' },
     { icon: SettingsIcon, label: 'Settings', path: '/settings' },
   ];
 
