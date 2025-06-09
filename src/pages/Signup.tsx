@@ -57,8 +57,8 @@ const Signup = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900/20 to-cyan-900/20 py-6 sm:py-12 px-3 sm:px-6 lg:px-8">
       <div className="max-w-sm sm:max-w-md w-full space-y-4 sm:space-y-8 animate-fade-in">
         <div className="text-center">
-          <Link to="/" className="inline-flex items-center justify-center mb-3 sm:mb-6 hover-scale">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center glow shadow-lg shadow-blue-500/25">
+          <Link to="/" className="inline-flex items-center justify-center mb-3 sm:mb-6 hover:scale-105 transition-transform">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25">
               <span className="text-white font-bold text-base sm:text-lg">AI</span>
             </div>
           </Link>
@@ -77,7 +77,7 @@ const Signup = () => {
           
           <form className="space-y-3 sm:space-y-6" onSubmit={handleSubmit}>
             {/* Name Field */}
-            <div className="animate-fade-in animation-delay-200">
+            <div className="animate-fade-in">
               <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
                 Full Name
               </label>
@@ -97,7 +97,7 @@ const Signup = () => {
             </div>
             
             {/* Email Field */}
-            <div className="animate-fade-in animation-delay-300">
+            <div className="animate-fade-in">
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
                 Email Address
               </label>
@@ -117,7 +117,7 @@ const Signup = () => {
             </div>
             
             {/* Password Field */}
-            <div className="animate-fade-in animation-delay-400">
+            <div className="animate-fade-in">
               <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
                 Password
               </label>
@@ -137,7 +137,7 @@ const Signup = () => {
               
               {/* Password Requirements */}
               {password && (
-                <div className="mt-2 grid grid-cols-1 gap-1">
+                <div className="mt-2 space-y-1">
                   {passwordRequirements.map((requirement) => (
                     <div 
                       key={requirement.id}
@@ -145,7 +145,7 @@ const Signup = () => {
                         requirement.met ? 'text-green-400' : 'text-gray-400'
                       }`}
                     >
-                      {requirement.met && <Check className="w-3 h-3 mr-1 animate-fade-in" />}
+                      {requirement.met && <Check className="w-3 h-3 mr-1 animate-fade-in flex-shrink-0" />}
                       <span className="truncate">{requirement.label}</span>
                     </div>
                   ))}
@@ -154,7 +154,7 @@ const Signup = () => {
             </div>
             
             {/* Confirm Password Field */}
-            <div className="animate-fade-in animation-delay-500">
+            <div className="animate-fade-in">
               <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-300 mb-1">
                 Confirm Password
               </label>
@@ -181,11 +181,11 @@ const Signup = () => {
             </div>
             
             {/* Terms Checkbox */}
-            <div className="flex items-start animate-fade-in animation-delay-600">
+            <div className="flex items-start animate-fade-in">
               <input 
                 id="agree-terms" 
                 type="checkbox" 
-                className="h-4 w-4 mt-0.5 rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500 transition-all" 
+                className="h-4 w-4 mt-0.5 rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500 transition-all flex-shrink-0" 
                 required
                 disabled={isLoading}
               />
@@ -197,7 +197,7 @@ const Signup = () => {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all animate-fade-in animation-delay-700 h-10 sm:h-12 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 text-sm sm:text-base"
+              className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover:scale-105 transition-all animate-fade-in h-10 sm:h-12 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 text-sm sm:text-base"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -212,7 +212,7 @@ const Signup = () => {
           </form>
           
           {/* Social Login */}
-          <div className="mt-4 sm:mt-6 animate-fade-in animation-delay-800">
+          <div className="mt-4 sm:mt-6 animate-fade-in">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-600"></div>
@@ -225,19 +225,19 @@ const Signup = () => {
             <div className="mt-4 sm:mt-6 grid grid-cols-2 gap-2 sm:gap-3">
               <Button 
                 variant="outline" 
-                className="border-gray-600 hover:bg-gray-700 hover-scale transition-all h-9 sm:h-11 text-xs sm:text-sm"
+                className="border-gray-600 hover:bg-gray-700 hover:scale-105 transition-all h-9 sm:h-11 text-xs sm:text-sm"
                 disabled={isLoading}
               >
-                <Github className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <Github className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
                 <span className="hidden xs:inline">GitHub</span>
                 <span className="xs:hidden">Git</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="border-gray-600 hover:bg-gray-700 hover-scale transition-all h-9 sm:h-11 text-xs sm:text-sm"
+                className="border-gray-600 hover:bg-gray-700 hover:scale-105 transition-all h-9 sm:h-11 text-xs sm:text-sm"
                 disabled={isLoading}
               >
-                <Twitter className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <Twitter className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
                 <span className="hidden xs:inline">Twitter</span>
                 <span className="xs:hidden">X</span>
               </Button>
@@ -246,7 +246,7 @@ const Signup = () => {
         </div>
         
         {/* Login Link */}
-        <div className="text-center animate-fade-in animation-delay-1000">
+        <div className="text-center animate-fade-in">
           <p className="text-gray-400 text-xs sm:text-sm">
             Already have an account?{' '}
             <Link to="/login" className="font-medium text-blue-400 hover:text-blue-300 transition-colors underline">

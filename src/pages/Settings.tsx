@@ -4,325 +4,309 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import WorkingButton from '@/components/WorkingButton';
 import { 
+  Settings as SettingsIcon, 
   User, 
-  Mail, 
-  Lock, 
-  Bell, 
-  CreditCard, 
   Shield, 
-  Globe, 
-  Smartphone,
-  Download,
-  Trash2,
-  Eye,
-  Settings as SettingsIcon,
-  Key,
-  Palette,
-  ExternalLink
+  CreditCard, 
+  Bell, 
+  Palette, 
+  Key, 
+  Download, 
+  Trash2, 
+  ChevronRight,
+  Check,
+  Globe,
+  Lock,
+  Mail,
+  Smartphone
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { cn } from '@/lib/utils';
 
 const Settings = () => {
-  const [activeSection, setActiveSection] = useState('profile');
+  const [notifications, setNotifications] = useState({
+    email: true,
+    push: false,
+    marketing: true
+  });
 
-  const sections = [
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'account', label: 'Account', icon: SettingsIcon },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'security', label: 'Security', icon: Shield },
-    { id: 'billing', label: 'Billing', icon: CreditCard },
-    { id: 'preferences', label: 'Preferences', icon: Globe }
-  ];
+  const handleNotificationChange = (type: string) => {
+    setNotifications(prev => ({
+      ...prev,
+      [type]: !prev[type as keyof typeof prev]
+    }));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/5 to-cyan-900/5">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Settings</h1>
-          <p className="text-gray-400">Manage your account preferences and configurations</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+            Settings
+          </h1>
+          <p className="text-gray-400">
+            Manage your account preferences and application settings
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="bg-gray-800/60 p-4 rounded-2xl border border-gray-700 sticky top-8">
-              <nav className="space-y-2">
-                {sections.map((section) => {
-                  const Icon = section.icon;
-                  return (
-                    <button
-                      key={section.id}
-                      onClick={() => setActiveSection(section.id)}
-                      className={cn(
-                        'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
-                        activeSection === section.id
-                          ? 'bg-blue-500 text-white'
-                          : 'text-gray-400 hover:text-white hover:bg-gray-700'
-                      )}
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span>{section.label}</span>
-                    </button>
-                  );
-                })}
-              </nav>
+        <div className="space-y-6">
+          {/* Profile Settings */}
+          <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                <User className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white">Profile Settings</h2>
+                <p className="text-sm text-gray-400">Manage your personal information</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+                <input 
+                  type="text" 
+                  defaultValue="John Doe"
+                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                <input 
+                  type="email" 
+                  defaultValue="john@example.com"
+                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 mt-6">
+              <Button className="bg-blue-500 hover:bg-blue-600">
+                Save Changes
+              </Button>
+              <Button variant="outline" className="border-gray-600 hover:bg-gray-700">
+                Cancel
+              </Button>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="lg:col-span-3 space-y-6">
-            {/* Profile Section */}
-            {activeSection === 'profile' && (
-              <div className="space-y-6">
-                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
-                  <h3 className="text-xl font-semibold text-white mb-4">Profile Information</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
-                      <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" defaultValue="John Doe" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
-                      <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" defaultValue="john@example.com" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Job Title</label>
-                      <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" placeholder="e.g., AI Engineer" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Company</label>
-                      <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" placeholder="e.g., Tech Corp" />
-                    </div>
-                  </div>
-                  <div className="mt-6">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Bio</label>
-                    <textarea className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none h-24" placeholder="Tell us about yourself..." />
-                  </div>
-                  <div className="flex justify-end mt-6">
-                    <Button className="bg-blue-500 hover:bg-blue-600">Save Changes</Button>
+          {/* Security Settings */}
+          <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                <Shield className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white">Security</h2>
+                <p className="text-sm text-gray-400">Password and authentication settings</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-gray-700/50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Lock className="w-5 h-5 text-green-400" />
+                  <div>
+                    <p className="font-medium text-white">Change Password</p>
+                    <p className="text-sm text-gray-400">Update your account password</p>
                   </div>
                 </div>
+                <WorkingButton action="security" variant="outline" className="border-gray-600 hover:bg-gray-700 w-full sm:w-auto">
+                  Update
+                </WorkingButton>
               </div>
-            )}
 
-            {/* Account Section */}
-            {activeSection === 'account' && (
-              <div className="space-y-6">
-                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
-                  <h3 className="text-xl font-semibold text-white mb-4">Account Settings</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Palette className="w-5 h-5 text-blue-400" />
-                        <div>
-                          <h4 className="font-medium text-white">Appearance</h4>
-                          <p className="text-sm text-gray-400">Customize theme, colors, and layout</p>
-                        </div>
-                      </div>
-                      <Link to="/appearance">
-                        <Button variant="outline" className="border-gray-600 hover:bg-gray-700">
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          Configure
-                        </Button>
-                      </Link>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Key className="w-5 h-5 text-green-400" />
-                        <div>
-                          <h4 className="font-medium text-white">API Keys</h4>
-                          <p className="text-sm text-gray-400">Manage your API keys and integrations</p>
-                        </div>
-                      </div>
-                      <Link to="/api-keys">
-                        <Button variant="outline" className="border-gray-600 hover:bg-gray-700">
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          Manage
-                        </Button>
-                      </Link>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Download className="w-5 h-5 text-purple-400" />
-                        <div>
-                          <h4 className="font-medium text-white">Export Data</h4>
-                          <p className="text-sm text-gray-400">Download your workflows and data</p>
-                        </div>
-                      </div>
-                      <WorkingButton action="export" variant="outline" className="border-gray-600 hover:bg-gray-700">
-                        Export
-                      </WorkingButton>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-red-900/20 border border-red-700 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Trash2 className="w-5 h-5 text-red-400" />
-                        <div>
-                          <h4 className="font-medium text-white">Delete Account</h4>
-                          <p className="text-sm text-gray-400">Permanently delete your account and all data</p>
-                        </div>
-                      </div>
-                      <WorkingButton action="delete" variant="outline" className="border-red-600 text-red-400 hover:bg-red-600/10">
-                        Delete
-                      </WorkingButton>
-                    </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-gray-700/50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Smartphone className="w-5 h-5 text-blue-400" />
+                  <div>
+                    <p className="font-medium text-white">Two-Factor Authentication</p>
+                    <p className="text-sm text-gray-400">Add an extra layer of security</p>
                   </div>
                 </div>
+                <Badge variant="outline" className="border-yellow-500 text-yellow-400 w-full sm:w-auto justify-center">
+                  Not Enabled
+                </Badge>
               </div>
-            )}
+            </div>
+          </div>
 
-            {/* Notifications Section */}
-            {activeSection === 'notifications' && (
-              <div className="space-y-6">
-                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
-                  <h3 className="text-xl font-semibold text-white mb-4">Notification Preferences</h3>
-                  <div className="space-y-4">
-                    {[
-                      { id: 'email', label: 'Email Notifications', desc: 'Receive updates via email' },
-                      { id: 'push', label: 'Push Notifications', desc: 'Browser notifications' },
-                      { id: 'workflow', label: 'Workflow Updates', desc: 'Notifications about your workflows' },
-                      { id: 'community', label: 'Community Activity', desc: 'Comments, likes, and mentions' },
-                      { id: 'marketing', label: 'Marketing Emails', desc: 'Product updates and tips' }
-                    ].map((item) => (
-                      <div key={item.id} className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
-                        <div>
-                          <h4 className="font-medium text-white">{item.label}</h4>
-                          <p className="text-sm text-gray-400">{item.desc}</p>
-                        </div>
-                        <WorkingButton action="notification" variant="outline" className="border-gray-600 hover:bg-gray-700">
-                          Configure
-                        </WorkingButton>
-                      </div>
-                    ))}
+          {/* Notification Settings */}
+          <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                <Bell className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white">Notifications</h2>
+                <p className="text-sm text-gray-400">Configure how you receive updates</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-gray-700/50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-blue-400" />
+                  <div>
+                    <p className="font-medium text-white">Email Notifications</p>
+                    <p className="text-sm text-gray-400">Receive updates via email</p>
                   </div>
                 </div>
+                <button
+                  onClick={() => handleNotificationChange('email')}
+                  className={`w-12 h-6 rounded-full transition-colors relative ${
+                    notifications.email ? 'bg-blue-500' : 'bg-gray-600'
+                  }`}
+                >
+                  <div
+                    className={`w-5 h-5 bg-white rounded-full transition-transform absolute top-0.5 ${
+                      notifications.email ? 'translate-x-6' : 'translate-x-0.5'
+                    }`}
+                  />
+                </button>
               </div>
-            )}
 
-            {/* Security Section */}
-            {activeSection === 'security' && (
-              <div className="space-y-6">
-                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
-                  <h3 className="text-xl font-semibold text-white mb-4">Security Settings</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
-                      <div>
-                        <h4 className="font-medium text-white">Change Password</h4>
-                        <p className="text-sm text-gray-400">Update your account password</p>
-                      </div>
-                      <WorkingButton action="security" variant="outline" className="border-gray-600 hover:bg-gray-700">
-                        Change
-                      </WorkingButton>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
-                      <div>
-                        <h4 className="font-medium text-white">Two-Factor Authentication</h4>
-                        <p className="text-sm text-gray-400">Add an extra layer of security</p>
-                      </div>
-                      <WorkingButton action="security" variant="outline" className="border-gray-600 hover:bg-gray-700">
-                        Enable
-                      </WorkingButton>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
-                      <div>
-                        <h4 className="font-medium text-white">Active Sessions</h4>
-                        <p className="text-sm text-gray-400">Manage your logged-in devices</p>
-                      </div>
-                      <WorkingButton action="security" variant="outline" className="border-gray-600 hover:bg-gray-700">
-                        <Eye className="w-4 h-4 mr-2" />
-                        View
-                      </WorkingButton>
-                    </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-gray-700/50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Smartphone className="w-5 h-5 text-green-400" />
+                  <div>
+                    <p className="font-medium text-white">Push Notifications</p>
+                    <p className="text-sm text-gray-400">Browser push notifications</p>
                   </div>
                 </div>
+                <button
+                  onClick={() => handleNotificationChange('push')}
+                  className={`w-12 h-6 rounded-full transition-colors relative ${
+                    notifications.push ? 'bg-blue-500' : 'bg-gray-600'
+                  }`}
+                >
+                  <div
+                    className={`w-5 h-5 bg-white rounded-full transition-transform absolute top-0.5 ${
+                      notifications.push ? 'translate-x-6' : 'translate-x-0.5'
+                    }`}
+                  />
+                </button>
               </div>
-            )}
 
-            {/* Billing Section */}
-            {activeSection === 'billing' && (
-              <div className="space-y-6">
-                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
-                  <h3 className="text-xl font-semibold text-white mb-4">Billing Information</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
-                      <div>
-                        <h4 className="font-medium text-white">Subscription</h4>
-                        <p className="text-sm text-gray-400">Manage your subscription plan</p>
-                      </div>
-                      <WorkingButton action="billing" variant="outline" className="border-gray-600 hover:bg-gray-700">
-                        Manage
-                      </WorkingButton>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
-                      <div>
-                        <h4 className="font-medium text-white">Payment Methods</h4>
-                        <p className="text-sm text-gray-400">Update your payment information</p>
-                      </div>
-                      <WorkingButton action="billing" variant="outline" className="border-gray-600 hover:bg-gray-700">
-                        Update
-                      </WorkingButton>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
-                      <div>
-                        <h4 className="font-medium text-white">Billing History</h4>
-                        <p className="text-sm text-gray-400">View your payment history</p>
-                      </div>
-                      <WorkingButton action="billing" variant="outline" className="border-gray-600 hover:bg-gray-700">
-                        View
-                      </WorkingButton>
-                    </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-gray-700/50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Globe className="w-5 h-5 text-purple-400" />
+                  <div>
+                    <p className="font-medium text-white">Marketing Updates</p>
+                    <p className="text-sm text-gray-400">Product news and updates</p>
                   </div>
                 </div>
+                <button
+                  onClick={() => handleNotificationChange('marketing')}
+                  className={`w-12 h-6 rounded-full transition-colors relative ${
+                    notifications.marketing ? 'bg-blue-500' : 'bg-gray-600'
+                  }`}
+                >
+                  <div
+                    className={`w-5 h-5 bg-white rounded-full transition-transform absolute top-0.5 ${
+                      notifications.marketing ? 'translate-x-6' : 'translate-x-0.5'
+                    }`}
+                  />
+                </button>
               </div>
-            )}
+            </div>
 
-            {/* Preferences Section */}
-            {activeSection === 'preferences' && (
-              <div className="space-y-6">
-                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
-                  <h3 className="text-xl font-semibold text-white mb-4">User Preferences</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
-                      <div>
-                        <h4 className="font-medium text-white">Language</h4>
-                        <p className="text-sm text-gray-400">Choose your preferred language</p>
-                      </div>
-                      <WorkingButton action="preferences" variant="outline" className="border-gray-600 hover:bg-gray-700">
-                        English
-                      </WorkingButton>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
-                      <div>
-                        <h4 className="font-medium text-white">Timezone</h4>
-                        <p className="text-sm text-gray-400">Set your local timezone</p>
-                      </div>
-                      <WorkingButton action="preferences" variant="outline" className="border-gray-600 hover:bg-gray-700">
-                        UTC-5
-                      </WorkingButton>
-                    </div>
+            <div className="mt-6">
+              <WorkingButton action="notification" className="bg-blue-500 hover:bg-blue-600 w-full sm:w-auto">
+                Save Notification Settings
+              </WorkingButton>
+            </div>
+          </div>
 
-                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
-                      <div>
-                        <h4 className="font-medium text-white">Privacy Settings</h4>
-                        <p className="text-sm text-gray-400">Control your privacy preferences</p>
-                      </div>
-                      <WorkingButton action="preferences" variant="outline" className="border-gray-600 hover:bg-gray-700">
-                        Configure
-                      </WorkingButton>
-                    </div>
-                  </div>
+          {/* Billing */}
+          <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
+                <CreditCard className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white">Billing & Subscription</h2>
+                <p className="text-sm text-gray-400">Manage your subscription and billing</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-gray-700/50 rounded-lg mb-4">
+              <div>
+                <p className="font-medium text-white">Current Plan</p>
+                <p className="text-sm text-gray-400">Professional Plan - $29/month</p>
+              </div>
+              <Badge className="bg-green-500 text-white w-full sm:w-auto justify-center">
+                Active
+              </Badge>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <WorkingButton action="billing" className="bg-blue-500 hover:bg-blue-600 flex-1">
+                Manage Billing
+              </WorkingButton>
+              <Button variant="outline" className="border-gray-600 hover:bg-gray-700 flex-1">
+                Usage & Limits
+              </Button>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
+                <SettingsIcon className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white">Quick Actions</h2>
+                <p className="text-sm text-gray-400">Common settings and preferences</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Palette className="w-5 h-5 text-pink-400" />
+                  <span className="text-white font-medium">Appearance</span>
                 </div>
+                <WorkingButton action="preferences" variant="ghost" size="sm">
+                  <ChevronRight className="w-4 h-4" />
+                </WorkingButton>
               </div>
-            )}
+
+              <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Key className="w-5 h-5 text-cyan-400" />
+                  <span className="text-white font-medium">API Keys</span>
+                </div>
+                <WorkingButton action="preferences" variant="ghost" size="sm">
+                  <ChevronRight className="w-4 h-4" />
+                </WorkingButton>
+              </div>
+            </div>
+          </div>
+
+          {/* Data Management */}
+          <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+                <Download className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white">Data Management</h2>
+                <p className="text-sm text-gray-400">Export or delete your data</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <WorkingButton action="export" variant="outline" className="border-gray-600 hover:bg-gray-700 flex-1">
+                <Download className="w-4 h-4 mr-2" />
+                Export Data
+              </WorkingButton>
+              <WorkingButton action="delete" variant="outline" className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white flex-1">
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete Account
+              </WorkingButton>
+            </div>
           </div>
         </div>
       </div>

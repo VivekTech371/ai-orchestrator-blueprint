@@ -18,8 +18,7 @@ import {
   X,
   Menu,
   CreditCard,
-  Search,
-  Eye
+  Search
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -69,7 +68,7 @@ export const Navigation: React.FC = () => {
         {/* Desktop Navigation */}
         <div className="hidden lg:block">
           <div className="flex items-center justify-center h-14">
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1 overflow-x-auto">
               {allItems.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
@@ -79,14 +78,14 @@ export const Navigation: React.FC = () => {
                     key={item.path}
                     to={item.path}
                     className={cn(
-                      'group relative flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105',
+                      'group relative flex items-center space-x-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 whitespace-nowrap',
                       active
                         ? 'bg-primary text-primary-foreground shadow-md'
                         : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                     )}
                   >
-                    <Icon className="w-4 h-4" />
-                    <span>{item.label}</span>
+                    <Icon className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">{item.label}</span>
                     
                     {/* Active indicator */}
                     {active && (
@@ -102,8 +101,8 @@ export const Navigation: React.FC = () => {
         {/* Tablet Navigation */}
         <div className="hidden md:block lg:hidden">
           <div className="flex items-center justify-between h-12">
-            <div className="flex items-center space-x-1 overflow-x-auto scrollbar-none">
-              {allItems.slice(0, 6).map((item) => {
+            <div className="flex items-center space-x-1 overflow-x-auto scrollbar-none flex-1">
+              {allItems.slice(0, 5).map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
                 
@@ -112,7 +111,7 @@ export const Navigation: React.FC = () => {
                     key={item.path}
                     to={item.path}
                     className={cn(
-                      'flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap',
+                      'flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0',
                       active
                         ? 'bg-primary text-primary-foreground'
                         : 'text-muted-foreground hover:text-foreground hover:bg-accent'
@@ -125,20 +124,20 @@ export const Navigation: React.FC = () => {
               })}
             </div>
             
-            {allItems.length > 6 && (
+            {allItems.length > 5 && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="ml-2 text-muted-foreground hover:text-foreground"
+                    className="ml-2 text-muted-foreground hover:text-foreground flex-shrink-0"
                   >
                     <Menu className="w-4 h-4" />
                     <ChevronDown className="w-3 h-3 ml-1" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  {allItems.slice(6).map((item) => {
+                <DropdownMenuContent align="end" className="w-48 bg-background/95 backdrop-blur-xl border border-border">
+                  {allItems.slice(5).map((item) => {
                     const Icon = item.icon;
                     const active = isActive(item.path);
                     
@@ -177,7 +176,7 @@ export const Navigation: React.FC = () => {
                     key={item.path}
                     to={item.path}
                     className={cn(
-                      'flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 min-w-[60px]',
+                      'flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 min-w-[60px] flex-shrink-0',
                       active
                         ? 'bg-primary text-primary-foreground'
                         : 'text-muted-foreground hover:text-foreground hover:bg-accent'
@@ -197,7 +196,7 @@ export const Navigation: React.FC = () => {
               variant="ghost"
               size="sm"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="ml-2 text-muted-foreground hover:text-foreground"
+              className="ml-2 text-muted-foreground hover:text-foreground flex-shrink-0"
             >
               {isMobileMenuOpen ? (
                 <X className="w-5 h-5" />
@@ -209,8 +208,8 @@ export const Navigation: React.FC = () => {
 
           {/* Mobile Dropdown Menu */}
           {isMobileMenuOpen && (
-            <div className="absolute top-full left-0 right-0 bg-background/98 backdrop-blur-xl border-b border-border shadow-xl">
-              <div className="px-4 py-3 space-y-1 max-h-[80vh] overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 bg-background/98 backdrop-blur-xl border-b border-border shadow-xl z-50">
+              <div className="px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
                 {allItems.slice(3).map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.path);
@@ -227,7 +226,7 @@ export const Navigation: React.FC = () => {
                           : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                       )}
                     >
-                      <Icon className="w-5 h-5" />
+                      <Icon className="w-5 h-5 flex-shrink-0" />
                       <span className="font-medium">{item.label}</span>
                     </Link>
                   );

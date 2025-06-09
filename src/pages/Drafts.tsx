@@ -13,8 +13,6 @@ import {
   Plus,
   Search,
   Filter,
-  Calendar,
-  ArrowRight,
   Save
 } from 'lucide-react';
 
@@ -103,7 +101,7 @@ const Drafts = () => {
                 className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
               />
             </div>
-            <Button variant="outline" className="border-gray-600 hover:bg-gray-700">
+            <Button variant="outline" className="border-gray-600 hover:bg-gray-700 w-full sm:w-auto">
               <Filter className="w-4 h-4 mr-2" />
               Filter
             </Button>
@@ -111,11 +109,11 @@ const Drafts = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
             <div className="flex items-center gap-3">
-              <FileText className="w-5 h-5 text-blue-400" />
-              <div>
+              <FileText className="w-5 h-5 text-blue-400 flex-shrink-0" />
+              <div className="min-w-0">
                 <p className="text-sm text-gray-400">Total Drafts</p>
                 <p className="text-lg font-semibold text-white">{drafts.length}</p>
               </div>
@@ -123,8 +121,8 @@ const Drafts = () => {
           </div>
           <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
             <div className="flex items-center gap-3">
-              <Edit className="w-5 h-5 text-green-400" />
-              <div>
+              <Edit className="w-5 h-5 text-green-400 flex-shrink-0" />
+              <div className="min-w-0">
                 <p className="text-sm text-gray-400">In Progress</p>
                 <p className="text-lg font-semibold text-white">
                   {drafts.filter(d => d.progress > 0 && d.progress < 100).length}
@@ -134,8 +132,8 @@ const Drafts = () => {
           </div>
           <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
             <div className="flex items-center gap-3">
-              <Save className="w-5 h-5 text-yellow-400" />
-              <div>
+              <Save className="w-5 h-5 text-yellow-400 flex-shrink-0" />
+              <div className="min-w-0">
                 <p className="text-sm text-gray-400">Near Complete</p>
                 <p className="text-lg font-semibold text-white">
                   {drafts.filter(d => d.progress >= 75).length}
@@ -145,8 +143,8 @@ const Drafts = () => {
           </div>
           <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
             <div className="flex items-center gap-3">
-              <Clock className="w-5 h-5 text-purple-400" />
-              <div>
+              <Clock className="w-5 h-5 text-purple-400 flex-shrink-0" />
+              <div className="min-w-0">
                 <p className="text-sm text-gray-400">Recent</p>
                 <p className="text-lg font-semibold text-white">
                   {drafts.filter(d => d.lastModified.includes('hour') || d.lastModified.includes('day')).length}
@@ -172,29 +170,29 @@ const Drafts = () => {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {filteredDrafts.map((draft) => (
               <div key={draft.id} className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700 hover:border-gray-600 transition-all duration-300 group">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
                       <FileText className="w-5 h-5 text-white" />
                     </div>
-                    <Badge variant="outline" className="border-gray-600 text-gray-400 text-xs">
+                    <Badge variant="outline" className="border-gray-600 text-gray-400 text-xs flex-shrink-0">
                       {draft.type}
                     </Badge>
                   </div>
-                  <div className="text-xs text-gray-400 flex items-center gap-1">
+                  <div className="text-xs text-gray-400 flex items-center gap-1 flex-shrink-0 ml-2">
                     <Clock className="w-3 h-3" />
-                    {draft.lastModified}
+                    <span className="hidden sm:inline">{draft.lastModified}</span>
                   </div>
                 </div>
 
-                <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">
+                <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors line-clamp-2">
                   {draft.title}
                 </h3>
                 
-                <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+                <p className="text-gray-400 text-sm mb-4 line-clamp-3">
                   {draft.description}
                 </p>
 
@@ -224,7 +222,7 @@ const Drafts = () => {
                     className="flex-1 bg-blue-500 hover:bg-blue-600 text-xs"
                   >
                     <Edit className="w-3 h-3 mr-1" />
-                    Continue
+                    <span className="hidden sm:inline">Continue</span>
                   </WorkingButton>
                   <WorkingButton 
                     size="sm" 
