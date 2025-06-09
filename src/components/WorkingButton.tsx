@@ -11,7 +11,7 @@ interface WorkingButtonProps {
   icon?: LucideIcon;
   children: React.ReactNode;
   className?: string;
-  action?: 'useTemplate' | 'purchase' | 'download' | 'startSelling' | 'continue' | 'view' | 'notification' | 'security' | 'billing' | 'preferences';
+  action?: 'useTemplate' | 'purchase' | 'download' | 'startSelling' | 'continue' | 'view' | 'notification' | 'security' | 'billing' | 'preferences' | 'export' | 'delete';
   onClick?: () => void;
   disabled?: boolean;
 }
@@ -107,6 +107,21 @@ const WorkingButton: React.FC<WorkingButtonProps> = ({
         toast({
           title: "User Preferences",
           description: "Loading preference settings...",
+        });
+        break;
+        
+      case 'export':
+        toast({
+          title: "Export Started",
+          description: "Preparing your data for download...",
+        });
+        break;
+        
+      case 'delete':
+        toast({
+          title: "Delete Account",
+          description: "This will permanently delete your account. Please confirm in the modal that will appear.",
+          variant: "destructive",
         });
         break;
         
