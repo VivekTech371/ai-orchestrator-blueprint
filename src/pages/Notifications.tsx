@@ -1,54 +1,55 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import WorkingButton from '@/components/WorkingButton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Bell, 
   BellOff, 
   Check, 
-  X, 
-  Eye, 
   Trash2, 
-  Settings,
+  Settings, 
+  Filter,
+  Zap,
   Users,
-  MessageSquare,
-  Heart,
-  Download,
-  TrendingUp,
+  Shield,
+  AlertCircle,
+  CheckCircle,
+  Info,
+  Star,
   Clock,
-  Filter
+  ArrowRight
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 const Notifications = () => {
   const [filter, setFilter] = useState('all');
   const [notifications, setNotifications] = useState([
     {
       id: 1,
-      type: 'like',
-      title: 'Someone liked your agent',
-      message: 'Sarah Chen liked your "Customer Support AI Agent"',
+      type: 'success',
+      title: 'Agent deployment successful',
+      message: 'Your customer service agent has been deployed successfully and is now active.',
       time: '2 minutes ago',
       read: false,
-      action: 'view'
+      category: 'system'
     },
     {
       id: 2,
-      type: 'comment',
-      title: 'New comment on your post',
-      message: 'Alex Rodriguez commented: "Great work! This solved our customer service issues."',
+      type: 'warning',
+      title: 'High API usage detected',
+      message: 'Your agent "Data Processor" is approaching the monthly API limit.',
       time: '1 hour ago',
       read: false,
-      action: 'view'
+      category: 'usage'
     },
     {
       id: 3,
-      type: 'download',
-      title: 'Your agent was downloaded',
-      message: '15 new downloads of your "E-commerce Bot" in the last 24 hours',
+      type: 'info',
+      title: 'New template available',
+      message: 'Check out the new "E-commerce Assistant" template in the marketplace.',
       time: '3 hours ago',
       read: true,
-      action: 'view'
+      category: 'updates'
     },
     {
       id: 4,
@@ -70,6 +71,26 @@ const Notifications = () => {
     }
   ]);
 
+  const getIcon = (type: string) => {
+    switch (type) {
+      case 'success': return <CheckCircle className="w-5 h-5 text-green-400" />;
+      case 'warning': return <AlertCircle className="w-5 h-5 text-yellow-400" />;
+      case 'error': return <AlertCircle className="w-5 h-5 text-red-400" />;
+      case 'info': return <Info className="w-5 h-5 text-blue-400" />;
+      default: return <Bell className="w-5 h-5 text-gray-400" />;
+    }
+  };
+
+  const getBadgeColor = (type: string) => {
+    switch (type) {
+      case 'success': return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'warning': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'error': return 'bg-red-500/20 text-red-400 border-red-500/30';
+      case 'info': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+    }
+  };
+
   const markAsRead = (id: number) => {
     setNotifications(prev => 
       prev.map(notif => 
@@ -78,55 +99,22 @@ const Notifications = () => {
     );
   };
 
-  const markAllAsRead = () => {
-    setNotifications(prev => 
-      prev.map(notif => ({ ...notif, read: true }))
-    );
-  };
-
   const deleteNotification = (id: number) => {
     setNotifications(prev => prev.filter(notif => notif.id !== id));
   };
 
-  const getIcon = (type: string) => {
-    switch (type) {
-      case 'like':
-        return Heart;
-      case 'comment':
-        return MessageSquare;
-      case 'download':
-        return Download;
-      case 'follow':
-        return Users;
-      case 'trending':
-        return TrendingUp;
-      default:
-        return Bell;
-    }
+  const markAllAsRead = () => {
+    setNotifications(prev => prev.map(notif => ({ ...notif, read: true })));
   };
 
-  const getIconColor = (type: string) => {
-    switch (type) {
-      case 'like':
-        return 'text-red-400 bg-red-400/20';
-      case 'comment':
-        return 'text-blue-400 bg-blue-400/20';
-      case 'download':
-        return 'text-green-400 bg-green-400/20';
-      case 'follow':
-        return 'text-purple-400 bg-purple-400/20';
-      case 'trending':
-        return 'text-orange-400 bg-orange-400/20';
-      default:
-        return 'text-gray-400 bg-gray-400/20';
-    }
+  const clearAll = () => {
+    setNotifications([]);
   };
 
   const filteredNotifications = notifications.filter(notif => {
     if (filter === 'all') return true;
     if (filter === 'unread') return !notif.read;
-    if (filter === 'read') return notif.read;
-    return notif.type === filter;
+    return notif.category === filter;
   });
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -135,170 +123,193 @@ const Notifications = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/5 to-cyan-900/5">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-              Notifications
-            </h1>
-            <p className="text-gray-400">
-              Stay updated with your latest activity
-              {unreadCount > 0 && (
-                <Badge className="ml-2 bg-red-500 text-white">
-                  {unreadCount} unread
-                </Badge>
-              )}
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <WorkingButton 
-              action="notification"
-              variant="outline"
-              className="border-gray-600 hover:bg-gray-700"
-            >
-              <Settings className="w-4 h-4 mr-2" />
-              Settings
-            </WorkingButton>
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                Notifications
+              </h1>
+              <p className="text-gray-400">
+                Stay updated with your agent activities and system updates
+              </p>
+            </div>
             
-            {unreadCount > 0 && (
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <Button 
-                onClick={markAllAsRead}
                 variant="outline" 
-                className="border-gray-600 hover:bg-gray-700"
+                onClick={markAllAsRead}
+                className="border-gray-600 hover:bg-gray-700 text-sm"
+                disabled={unreadCount === 0}
               >
                 <Check className="w-4 h-4 mr-2" />
                 Mark All Read
               </Button>
-            )}
+              <Button 
+                variant="outline" 
+                onClick={clearAll}
+                className="border-gray-600 hover:bg-gray-700 text-red-400 hover:text-red-300 text-sm"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Clear All
+              </Button>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
+              <div className="flex items-center gap-3">
+                <Bell className="w-5 h-5 text-blue-400" />
+                <div>
+                  <p className="text-sm text-gray-400">Total</p>
+                  <p className="text-lg font-semibold text-white">{notifications.length}</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
+              <div className="flex items-center gap-3">
+                <BellOff className="w-5 h-5 text-yellow-400" />
+                <div>
+                  <p className="text-sm text-gray-400">Unread</p>
+                  <p className="text-lg font-semibold text-white">{unreadCount}</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
+              <div className="flex items-center gap-3">
+                <Zap className="w-5 h-5 text-green-400" />
+                <div>
+                  <p className="text-sm text-gray-400">System</p>
+                  <p className="text-lg font-semibold text-white">
+                    {notifications.filter(n => n.category === 'system').length}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
+              <div className="flex items-center gap-3">
+                <Star className="w-5 h-5 text-purple-400" />
+                <div>
+                  <p className="text-sm text-gray-400">Updates</p>
+                  <p className="text-lg font-semibold text-white">
+                    {notifications.filter(n => n.category === 'updates').length}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="flex flex-wrap gap-2 mb-6 p-1 bg-gray-800/60 rounded-lg">
-          {[
-            { id: 'all', label: 'All', count: notifications.length },
-            { id: 'unread', label: 'Unread', count: unreadCount },
-            { id: 'like', label: 'Likes', count: notifications.filter(n => n.type === 'like').length },
-            { id: 'comment', label: 'Comments', count: notifications.filter(n => n.type === 'comment').length },
-            { id: 'download', label: 'Downloads', count: notifications.filter(n => n.type === 'download').length }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setFilter(tab.id)}
-              className={cn(
-                'flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200',
-                filter === tab.id
-                  ? 'bg-blue-500 text-white'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-700'
-              )}
-            >
-              <span>{tab.label}</span>
-              {tab.count > 0 && (
-                <Badge variant="secondary" className="text-xs">
-                  {tab.count}
-                </Badge>
-              )}
-            </button>
-          ))}
-        </div>
+        {/* Filters */}
+        <Tabs value={filter} onValueChange={setFilter} className="mb-6">
+          <TabsList className="bg-gray-800/60 border border-gray-700 w-full sm:w-auto">
+            <TabsTrigger value="all" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+              All
+            </TabsTrigger>
+            <TabsTrigger value="unread" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+              Unread
+            </TabsTrigger>
+            <TabsTrigger value="system" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+              System
+            </TabsTrigger>
+            <TabsTrigger value="usage" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+              Usage
+            </TabsTrigger>
+            <TabsTrigger value="updates" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+              Updates
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
 
         {/* Notifications List */}
         <div className="space-y-4">
           {filteredNotifications.length === 0 ? (
-            <div className="bg-gray-800/60 p-8 rounded-xl border border-gray-700 text-center">
+            <div className="bg-gray-800/60 p-8 sm:p-12 rounded-xl border border-gray-700 text-center">
               <Bell className="w-12 h-12 text-gray-500 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-white mb-2">No notifications</h3>
               <p className="text-gray-400">
-                {filter === 'all' 
-                  ? 'You\'re all caught up! Check back later for new notifications.'
-                  : `No ${filter} notifications to show.`
-                }
+                {filter === 'all' ? 'You\'re all caught up!' : `No ${filter} notifications found.`}
               </p>
             </div>
           ) : (
-            filteredNotifications.map((notification) => {
-              const IconComponent = getIcon(notification.type);
-              const iconColor = getIconColor(notification.type);
-              
-              return (
-                <div
-                  key={notification.id}
-                  className={cn(
-                    'bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border transition-all duration-300 group',
-                    notification.read 
-                      ? 'border-gray-700 hover:border-gray-600' 
-                      : 'border-blue-500/30 bg-blue-900/10 hover:border-blue-500/50'
-                  )}
-                >
-                  <div className="flex items-start space-x-4">
-                    <div className={cn(
-                      'w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0',
-                      iconColor
-                    )}>
-                      <IconComponent className="w-5 h-5" />
+            filteredNotifications.map((notification) => (
+              <div 
+                key={notification.id}
+                className={`bg-gray-800/60 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-gray-700 hover:border-gray-600 transition-all duration-300 ${
+                  !notification.read ? 'border-l-4 border-l-blue-500' : ''
+                }`}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    {getIcon(notification.type)}
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-2">
+                      <h3 className="text-white font-semibold">{notification.title}</h3>
+                      <div className="flex items-center gap-2">
+                        <Badge className={getBadgeColor(notification.type)}>
+                          {notification.type}
+                        </Badge>
+                        {!notification.read && (
+                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        )}
+                      </div>
                     </div>
                     
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <h3 className={cn(
-                            'font-semibold mb-1 transition-colors',
-                            notification.read ? 'text-gray-300' : 'text-white'
-                          )}>
-                            {notification.title}
-                          </h3>
-                          <p className={cn(
-                            'text-sm mb-2 line-clamp-2',
-                            notification.read ? 'text-gray-500' : 'text-gray-400'
-                          )}>
-                            {notification.message}
-                          </p>
-                          <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <Clock className="w-3 h-3" />
-                            <span>{notification.time}</span>
-                            {!notification.read && (
-                              <Badge className="bg-blue-500 text-white text-xs">New</Badge>
-                            )}
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center gap-2 flex-shrink-0">
-                          <WorkingButton 
-                            action="view"
-                            size="sm"
+                    <p className="text-gray-300 mb-3 text-sm sm:text-base">
+                      {notification.message}
+                    </p>
+                    
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div className="flex items-center gap-2 text-gray-400 text-sm">
+                        <Clock className="w-4 h-4" />
+                        {notification.time}
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        {!notification.read && (
+                          <Button 
+                            size="sm" 
                             variant="outline"
-                            className="border-gray-600 hover:bg-gray-700"
+                            onClick={() => markAsRead(notification.id)}
+                            className="border-gray-600 hover:bg-gray-700 text-xs"
                           >
-                            <Eye className="w-3 h-3" />
-                          </WorkingButton>
-                          
-                          {!notification.read && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => markAsRead(notification.id)}
-                              className="border-gray-600 hover:bg-gray-700"
-                            >
-                              <Check className="w-3 h-3" />
-                            </Button>
-                          )}
-                          
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => deleteNotification(notification.id)}
-                            className="border-gray-600 hover:bg-gray-700 text-red-400 hover:text-red-300"
-                          >
-                            <Trash2 className="w-3 h-3" />
+                            <Check className="w-3 h-3 mr-1" />
+                            Mark Read
                           </Button>
-                        </div>
+                        )}
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => deleteNotification(notification.id)}
+                          className="border-gray-600 hover:bg-gray-700 text-red-400 hover:text-red-300 text-xs"
+                        >
+                          <Trash2 className="w-3 h-3 mr-1" />
+                          Delete
+                        </Button>
+                        <Button 
+                          size="sm"
+                          className="bg-blue-500 hover:bg-blue-600 text-xs"
+                        >
+                          View
+                          <ArrowRight className="w-3 h-3 ml-1" />
+                        </Button>
                       </div>
                     </div>
                   </div>
                 </div>
-              );
-            })
+              </div>
+            ))
           )}
+        </div>
+
+        {/* Settings Link */}
+        <div className="mt-8 pt-6 border-t border-gray-700">
+          <Button variant="outline" className="w-full sm:w-auto border-gray-600 hover:bg-gray-700">
+            <Settings className="w-4 h-4 mr-2" />
+            Notification Settings
+          </Button>
         </div>
       </div>
     </div>
