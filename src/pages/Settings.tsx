@@ -1,690 +1,328 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import WorkingButton from '@/components/WorkingButton';
 import { 
   User, 
+  Mail, 
+  Lock, 
   Bell, 
-  Shield, 
   CreditCard, 
-  Key, 
-  Palette,
-  Globe,
+  Shield, 
+  Globe, 
   Smartphone,
-  Eye,
-  EyeOff,
-  Save,
-  Upload,
-  Trash2,
   Download,
+  Trash2,
+  Eye,
   Settings as SettingsIcon,
-  Check,
-  X,
-  AlertTriangle,
-  Star,
-  Plus
+  Key,
+  Palette,
+  ExternalLink
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 const Settings = () => {
-  const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('profile');
-  const [showPassword, setShowPassword] = useState(false);
-  const [unsavedChanges, setUnsavedChanges] = useState(false);
+  const [activeSection, setActiveSection] = useState('profile');
 
-  const [settings, setSettings] = useState({
-    profile: {
-      name: user?.name || '',
-      email: user?.email || '',
-      bio: '',
-      company: '',
-      website: '',
-      avatar: ''
-    },
-    notifications: {
-      emailNotifications: true,
-      pushNotifications: false,
-      workflowUpdates: true,
-      communityUpdates: false,
-      marketingEmails: false,
-      securityAlerts: true
-    },
-    security: {
-      twoFactorEnabled: false,
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    },
-    billing: {
-      plan: 'Pro',
-      billingCycle: 'monthly',
-      nextBilling: '2024-07-15'
-    },
-    preferences: {
-      theme: 'dark',
-      language: 'en',
-      timezone: 'UTC-8',
-      autoSave: true,
-      compactMode: false
-    }
-  });
-
-  const tabs = [
-    { id: 'profile', name: 'Profile', icon: User },
-    { id: 'notifications', name: 'Notifications', icon: Bell },
-    { id: 'security', name: 'Security', icon: Shield },
-    { id: 'billing', name: 'Billing', icon: CreditCard },
-    { id: 'preferences', name: 'Preferences', icon: SettingsIcon }
+  const sections = [
+    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'account', label: 'Account', icon: SettingsIcon },
+    { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'security', label: 'Security', icon: Shield },
+    { id: 'billing', label: 'Billing', icon: CreditCard },
+    { id: 'preferences', label: 'Preferences', icon: Globe }
   ];
-
-  const handleSave = async () => {
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    setUnsavedChanges(false);
-  };
-
-  const handleSettingChange = (category: string, key: string, value: any) => {
-    setSettings(prev => ({
-      ...prev,
-      [category]: {
-        ...prev[category as keyof typeof prev],
-        [key]: value
-      }
-    }));
-    setUnsavedChanges(true);
-  };
-
-  const renderProfile = () => (
-    <div className="space-y-6 lg:space-y-8 animate-fade-in">
-      <div>
-        <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Profile Information</h2>
-        <p className="text-gray-400 text-sm sm:text-base">Update your personal information and profile settings.</p>
-      </div>
-
-      {/* Avatar Section */}
-      <div className="bg-gray-800/60 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-gray-700/50">
-        <h3 className="text-base sm:text-lg font-semibold text-white mb-4">Profile Picture</h3>
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-lg sm:text-2xl font-bold shadow-lg">
-            {settings.profile.name ? settings.profile.name.charAt(0).toUpperCase() : 'U'}
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-            <Button variant="outline" className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all text-sm">
-              <Upload className="w-4 h-4 mr-2" />
-              Upload Photo
-            </Button>
-            <Button variant="outline" className="border-gray-600 hover:bg-gray-700/50 text-red-400 hover:text-red-300 hover-scale transition-all text-sm">
-              <Trash2 className="w-4 h-4 mr-2" />
-              Remove
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Basic Information */}
-      <div className="bg-gray-800/60 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-gray-700/50">
-        <h3 className="text-base sm:text-lg font-semibold text-white mb-4">Basic Information</h3>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="name" className="text-gray-300 text-sm">Full Name</Label>
-            <Input
-              id="name"
-              value={settings.profile.name}
-              onChange={(e) => handleSettingChange('profile', 'name', e.target.value)}
-              className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500 h-10 sm:h-11"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-gray-300 text-sm">Email Address</Label>
-            <Input
-              id="email"
-              type="email"
-              value={settings.profile.email}
-              onChange={(e) => handleSettingChange('profile', 'email', e.target.value)}
-              className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500 h-10 sm:h-11"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="company" className="text-gray-300 text-sm">Company</Label>
-            <Input
-              id="company"
-              value={settings.profile.company}
-              onChange={(e) => handleSettingChange('profile', 'company', e.target.value)}
-              className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500 h-10 sm:h-11"
-              placeholder="Your company name"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="website" className="text-gray-300 text-sm">Website</Label>
-            <Input
-              id="website"
-              value={settings.profile.website}
-              onChange={(e) => handleSettingChange('profile', 'website', e.target.value)}
-              className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500 h-10 sm:h-11"
-              placeholder="https://yourwebsite.com"
-            />
-          </div>
-        </div>
-        <div className="mt-4 sm:mt-6 space-y-2">
-          <Label htmlFor="bio" className="text-gray-300 text-sm">Bio</Label>
-          <Textarea
-            id="bio"
-            value={settings.profile.bio}
-            onChange={(e) => handleSettingChange('profile', 'bio', e.target.value)}
-            className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500 min-h-[100px] sm:min-h-[120px] resize-none"
-            placeholder="Tell us about yourself..."
-          />
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderNotifications = () => (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Notification Preferences</h2>
-        <p className="text-gray-400">Manage how and when you receive notifications.</p>
-      </div>
-
-      <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50">
-        <h3 className="text-lg font-semibold text-white mb-6">Email Notifications</h3>
-        <div className="space-y-6">
-          {[
-            { key: 'emailNotifications', label: 'Email Notifications', desc: 'Receive email updates about your account' },
-            { key: 'workflowUpdates', label: 'Workflow Updates', desc: 'Get notified when your workflows complete or fail' },
-            { key: 'communityUpdates', label: 'Community Updates', desc: 'Receive updates from the community hub' },
-            { key: 'marketingEmails', label: 'Marketing Emails', desc: 'Promotional emails and product updates' },
-            { key: 'securityAlerts', label: 'Security Alerts', desc: 'Important security notifications (recommended)' }
-          ].map((item) => (
-            <div key={item.key} className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors">
-              <div className="flex-1">
-                <h4 className="text-white font-medium">{item.label}</h4>
-                <p className="text-gray-400 text-sm mt-1">{item.desc}</p>
-              </div>
-              <Switch
-                checked={settings.notifications[item.key as keyof typeof settings.notifications]}
-                onCheckedChange={(checked) => handleSettingChange('notifications', item.key, checked)}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50">
-        <h3 className="text-lg font-semibold text-white mb-6">Push Notifications</h3>
-        <div className="space-y-6">
-          <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
-            <div className="flex-1">
-              <h4 className="text-white font-medium">Browser Notifications</h4>
-              <p className="text-gray-400 text-sm mt-1">Receive push notifications in your browser</p>
-            </div>
-            <Switch
-              checked={settings.notifications.pushNotifications}
-              onCheckedChange={(checked) => handleSettingChange('notifications', 'pushNotifications', checked)}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderSecurity = () => (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Security Settings</h2>
-        <p className="text-gray-400">Manage your account security and authentication methods.</p>
-      </div>
-
-      {/* Two-Factor Authentication */}
-      <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-white">Two-Factor Authentication</h3>
-          <Switch
-            checked={settings.security.twoFactorEnabled}
-            onCheckedChange={(checked) => handleSettingChange('security', 'twoFactorEnabled', checked)}
-          />
-        </div>
-        <p className="text-gray-400 text-sm mb-4">
-          Add an extra layer of security to your account by requiring a verification code in addition to your password.
-        </p>
-        {!settings.security.twoFactorEnabled && (
-          <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all">
-            <Shield className="w-4 h-4 mr-2" />
-            Enable 2FA
-          </Button>
-        )}
-      </div>
-
-      {/* Password Change */}
-      <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50">
-        <h3 className="text-lg font-semibold text-white mb-4">Change Password</h3>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="currentPassword" className="text-gray-300">Current Password</Label>
-            <div className="relative">
-              <Input
-                id="currentPassword"
-                type={showPassword ? "text" : "password"}
-                value={settings.security.currentPassword}
-                onChange={(e) => handleSettingChange('security', 'currentPassword', e.target.value)}
-                className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500 pr-10"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </Button>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="newPassword" className="text-gray-300">New Password</Label>
-              <Input
-                id="newPassword"
-                type="password"
-                value={settings.security.newPassword}
-                onChange={(e) => handleSettingChange('security', 'newPassword', e.target.value)}
-                className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="text-gray-300">Confirm New Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={settings.security.confirmPassword}
-                onChange={(e) => handleSettingChange('security', 'confirmPassword', e.target.value)}
-                className="bg-gray-700/50 border-gray-600 text-white focus:border-blue-500"
-              />
-            </div>
-          </div>
-          
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
-            <h4 className="text-blue-400 font-medium mb-2">Password Requirements:</h4>
-            <ul className="text-sm text-gray-300 space-y-1">
-              <li>• At least 8 characters long</li>
-              <li>• Contains uppercase and lowercase letters</li>
-              <li>• Contains at least one number</li>
-              <li>• Contains at least one special character</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* API Keys */}
-      <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50">
-        <h3 className="text-lg font-semibold text-white mb-4">API Keys</h3>
-        <p className="text-gray-400 text-sm mb-4">
-          Manage your API keys for integrating with external services.
-        </p>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
-            <div>
-              <h4 className="text-white font-medium">Production API Key</h4>
-              <p className="text-gray-400 text-sm">Created on Jan 15, 2024</p>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="border-gray-600 hover:bg-gray-700/50">
-                <Eye className="w-4 h-4 mr-2" />
-                View
-              </Button>
-              <Button variant="outline" size="sm" className="border-gray-600 hover:bg-gray-700/50 text-red-400">
-                <Trash2 className="w-4 h-4 mr-2" />
-                Revoke
-              </Button>
-            </div>
-          </div>
-          <Button variant="outline" className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all">
-            <Key className="w-4 h-4 mr-2" />
-            Generate New API Key
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderBilling = () => (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Billing & Subscription</h2>
-        <p className="text-gray-400">Manage your subscription and billing information.</p>
-      </div>
-
-      {/* Current Plan */}
-      <div className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 backdrop-blur-sm p-6 rounded-xl border border-blue-500/20">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h3 className="text-xl font-semibold text-white mb-2">Pro Plan</h3>
-            <p className="text-gray-300">Everything you need for professional automation</p>
-          </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold text-white">$29<span className="text-sm font-normal text-gray-400">/month</span></div>
-            <p className="text-gray-400 text-sm">Billed monthly</p>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-gray-800/60 p-4 rounded-lg">
-            <h4 className="text-white font-medium mb-2">Workflows</h4>
-            <p className="text-2xl font-bold text-blue-400">Unlimited</p>
-          </div>
-          <div className="bg-gray-800/60 p-4 rounded-lg">
-            <h4 className="text-white font-medium mb-2">Executions</h4>
-            <p className="text-2xl font-bold text-blue-400">50K/month</p>
-          </div>
-          <div className="bg-gray-800/60 p-4 rounded-lg">
-            <h4 className="text-white font-medium mb-2">Team Members</h4>
-            <p className="text-2xl font-bold text-blue-400">10</p>
-          </div>
-        </div>
-        
-        <div className="flex gap-3">
-          <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all">
-            Upgrade Plan
-          </Button>
-          <Button variant="outline" className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all">
-            Change Billing Cycle
-          </Button>
-        </div>
-      </div>
-
-      {/* Payment Method */}
-      <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50">
-        <h3 className="text-lg font-semibold text-white mb-4">Payment Method</h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded flex items-center justify-center">
-                <CreditCard className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <h4 className="text-white font-medium">•••• •••• •••• 4242</h4>
-                <p className="text-gray-400 text-sm">Expires 12/25</p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="border-gray-600 hover:bg-gray-700/50">
-                Edit
-              </Button>
-              <Button variant="outline" size="sm" className="border-gray-600 hover:bg-gray-700/50 text-red-400">
-                Remove
-              </Button>
-            </div>
-          </div>
-          <Button variant="outline" className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Payment Method
-          </Button>
-        </div>
-      </div>
-
-      {/* Billing History */}
-      <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50">
-        <h3 className="text-lg font-semibold text-white mb-4">Billing History</h3>
-        <div className="space-y-3">
-          {[
-            { date: 'June 15, 2024', amount: '$29.00', status: 'Paid' },
-            { date: 'May 15, 2024', amount: '$29.00', status: 'Paid' },
-            { date: 'April 15, 2024', amount: '$29.00', status: 'Paid' }
-          ].map((invoice, index) => (
-            <div key={index} className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
-              <div>
-                <h4 className="text-white font-medium">{invoice.date}</h4>
-                <p className="text-gray-400 text-sm">Pro Plan - Monthly</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-white font-medium">{invoice.amount}</span>
-                <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-sm">
-                  {invoice.status}
-                </span>
-                <Button variant="outline" size="sm" className="border-gray-600 hover:bg-gray-700/50">
-                  <Download className="w-4 h-4 mr-2" />
-                  Download
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderPreferences = () => (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Preferences</h2>
-        <p className="text-gray-400">Customize your experience with OrchestrAI.</p>
-      </div>
-
-      {/* Appearance */}
-      <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50">
-        <h3 className="text-lg font-semibold text-white mb-4">Appearance</h3>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label className="text-gray-300">Theme</Label>
-            <div className="grid grid-cols-3 gap-3">
-              {['light', 'dark', 'auto'].map((theme) => (
-                <button
-                  key={theme}
-                  onClick={() => handleSettingChange('preferences', 'theme', theme)}
-                  className={`p-3 rounded-lg border-2 transition-all hover-scale ${
-                    settings.preferences.theme === theme
-                      ? 'border-blue-500 bg-blue-500/20'
-                      : 'border-gray-600 bg-gray-700/30 hover:border-gray-500'
-                  }`}
-                >
-                  <div className="text-white font-medium capitalize">{theme}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
-            <div>
-              <h4 className="text-white font-medium">Compact Mode</h4>
-              <p className="text-gray-400 text-sm">Use a more compact interface layout</p>
-            </div>
-            <Switch
-              checked={settings.preferences.compactMode}
-              onCheckedChange={(checked) => handleSettingChange('preferences', 'compactMode', checked)}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Localization */}
-      <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50">
-        <h3 className="text-lg font-semibold text-white mb-4">Localization</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label className="text-gray-300">Language</Label>
-            <select
-              value={settings.preferences.language}
-              onChange={(e) => handleSettingChange('preferences', 'language', e.target.value)}
-              className="w-full bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 focus:border-blue-500 focus:outline-none"
-            >
-              <option value="en">English</option>
-              <option value="es">Español</option>
-              <option value="fr">Français</option>
-              <option value="de">Deutsch</option>
-            </select>
-          </div>
-          <div className="space-y-2">
-            <Label className="text-gray-300">Timezone</Label>
-            <select
-              value={settings.preferences.timezone}
-              onChange={(e) => handleSettingChange('preferences', 'timezone', e.target.value)}
-              className="w-full bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 focus:border-blue-500 focus:outline-none"
-            >
-              <option value="UTC-8">Pacific Time (UTC-8)</option>
-              <option value="UTC-5">Eastern Time (UTC-5)</option>
-              <option value="UTC+0">GMT (UTC+0)</option>
-              <option value="UTC+1">Central European Time (UTC+1)</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Workflow Preferences */}
-      <div className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50">
-        <h3 className="text-lg font-semibold text-white mb-4">Workflow Preferences</h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
-            <div>
-              <h4 className="text-white font-medium">Auto-save</h4>
-              <p className="text-gray-400 text-sm">Automatically save workflow changes</p>
-            </div>
-            <Switch
-              checked={settings.preferences.autoSave}
-              onCheckedChange={(checked) => handleSettingChange('preferences', 'autoSave', checked)}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/5 to-cyan-900/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
-        <div className="text-center mb-8 sm:mb-12 animate-fade-in">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
-            Account <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Settings</span>
-          </h1>
-          <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto px-4">
-            Manage your account preferences, security settings, and subscription details.
-          </p>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Settings</h1>
+          <p className="text-gray-400">Manage your account preferences and configurations</p>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 lg:gap-8">
-          {/* Sidebar Navigation */}
-          <div className="xl:col-span-1">
-            <div className="bg-gray-800/60 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-gray-700/50 sticky top-20 sm:top-24 animate-fade-in animation-delay-200">
-              <nav className="space-y-1 sm:space-y-2">
-                {tabs.map((tab) => {
-                  const Icon = tab.icon;
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="bg-gray-800/60 p-4 rounded-2xl border border-gray-700 sticky top-8">
+              <nav className="space-y-2">
+                {sections.map((section) => {
+                  const Icon = section.icon;
                   return (
                     <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-left transition-all hover-scale text-sm sm:text-base ${
-                        activeTab === tab.id
-                          ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
-                          : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
-                      }`}
+                      key={section.id}
+                      onClick={() => setActiveSection(section.id)}
+                      className={cn(
+                        'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
+                        activeSection === section.id
+                          ? 'bg-blue-500 text-white'
+                          : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                      )}
                     >
-                      <Icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                      <span className="font-medium truncate">{tab.name}</span>
+                      <Icon className="w-4 h-4" />
+                      <span>{section.label}</span>
                     </button>
                   );
                 })}
               </nav>
-
-              {/* Unsaved Changes Indicator */}
-              {unsavedChanges && (
-                <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-yellow-500/20 border border-yellow-500/20 rounded-lg">
-                  <div className="flex items-center gap-2 text-yellow-400 mb-2">
-                    <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-                    <span className="font-medium text-sm">Unsaved Changes</span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-gray-300 mb-3">
-                    You have unsaved changes that will be lost if you leave this page.
-                  </p>
-                  <Button
-                    onClick={handleSave}
-                    disabled={isLoading}
-                    className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all text-sm h-9 sm:h-10"
-                  >
-                    {isLoading ? (
-                      <LoadingSpinner size="sm" className="mr-2" />
-                    ) : (
-                      <Save className="w-4 h-4 mr-2" />
-                    )}
-                    Save Changes
-                  </Button>
-                </div>
-              )}
             </div>
           </div>
 
-          {/* Main Content */}
-          <div className="xl:col-span-3">
-            <div className="animate-fade-in animation-delay-300">
-              {activeTab === 'profile' && renderProfile()}
-              {activeTab === 'notifications' && (
-                <div className="text-white">
-                  <h2 className="text-xl sm:text-2xl font-bold mb-4">Notifications</h2>
-                  <p className="text-gray-400">Notification settings coming soon...</p>
+          {/* Content */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Profile Section */}
+            {activeSection === 'profile' && (
+              <div className="space-y-6">
+                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
+                  <h3 className="text-xl font-semibold text-white mb-4">Profile Information</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+                      <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" defaultValue="John Doe" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                      <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" defaultValue="john@example.com" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Job Title</label>
+                      <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" placeholder="e.g., AI Engineer" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Company</label>
+                      <input className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none" placeholder="e.g., Tech Corp" />
+                    </div>
+                  </div>
+                  <div className="mt-6">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Bio</label>
+                    <textarea className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none h-24" placeholder="Tell us about yourself..." />
+                  </div>
+                  <div className="flex justify-end mt-6">
+                    <Button className="bg-blue-500 hover:bg-blue-600">Save Changes</Button>
+                  </div>
                 </div>
-              )}
-              {activeTab === 'security' && (
-                <div className="text-white">
-                  <h2 className="text-xl sm:text-2xl font-bold mb-4">Security</h2>
-                  <p className="text-gray-400">Security settings coming soon...</p>
-                </div>
-              )}
-              {activeTab === 'billing' && (
-                <div className="text-white">
-                  <h2 className="text-xl sm:text-2xl font-bold mb-4">Billing</h2>
-                  <p className="text-gray-400">Billing settings coming soon...</p>
-                </div>
-              )}
-              {activeTab === 'preferences' && (
-                <div className="text-white">
-                  <h2 className="text-xl sm:text-2xl font-bold mb-4">Preferences</h2>
-                  <p className="text-gray-400">Preference settings coming soon...</p>
-                </div>
-              )}
-            </div>
-
-            {/* Action Buttons */}
-            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between animate-fade-in animation-delay-400">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  onClick={handleSave}
-                  disabled={isLoading}
-                  className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover-scale transition-all duration-300 h-10 sm:h-11"
-                >
-                  {isLoading ? (
-                    <LoadingSpinner size="sm" className="mr-2" />
-                  ) : (
-                    <Save className="w-4 h-4 mr-2" />
-                  )}
-                  Save Changes
-                </Button>
-                <Button
-                  variant="outline"
-                  className="border-gray-600 hover:bg-gray-700/50 hover-scale transition-all duration-300 h-10 sm:h-11"
-                  onClick={() => {
-                    setUnsavedChanges(false);
-                  }}
-                >
-                  <X className="w-4 h-4 mr-2" />
-                  Cancel
-                </Button>
               </div>
-              
-              <Button
-                variant="outline"
-                className="border-red-600 text-red-400 hover:bg-red-500/20 hover:border-red-500 hover-scale transition-all duration-300 h-10 sm:h-11"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete Account
-              </Button>
-            </div>
+            )}
+
+            {/* Account Section */}
+            {activeSection === 'account' && (
+              <div className="space-y-6">
+                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
+                  <h3 className="text-xl font-semibold text-white mb-4">Account Settings</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Palette className="w-5 h-5 text-blue-400" />
+                        <div>
+                          <h4 className="font-medium text-white">Appearance</h4>
+                          <p className="text-sm text-gray-400">Customize theme, colors, and layout</p>
+                        </div>
+                      </div>
+                      <Link to="/appearance">
+                        <Button variant="outline" className="border-gray-600 hover:bg-gray-700">
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          Configure
+                        </Button>
+                      </Link>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Key className="w-5 h-5 text-green-400" />
+                        <div>
+                          <h4 className="font-medium text-white">API Keys</h4>
+                          <p className="text-sm text-gray-400">Manage your API keys and integrations</p>
+                        </div>
+                      </div>
+                      <Link to="/api-keys">
+                        <Button variant="outline" className="border-gray-600 hover:bg-gray-700">
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          Manage
+                        </Button>
+                      </Link>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Download className="w-5 h-5 text-purple-400" />
+                        <div>
+                          <h4 className="font-medium text-white">Export Data</h4>
+                          <p className="text-sm text-gray-400">Download your workflows and data</p>
+                        </div>
+                      </div>
+                      <WorkingButton action="export" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        Export
+                      </WorkingButton>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 bg-red-900/20 border border-red-700 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Trash2 className="w-5 h-5 text-red-400" />
+                        <div>
+                          <h4 className="font-medium text-white">Delete Account</h4>
+                          <p className="text-sm text-gray-400">Permanently delete your account and all data</p>
+                        </div>
+                      </div>
+                      <WorkingButton action="delete" variant="outline" className="border-red-600 text-red-400 hover:bg-red-600/10">
+                        Delete
+                      </WorkingButton>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Notifications Section */}
+            {activeSection === 'notifications' && (
+              <div className="space-y-6">
+                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
+                  <h3 className="text-xl font-semibold text-white mb-4">Notification Preferences</h3>
+                  <div className="space-y-4">
+                    {[
+                      { id: 'email', label: 'Email Notifications', desc: 'Receive updates via email' },
+                      { id: 'push', label: 'Push Notifications', desc: 'Browser notifications' },
+                      { id: 'workflow', label: 'Workflow Updates', desc: 'Notifications about your workflows' },
+                      { id: 'community', label: 'Community Activity', desc: 'Comments, likes, and mentions' },
+                      { id: 'marketing', label: 'Marketing Emails', desc: 'Product updates and tips' }
+                    ].map((item) => (
+                      <div key={item.id} className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                        <div>
+                          <h4 className="font-medium text-white">{item.label}</h4>
+                          <p className="text-sm text-gray-400">{item.desc}</p>
+                        </div>
+                        <WorkingButton action="notification" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                          Configure
+                        </WorkingButton>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Security Section */}
+            {activeSection === 'security' && (
+              <div className="space-y-6">
+                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
+                  <h3 className="text-xl font-semibold text-white mb-4">Security Settings</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Change Password</h4>
+                        <p className="text-sm text-gray-400">Update your account password</p>
+                      </div>
+                      <WorkingButton action="security" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        Change
+                      </WorkingButton>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Two-Factor Authentication</h4>
+                        <p className="text-sm text-gray-400">Add an extra layer of security</p>
+                      </div>
+                      <WorkingButton action="security" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        Enable
+                      </WorkingButton>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Active Sessions</h4>
+                        <p className="text-sm text-gray-400">Manage your logged-in devices</p>
+                      </div>
+                      <WorkingButton action="security" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        <Eye className="w-4 h-4 mr-2" />
+                        View
+                      </WorkingButton>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Billing Section */}
+            {activeSection === 'billing' && (
+              <div className="space-y-6">
+                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
+                  <h3 className="text-xl font-semibold text-white mb-4">Billing Information</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Subscription</h4>
+                        <p className="text-sm text-gray-400">Manage your subscription plan</p>
+                      </div>
+                      <WorkingButton action="billing" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        Manage
+                      </WorkingButton>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Payment Methods</h4>
+                        <p className="text-sm text-gray-400">Update your payment information</p>
+                      </div>
+                      <WorkingButton action="billing" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        Update
+                      </WorkingButton>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Billing History</h4>
+                        <p className="text-sm text-gray-400">View your payment history</p>
+                      </div>
+                      <WorkingButton action="billing" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        View
+                      </WorkingButton>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Preferences Section */}
+            {activeSection === 'preferences' && (
+              <div className="space-y-6">
+                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
+                  <h3 className="text-xl font-semibold text-white mb-4">User Preferences</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Language</h4>
+                        <p className="text-sm text-gray-400">Choose your preferred language</p>
+                      </div>
+                      <WorkingButton action="preferences" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        English
+                      </WorkingButton>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Timezone</h4>
+                        <p className="text-sm text-gray-400">Set your local timezone</p>
+                      </div>
+                      <WorkingButton action="preferences" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        UTC-5
+                      </WorkingButton>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-white">Privacy Settings</h4>
+                        <p className="text-sm text-gray-400">Control your privacy preferences</p>
+                      </div>
+                      <WorkingButton action="preferences" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                        Configure
+                      </WorkingButton>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -24,6 +24,10 @@ import Contact from './pages/Contact';
 import Feedback from './pages/Feedback';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
+import Payments from './pages/Payments';
+import BrowseWorkflows from './pages/BrowseWorkflows';
+import Appearance from './pages/Appearance';
+import ApiKeys from './pages/ApiKeys';
 
 function App() {
   return (
@@ -48,6 +52,10 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/feedback" element={<Feedback />} />
               <Route path="/profile/:userId" element={<Profile />} />
+              <Route path="/payments" element={<Payments />} />
+              <Route path="/browse-workflows" element={<BrowseWorkflows />} />
+              <Route path="/appearance" element={<Appearance />} />
+              <Route path="/api-keys" element={<ApiKeys />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>

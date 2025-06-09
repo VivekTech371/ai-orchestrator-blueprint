@@ -1,80 +1,88 @@
-
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import WorkingButton from '@/components/WorkingButton';
+import LikeButton from '@/components/LikeButton';
 import { 
   Bookmark, 
-  Heart, 
-  Share2, 
+  Search, 
+  Filter, 
+  Calendar, 
   Eye, 
   Star,
-  Search,
-  Filter,
-  Grid,
-  List,
-  Calendar,
-  User,
-  Zap,
-  Trash2
+  Clock,
+  FileText,
+  Bot,
+  Workflow,
+  Trash2,
+  MoreVertical
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const Bookmarks = () => {
-  const [viewMode, setViewMode] = useState('grid');
-  const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState('all');
   const [bookmarks, setBookmarks] = useState([
     {
       id: 1,
-      title: 'Customer Service AI Template',
-      description: 'Advanced AI agent template for handling customer support inquiries with natural language processing.',
-      type: 'template',
-      category: 'Customer Support',
-      author: 'AI Templates Inc.',
+      title: 'Advanced Customer Support AI Agent',
+      description: 'Intelligent customer support agent with multi-language support and sentiment analysis capabilities.',
+      type: 'agent',
+      author: 'TechCorp Solutions',
       rating: 4.8,
-      bookmarkedAt: '2 days ago',
-      tags: ['AI', 'Customer Service', 'NLP'],
-      price: 'Free',
-      image: '/api/placeholder/300/200'
+      reviews: 124,
+      savedDate: '2 days ago',
+      category: 'Customer Service',
+      tags: ['AI', 'Support', 'Multilingual'],
+      isLiked: true,
+      likes: 89
     },
     {
       id: 2,
-      title: 'E-commerce Order Processing Workflow',
-      description: 'Automated workflow for processing e-commerce orders, inventory management, and shipping notifications.',
+      title: 'Automated Data Analysis Workflow',
+      description: 'Workflow for automatically analyzing and reporting on large datasets.',
       type: 'workflow',
-      category: 'E-commerce',
-      author: 'WorkflowMaster',
-      rating: 4.9,
-      bookmarkedAt: '1 week ago',
-      tags: ['E-commerce', 'Automation', 'Orders'],
-      price: '$29',
-      image: '/api/placeholder/300/200'
+      author: 'Data Insights Pro',
+      rating: 4.5,
+      reviews: 78,
+      savedDate: '5 days ago',
+      category: 'Data Analysis',
+      tags: ['Data', 'Analysis', 'Automation'],
+      isLiked: false,
+      likes: 56
     },
     {
       id: 3,
-      title: 'Data Analysis Assistant',
-      description: 'AI-powered data analysis tool that can process CSV files, generate insights, and create visualizations.',
-      type: 'agent',
-      category: 'Data Science',
-      author: 'DataPro Solutions',
-      rating: 4.7,
-      bookmarkedAt: '3 days ago',
-      tags: ['Data Analysis', 'CSV', 'Visualization'],
-      price: '$15',
-      image: '/api/placeholder/300/200'
+      title: 'E-commerce Email Marketing Template',
+      description: 'High-converting email template for promoting e-commerce products and offers.',
+      type: 'template',
+      author: 'Marketing Ace Templates',
+      rating: 4.9,
+      reviews: 156,
+      savedDate: '1 week ago',
+      category: 'Marketing',
+      tags: ['Email', 'Marketing', 'E-commerce'],
+      isLiked: true,
+      likes: 112
     },
     {
       id: 4,
-      title: 'Social Media Content Moderator',
-      description: 'Automated content moderation system for social media platforms with advanced filtering capabilities.',
-      type: 'template',
-      category: 'Content Management',
-      author: 'SocialGuard',
-      rating: 4.6,
-      bookmarkedAt: '5 days ago',
-      tags: ['Social Media', 'Moderation', 'AI'],
-      price: 'Free',
-      image: '/api/placeholder/300/200'
+      title: 'AI-Powered Content Generation Agent',
+      description: 'Agent for generating high-quality content for blogs, articles, and social media posts.',
+      type: 'agent',
+      author: 'ContentGenius AI',
+      rating: 4.7,
+      reviews: 95,
+      savedDate: '2 weeks ago',
+      category: 'Content Creation',
+      tags: ['AI', 'Content', 'Generation'],
+      isLiked: false,
+      likes: 78
     }
   ]);
 
@@ -84,97 +92,37 @@ const Bookmarks = () => {
 
   const filteredBookmarks = bookmarks.filter(bookmark => {
     const matchesSearch = bookmark.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         bookmark.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         bookmark.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+                         bookmark.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = selectedFilter === 'all' || bookmark.type === selectedFilter;
     
-    if (filter === 'all') return matchesSearch;
-    return matchesSearch && bookmark.type === filter;
+    return matchesSearch && matchesFilter;
   });
 
-  const BookmarkCard = ({ bookmark, compact = false }: { bookmark: any, compact?: boolean }) => (
-    <div className={`bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-gray-600 transition-all duration-300 group ${compact ? 'p-4' : 'p-6'}`}>
-      <div className={`flex ${compact ? 'items-center gap-4' : 'flex-col'}`}>
-        {!compact && (
-          <div className="relative mb-4 overflow-hidden rounded-lg">
-            <img 
-              src={bookmark.image} 
-              alt={bookmark.title}
-              className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-            <div className="absolute top-2 right-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => removeBookmark(bookmark.id)}
-                className="bg-black/50 border-gray-600 hover:bg-red-500/20 hover:border-red-500 text-red-400"
-              >
-                <Bookmark className="w-3 h-3 fill-current" />
-              </Button>
-            </div>
-          </div>
-        )}
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'agent':
+        return Bot;
+      case 'workflow':
+        return Workflow;
+      case 'template':
+        return FileText;
+      default:
+        return FileText;
+    }
+  };
 
-        <div className={compact ? 'flex-1' : ''}>
-          <div className="flex items-start justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="border-blue-500/30 text-blue-400 text-xs">
-                {bookmark.type}
-              </Badge>
-              <div className="flex items-center gap-1">
-                <Star className="w-3 h-3 text-yellow-400 fill-current" />
-                <span className="text-xs text-gray-400">{bookmark.rating}</span>
-              </div>
-            </div>
-            {compact && (
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => removeBookmark(bookmark.id)}
-                className="border-gray-600 hover:bg-red-500/20 hover:border-red-500 text-red-400"
-              >
-                <Trash2 className="w-3 h-3" />
-              </Button>
-            )}
-          </div>
-
-          <h3 className={`font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors ${compact ? 'text-base' : 'text-lg'}`}>
-            {bookmark.title}
-          </h3>
-
-          <p className={`text-gray-400 mb-3 ${compact ? 'text-sm line-clamp-1' : 'text-sm line-clamp-2'}`}>
-            {bookmark.description}
-          </p>
-
-          <div className="flex flex-wrap gap-1 mb-3">
-            {bookmark.tags.slice(0, compact ? 2 : 3).map((tag: string, index: number) => (
-              <Badge key={index} variant="outline" className="border-gray-600 text-gray-400 text-xs">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-
-          <div className={`flex ${compact ? 'items-center' : 'flex-col gap-2'} justify-between`}>
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <User className="w-3 h-3" />
-              <span>{bookmark.author}</span>
-              <Calendar className="w-3 h-3 ml-2" />
-              <span>{bookmark.bookmarkedAt}</span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className={`font-semibold ${bookmark.price === 'Free' ? 'text-green-400' : 'text-blue-400'} ${compact ? 'text-sm' : 'text-base'}`}>
-                {bookmark.price}
-              </span>
-              <Button size="sm" className="bg-blue-500 hover:bg-blue-600 text-xs">
-                <Eye className="w-3 h-3 mr-1" />
-                View
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'agent':
+        return 'from-blue-500 to-cyan-500';
+      case 'workflow':
+        return 'from-purple-500 to-pink-500';
+      case 'template':
+        return 'from-green-500 to-emerald-500';
+      default:
+        return 'from-gray-500 to-gray-600';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/5 to-cyan-900/5">
@@ -187,27 +135,8 @@ const Bookmarks = () => {
                 Bookmarks
               </h1>
               <p className="text-gray-400">
-                Your saved templates, workflows, and agents
+                Your saved agents, workflows, and templates
               </p>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setViewMode('grid')}
-                className={`border-gray-600 ${viewMode === 'grid' ? 'bg-blue-500 text-white' : 'hover:bg-gray-700'}`}
-              >
-                <Grid className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setViewMode('list')}
-                className={`border-gray-600 ${viewMode === 'list' ? 'bg-blue-500 text-white' : 'hover:bg-gray-700'}`}
-              >
-                <List className="w-4 h-4" />
-              </Button>
             </div>
           </div>
 
@@ -223,67 +152,43 @@ const Bookmarks = () => {
                 className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
               />
             </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setFilter('all')}
-                className={`border-gray-600 ${filter === 'all' ? 'bg-blue-500 text-white' : 'hover:bg-gray-700'}`}
-              >
-                All
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setFilter('template')}
-                className={`border-gray-600 ${filter === 'template' ? 'bg-blue-500 text-white' : 'hover:bg-gray-700'}`}
-              >
-                Templates
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setFilter('workflow')}
-                className={`border-gray-600 ${filter === 'workflow' ? 'bg-blue-500 text-white' : 'hover:bg-gray-700'}`}
-              >
-                Workflows
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setFilter('agent')}
-                className={`border-gray-600 ${filter === 'agent' ? 'bg-blue-500 text-white' : 'hover:bg-gray-700'}`}
-              >
-                Agents
-              </Button>
-            </div>
+            <select
+              value={selectedFilter}
+              onChange={(e) => setSelectedFilter(e.target.value)}
+              className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+            >
+              <option value="all">All Types</option>
+              <option value="agent">Agents</option>
+              <option value="workflow">Workflows</option>
+              <option value="template">Templates</option>
+            </select>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
               <div className="flex items-center gap-3">
                 <Bookmark className="w-5 h-5 text-blue-400" />
                 <div>
-                  <p className="text-sm text-gray-400">Total</p>
+                  <p className="text-sm text-gray-400">Total Saved</p>
                   <p className="text-lg font-semibold text-white">{bookmarks.length}</p>
                 </div>
               </div>
             </div>
             <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
               <div className="flex items-center gap-3">
-                <Zap className="w-5 h-5 text-green-400" />
+                <Bot className="w-5 h-5 text-purple-400" />
                 <div>
-                  <p className="text-sm text-gray-400">Templates</p>
+                  <p className="text-sm text-gray-400">Agents</p>
                   <p className="text-lg font-semibold text-white">
-                    {bookmarks.filter(b => b.type === 'template').length}
+                    {bookmarks.filter(b => b.type === 'agent').length}
                   </p>
                 </div>
               </div>
             </div>
             <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
               <div className="flex items-center gap-3">
-                <List className="w-5 h-5 text-purple-400" />
+                <Workflow className="w-5 h-5 text-green-400" />
                 <div>
                   <p className="text-sm text-gray-400">Workflows</p>
                   <p className="text-lg font-semibold text-white">
@@ -294,11 +199,11 @@ const Bookmarks = () => {
             </div>
             <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
               <div className="flex items-center gap-3">
-                <Heart className="w-5 h-5 text-red-400" />
+                <FileText className="w-5 h-5 text-orange-400" />
                 <div>
-                  <p className="text-sm text-gray-400">Agents</p>
+                  <p className="text-sm text-gray-400">Templates</p>
                   <p className="text-lg font-semibold text-white">
-                    {bookmarks.filter(b => b.type === 'agent').length}
+                    {bookmarks.filter(b => b.type === 'template').length}
                   </p>
                 </div>
               </div>
@@ -306,26 +211,111 @@ const Bookmarks = () => {
           </div>
         </div>
 
-        {/* Bookmarks Grid/List */}
+        {/* Bookmarks Grid */}
         {filteredBookmarks.length === 0 ? (
           <div className="bg-gray-800/60 p-8 sm:p-12 rounded-xl border border-gray-700 text-center">
             <Bookmark className="w-12 h-12 text-gray-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-2">No bookmarks found</h3>
             <p className="text-gray-400 mb-6">
-              {searchTerm ? 'Try adjusting your search terms.' : 'Start bookmarking templates and workflows you find interesting.'}
+              {searchTerm ? 'Try adjusting your search terms.' : 'Start exploring and save your favorite agents, workflows, and templates.'}
             </p>
-            <Link to="/templates">
-              <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600">
-                <Search className="w-4 h-4 mr-2" />
-                Browse Templates
-              </Button>
-            </Link>
           </div>
         ) : (
-          <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}>
-            {filteredBookmarks.map((bookmark) => (
-              <BookmarkCard key={bookmark.id} bookmark={bookmark} compact={viewMode === 'list'} />
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredBookmarks.map((bookmark) => {
+              const TypeIcon = getTypeIcon(bookmark.type);
+              const typeColor = getTypeColor(bookmark.type);
+              
+              return (
+                <div key={bookmark.id} className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700 hover:border-gray-600 transition-all duration-300 group">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 bg-gradient-to-r ${typeColor} rounded-lg flex items-center justify-center`}>
+                        <TypeIcon className="w-5 h-5 text-white" />
+                      </div>
+                      <Badge variant="outline" className="border-gray-600 text-gray-400 text-xs">
+                        {bookmark.type}
+                      </Badge>
+                    </div>
+                    
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+                          <MoreVertical className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="bg-gray-900/95 border-gray-800">
+                        <DropdownMenuItem 
+                          onClick={() => removeBookmark(bookmark.id)}
+                          className="text-red-400 hover:text-red-300"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Remove Bookmark
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+
+                  <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">
+                    {bookmark.title}
+                  </h3>
+                  
+                  <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+                    {bookmark.description}
+                  </p>
+
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                      <span className="text-sm text-white font-medium">{bookmark.rating}</span>
+                      <span className="text-xs text-gray-500">({bookmark.reviews})</span>
+                    </div>
+                    <span className="text-gray-500">•</span>
+                    <span className="text-xs text-gray-500">by {bookmark.author}</span>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {bookmark.tags.slice(0, 3).map((tag) => (
+                      <Badge key={tag} variant="outline" className="border-gray-600 text-gray-400 text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-1 text-gray-500 text-xs">
+                      <Clock className="w-3 h-3" />
+                      <span>Saved {bookmark.savedDate}</span>
+                    </div>
+                    
+                    <LikeButton 
+                      itemId={bookmark.id.toString()}
+                      initialLiked={bookmark.isLiked}
+                      initialCount={bookmark.likes}
+                      size="sm"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <WorkingButton 
+                      action="view"
+                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-sm"
+                    >
+                      <Eye className="w-3 h-3 mr-1" />
+                      View Details
+                    </WorkingButton>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => removeBookmark(bookmark.id)}
+                      className="border-gray-600 hover:bg-gray-700 text-red-400 hover:text-red-300 text-xs"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

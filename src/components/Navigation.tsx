@@ -16,7 +16,10 @@ import {
   MessageSquare,
   ChevronDown,
   X,
-  Menu
+  Menu,
+  CreditCard,
+  Search,
+  Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -38,6 +41,7 @@ export const Navigation: React.FC = () => {
     { icon: FileText, label: 'Templates', path: '/templates' },
     { icon: Users, label: 'Community', path: '/community' },
     { icon: ShoppingBag, label: 'Marketplace', path: '/marketplace' },
+    { icon: Search, label: 'Browse Workflows', path: '/browse-workflows' },
   ];
 
   const authenticatedItems = [
@@ -45,6 +49,7 @@ export const Navigation: React.FC = () => {
     { icon: Edit, label: 'Drafts', path: '/drafts' },
     { icon: Bookmark, label: 'Bookmarks', path: '/bookmarks' },
     { icon: Bell, label: 'Notifications', path: '/notifications' },
+    { icon: CreditCard, label: 'Payments', path: '/payments' },
     { icon: SettingsIcon, label: 'Settings', path: '/settings' },
   ];
 
@@ -56,57 +61,84 @@ export const Navigation: React.FC = () => {
     ? [...publicItems, ...authenticatedItems, ...contactItems]
     : [...publicItems, ...contactItems];
 
-  const primaryItems = allItems.slice(0, 5);
-  const moreItems = allItems.slice(5);
-
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed top-14 sm:top-16 left-0 right-0 z-40 bg-gray-900/98 backdrop-blur-xl border-b border-gray-800/60 shadow-xl">
+    <nav className="fixed top-14 sm:top-16 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center justify-center h-12">
-          <div className="flex items-center space-x-1">
-            {primaryItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.path);
-              
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={cn(
-                    'flex items-center space-x-2 px-3 py-2 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap group',
-                    active
-                      ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25'
-                      : 'text-gray-300 hover:text-white hover:bg-gray-800/80'
-                  )}
-                >
-                  <Icon className={cn(
-                    'w-4 h-4 transition-transform duration-300',
-                    active ? 'scale-110' : 'group-hover:scale-110'
-                  )} />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
+        <div className="hidden lg:block">
+          <div className="flex items-center justify-center h-14">
+            <div className="flex items-center space-x-1">
+              {allItems.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.path);
+                
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={cn(
+                      'group relative flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105',
+                      active
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                    )}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{item.label}</span>
+                    
+                    {/* Active indicator */}
+                    {active && (
+                      <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></div>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Tablet Navigation */}
+        <div className="hidden md:block lg:hidden">
+          <div className="flex items-center justify-between h-12">
+            <div className="flex items-center space-x-1 overflow-x-auto scrollbar-none">
+              {allItems.slice(0, 6).map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.path);
+                
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={cn(
+                      'flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap',
+                      active
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                    )}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span className="hidden sm:inline">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
             
-            {moreItems.length > 0 && (
+            {allItems.length > 6 && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800/80 font-medium text-sm"
+                    size="sm"
+                    className="ml-2 text-muted-foreground hover:text-foreground"
                   >
-                    <span>More</span>
-                    <ChevronDown className="w-4 h-4" />
+                    <Menu className="w-4 h-4" />
+                    <ChevronDown className="w-3 h-3 ml-1" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="bg-gray-900/98 backdrop-blur-xl border-gray-800 w-48"
-                >
-                  {moreItems.map((item) => {
+                <DropdownMenuContent align="end" className="w-48">
+                  {allItems.slice(6).map((item) => {
                     const Icon = item.icon;
                     const active = isActive(item.path);
                     
@@ -115,8 +147,8 @@ export const Navigation: React.FC = () => {
                         <Link
                           to={item.path}
                           className={cn(
-                            'flex items-center space-x-3 w-full px-3 py-2',
-                            active ? 'bg-blue-500/20 text-blue-400' : 'text-gray-300 hover:text-white'
+                            'flex items-center space-x-2 w-full',
+                            active && 'bg-accent'
                           )}
                         >
                           <Icon className="w-4 h-4" />
@@ -132,11 +164,11 @@ export const Navigation: React.FC = () => {
         </div>
 
         {/* Mobile Navigation */}
-        <div className="lg:hidden">
+        <div className="md:hidden">
           <div className="flex items-center justify-between h-12">
-            {/* Mobile Menu Items */}
-            <div className="flex items-center space-x-2 overflow-x-auto scrollbar-hide">
-              {primaryItems.slice(0, 3).map((item) => {
+            {/* Primary Mobile Items */}
+            <div className="flex items-center space-x-1 flex-1 overflow-x-auto scrollbar-none">
+              {allItems.slice(0, 3).map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
                 
@@ -145,14 +177,14 @@ export const Navigation: React.FC = () => {
                     key={item.path}
                     to={item.path}
                     className={cn(
-                      'flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-300 min-w-[60px]',
+                      'flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 min-w-[60px]',
                       active
-                        ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
-                        : 'text-gray-400 hover:text-white hover:bg-gray-800/80'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                     )}
                   >
                     <Icon className="w-4 h-4" />
-                    <span className="text-xs font-medium truncate w-full text-center">
+                    <span className="text-xs font-medium truncate">
                       {item.label.split(' ')[0]}
                     </span>
                   </Link>
@@ -163,8 +195,9 @@ export const Navigation: React.FC = () => {
             {/* Mobile Menu Toggle */}
             <Button
               variant="ghost"
+              size="sm"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 text-gray-300 hover:text-white hover:bg-gray-800/80"
+              className="ml-2 text-muted-foreground hover:text-foreground"
             >
               {isMobileMenuOpen ? (
                 <X className="w-5 h-5" />
@@ -174,10 +207,10 @@ export const Navigation: React.FC = () => {
             </Button>
           </div>
 
-          {/* Mobile Menu Dropdown */}
+          {/* Mobile Dropdown Menu */}
           {isMobileMenuOpen && (
-            <div className="absolute top-full left-0 right-0 bg-gray-900/98 backdrop-blur-xl border-b border-gray-800 shadow-xl">
-              <div className="px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 bg-background/98 backdrop-blur-xl border-b border-border shadow-xl">
+              <div className="px-4 py-3 space-y-1 max-h-[80vh] overflow-y-auto">
                 {allItems.slice(3).map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.path);
@@ -188,10 +221,10 @@ export const Navigation: React.FC = () => {
                       to={item.path}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={cn(
-                        'flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 w-full',
+                        'flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 w-full',
                         active
-                          ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
-                          : 'text-gray-300 hover:text-white hover:bg-gray-800/80'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                       )}
                     >
                       <Icon className="w-5 h-5" />
