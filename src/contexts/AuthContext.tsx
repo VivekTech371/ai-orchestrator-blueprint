@@ -8,6 +8,7 @@ interface User {
   preferences?: {
     theme: string;
     notifications: boolean;
+    darkMode: boolean;
   };
 }
 
@@ -49,7 +50,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         email: email,
         preferences: {
           theme: 'dark',
-          notifications: true
+          notifications: true,
+          darkMode: true
         }
       });
     } catch (error) {
@@ -70,7 +72,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         email: email,
         preferences: {
           theme: 'dark',
-          notifications: true
+          notifications: true,
+          darkMode: true
         }
       });
     } catch (error) {

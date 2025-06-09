@@ -404,7 +404,7 @@ const Templates = () => {
           
           {isLoading ? (
             <div className="flex items-center justify-center py-16">
-              <LoadingSpinner size="lg" variant="pulse" />
+              <LoadingSpinner size="lg" />
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
