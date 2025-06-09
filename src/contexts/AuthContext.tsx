@@ -5,6 +5,10 @@ interface User {
   id: string;
   name: string;
   email: string;
+  preferences?: {
+    theme: string;
+    notifications: boolean;
+  };
 }
 
 interface AuthContextType {
@@ -13,6 +17,7 @@ interface AuthContextType {
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
+  updateUser: (updates: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -41,7 +46,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser({
         id: '1',
         name: 'John Doe',
-        email: email
+        email: email,
+        preferences: {
+          theme: 'dark',
+          notifications: true
+        }
       });
     } catch (error) {
       throw new Error('Login failed');
@@ -58,7 +67,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser({
         id: '1',
         name: name,
-        email: email
+        email: email,
+        preferences: {
+          theme: 'dark',
+          notifications: true
+        }
       });
     } catch (error) {
       throw new Error('Signup failed');
@@ -67,12 +80,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const updateUser = (updates: Partial<User>) => {
+    if (user) {
+      setUser({ ...user, ...updates });
+    }
+  };
+
   const logout = () => {
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, loading, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

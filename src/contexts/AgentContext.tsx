@@ -4,16 +4,18 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 interface Agent {
   id: string;
   name: string;
-  type: string;
-  status: 'active' | 'inactive' | 'draft';
-  created: string;
+  description: string;
+  status: 'draft' | 'active' | 'paused';
+  createdAt: string;
+  lastRun?: string;
 }
 
 interface AgentContextType {
   agents: Agent[];
-  createAgent: (name: string, type: string) => void;
+  addAgent: (agent: Omit<Agent, 'id' | 'createdAt'>) => void;
   updateAgent: (id: string, updates: Partial<Agent>) => void;
   deleteAgent: (id: string) => void;
+  getAgent: (id: string) => Agent | undefined;
 }
 
 const AgentContext = createContext<AgentContextType | undefined>(undefined);
@@ -33,29 +35,39 @@ interface AgentProviderProps {
 export const AgentProvider: React.FC<AgentProviderProps> = ({ children }) => {
   const [agents, setAgents] = useState<Agent[]>([]);
 
-  const createAgent = (name: string, type: string) => {
+  const addAgent = (agentData: Omit<Agent, 'id' | 'createdAt'>) => {
     const newAgent: Agent = {
+      ...agentData,
       id: Date.now().toString(),
-      name,
-      type,
-      status: 'draft',
-      created: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
     setAgents(prev => [...prev, newAgent]);
   };
 
   const updateAgent = (id: string, updates: Partial<Agent>) => {
-    setAgents(prev => prev.map(agent => 
-      agent.id === id ? { ...agent, ...updates } : agent
-    ));
+    setAgents(prev =>
+      prev.map(agent =>
+        agent.id === id ? { ...agent, ...updates } : agent
+      )
+    );
   };
 
   const deleteAgent = (id: string) => {
     setAgents(prev => prev.filter(agent => agent.id !== id));
   };
 
+  const getAgent = (id: string) => {
+    return agents.find(agent => agent.id === id);
+  };
+
   return (
-    <AgentContext.Provider value={{ agents, createAgent, updateAgent, deleteAgent }}>
+    <AgentContext.Provider value={{
+      agents,
+      addAgent,
+      updateAgent,
+      deleteAgent,
+      getAgent
+    }}>
       {children}
     </AgentContext.Provider>
   );
