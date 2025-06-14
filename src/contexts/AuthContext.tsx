@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import { UserProfile, UserPreferences, AuthContextType } from '@/types/auth';
@@ -22,9 +21,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [preferences, setPreferences] = useState<UserPreferences | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSupabaseConfigured, setIsSupabaseConfigured] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
+    // Check if Supabase is properly configured
+    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+      setIsSupabaseConfigured(false);
+      setLoading(false);
+      return;
+    }
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
@@ -32,6 +39,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       } else {
         setLoading(false);
       }
+    }).catch(error => {
+      console.error('Error getting session:', error);
+      setLoading(false);
     });
 
     // Listen for auth changes
@@ -52,6 +62,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchUserProfile = async (userId: string) => {
     try {
+      // Skip actual fetching if Supabase is not configured
+      if (!isSupabaseConfigured) {
+        setLoading(false);
+        return;
+      }
+
       // Fetch user profile
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
@@ -304,6 +320,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       verifyOtp,
       resendVerification
     }}>
+      {!isSupabaseConfigured && (
+        <div className="fixed top-0 left-0 w-full bg-yellow-500 text-black p-2 text-center text-xs md:text-sm z-50">
+          Supabase is not configured. Authentication and database features will not work. 
+          <a 
+            href="https://docs.lovable.dev/integrations/supabase/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="underline ml-1 font-bold"
+          >
+            Learn how to connect Supabase
+          </a>
+        </div>
+      )}
       {children}
     </AuthContext.Provider>
   );
