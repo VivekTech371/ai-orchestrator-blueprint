@@ -1,0 +1,14 @@
+
+-- Insert sample templates
+INSERT INTO public.templates (id, user_id, name, description, category, template_data, is_public, downloads, rating, tags) VALUES
+('11111111-1111-1111-1111-111111111111', '00000000-0000-0000-0000-000000000000', 'Customer Support Bot', 'Ready-to-use template for handling customer inquiries with AI', 'Customer Service', '{"prompt": "You are a helpful customer support agent...", "model": "gpt-3.5-turbo"}', true, 156, 4.8, ARRAY['AI', 'Customer Service', 'Automation']),
+('22222222-2222-2222-2222-222222222222', '00000000-0000-0000-0000-000000000000', 'Marketing Email Generator', 'Template for generating personalized marketing emails', 'Marketing', '{"prompt": "Create engaging marketing emails...", "model": "gpt-3.5-turbo"}', true, 89, 4.5, ARRAY['Marketing', 'Email', 'AI']),
+('33333333-3333-3333-3333-333333333333', '00000000-0000-0000-0000-000000000000', 'Data Analysis Workflow', 'Automated data analysis and visualization template', 'Analytics', '{"steps": [{"type": "data_import"}, {"type": "analysis"}]}', true, 112, 4.7, ARRAY['Data', 'Analytics', 'Automation']),
+('44444444-4444-4444-4444-444444444444', '00000000-0000-0000-0000-000000000000', 'Social Media Content Creator', 'Template for creating engaging social media content', 'Social Media', '{"prompt": "Create engaging social media posts...", "model": "gpt-3.5-turbo"}', true, 67, 4.3, ARRAY['Social Media', 'Content', 'AI']);
+
+-- Insert sample posts (community content)
+INSERT INTO public.posts (id, user_id, title, content, post_type, tags, likes_count, comments_count, views_count) VALUES
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '00000000-0000-0000-0000-000000000000', 'How I Built a Customer Service AI Agent', 'After months of development, I''m excited to share my customer service AI agent that has transformed our support workflow. Here''s what I learned...', 'tutorial', ARRAY['AI', 'Customer Service', 'Tutorial'], 42, 15, 234),
+('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '00000000-0000-0000-0000-000000000000', 'The Ultimate Guide to AI-Powered Content Creation', 'In this comprehensive guide, I''ll walk you through the process of creating high-quality content using AI tools and techniques...', 'tutorial', ARRAY['AI', 'Content Creation', 'Guide'], 78, 23, 312),
+('cccccccc-cccc-cccc-cccc-cccccccccccc', '00000000-0000-0000-0000-000000000000', 'Building Communities with AI: My Experience', 'I''ve been experimenting with AI to build and manage online communities, and I''m excited to share my findings...', 'showcase', ARRAY['AI', 'Community', 'Experience'], 56, 18, 189),
+('dddddddd-dddd-dddd-dddd-dddddddddddd', '00000000-0000-0000-0000-000000000000', 'AI in Education: Transforming Learning', 'AI is revolutionizing the education sector, and I''m here to explore the possibilities and challenges...', 'discussion', ARRAY['AI', 'Education', 'Future'], 63, 21, 267);
