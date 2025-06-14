@@ -14,13 +14,21 @@ import {
 
 export const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, signOut, loading } = useAuth();
   const location = useLocation();
   const isDashboard = location.pathname.includes('/dashboard') || 
                      location.pathname.includes('/templates') || 
                      location.pathname.includes('/community') || 
                      location.pathname.includes('/marketplace') || 
                      location.pathname.includes('/settings');
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-900/98 backdrop-blur-xl border-b border-gray-800/60 shadow-xl">
@@ -78,11 +86,19 @@ export const Navbar: React.FC = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2 px-3 hover:bg-gray-800 transition-all duration-300">
                     <div className="w-7 h-7 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
-                      <User className="w-4 h-4 text-white" />
+                      {user.avatar_url ? (
+                        <img 
+                          src={user.avatar_url} 
+                          alt={user.name}
+                          className="w-7 h-7 rounded-full object-cover"
+                        />
+                      ) : (
+                        <User className="w-4 h-4 text-white" />
+                      )}
                     </div>
                     <div className="hidden sm:block text-left">
                       <p className="text-sm font-medium text-white truncate max-w-32">{user.name}</p>
-                      <p className="text-xs text-gray-400">Member</p>
+                      <p className="text-xs text-gray-400 capitalize">{user.role}</p>
                     </div>
                   </Button>
                 </DropdownMenuTrigger>
@@ -105,7 +121,11 @@ export const Navbar: React.FC = () => {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-gray-800" />
-                  <DropdownMenuItem onClick={logout} className="flex items-center space-x-2 text-red-400 w-full hover:bg-gray-800 hover:text-red-300 transition-colors">
+                  <DropdownMenuItem 
+                    onClick={handleSignOut} 
+                    className="flex items-center space-x-2 text-red-400 w-full hover:bg-gray-800 hover:text-red-300 transition-colors"
+                    disabled={loading}
+                  >
                     <LogOut className="w-4 h-4" />
                     <span>Logout</span>
                   </DropdownMenuItem>

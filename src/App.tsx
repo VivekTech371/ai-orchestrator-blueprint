@@ -4,12 +4,15 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { AgentProvider } from './contexts/AgentContext';
 import { Layout } from './components/Layout';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { Toaster } from './components/ui/toaster';
 
 // Pages
 import Index from './pages/Index';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import ForgotPassword from './pages/ForgotPassword';
+import EmailVerification from './pages/EmailVerification';
 import Dashboard from './pages/Dashboard';
 import AgentBuilder from './pages/AgentBuilder';
 import Templates from './pages/Templates';
@@ -36,26 +39,126 @@ function App() {
         <Router>
           <Layout>
             <Routes>
+              {/* Public routes */}
               <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/agent-builder" element={<AgentBuilder />} />
+              <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/browse-workflows" element={<BrowseWorkflows />} />
               <Route path="/templates" element={<Templates />} />
               <Route path="/community" element={<Community />} />
               <Route path="/marketplace" element={<Marketplace />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/how-it-works" element={<HowItWorks />} />
-              <Route path="/notifications" element={<Notifications />} />
-              <Route path="/drafts" element={<Drafts />} />
-              <Route path="/bookmarks" element={<Bookmarks />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/feedback" element={<Feedback />} />
+              
+              {/* Auth routes (redirect to dashboard if already logged in) */}
+              <Route 
+                path="/login" 
+                element={
+                  <ProtectedRoute requireAuth={false}>
+                    <Login />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/signup" 
+                element={
+                  <ProtectedRoute requireAuth={false}>
+                    <Signup />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/forgot-password" 
+                element={
+                  <ProtectedRoute requireAuth={false}>
+                    <ForgotPassword />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route path="/verify-email" element={<EmailVerification />} />
+
+              {/* Protected routes */}
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/agent-builder" 
+                element={
+                  <ProtectedRoute>
+                    <AgentBuilder />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/settings" 
+                element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/notifications" 
+                element={
+                  <ProtectedRoute>
+                    <Notifications />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/drafts" 
+                element={
+                  <ProtectedRoute>
+                    <Drafts />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/bookmarks" 
+                element={
+                  <ProtectedRoute>
+                    <Bookmarks />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/feedback" 
+                element={
+                  <ProtectedRoute>
+                    <Feedback />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/payments" 
+                element={
+                  <ProtectedRoute>
+                    <Payments />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/appearance" 
+                element={
+                  <ProtectedRoute>
+                    <Appearance />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/api-keys" 
+                element={
+                  <ProtectedRoute>
+                    <ApiKeys />
+                  </ProtectedRoute>
+                } 
+              />
               <Route path="/profile/:userId" element={<Profile />} />
-              <Route path="/payments" element={<Payments />} />
-              <Route path="/browse-workflows" element={<BrowseWorkflows />} />
-              <Route path="/appearance" element={<Appearance />} />
-              <Route path="/api-keys" element={<ApiKeys />} />
+              
+              {/* 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
