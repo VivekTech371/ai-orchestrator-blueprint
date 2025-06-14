@@ -12,6 +12,7 @@ import Index from './pages/Index';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import EmailVerification from './pages/EmailVerification';
 import Dashboard from './pages/Dashboard';
 import AgentBuilder from './pages/AgentBuilder';
@@ -70,6 +71,14 @@ function App() {
                 element={
                   <ProtectedRoute requireAuth={false}>
                     <ForgotPassword />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/reset-password" 
+                element={
+                  <ProtectedRoute requireAuth={false}>
+                    <ResetPassword />
                   </ProtectedRoute>
                 } 
               />

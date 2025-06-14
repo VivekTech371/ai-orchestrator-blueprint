@@ -26,7 +26,7 @@ interface CommandPaletteProps {
 const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
-  const { user, logout, updateUser } = useAuth();
+  const { user, preferences, signOut, updatePreferences } = useAuth();
 
   const commands = [
     {
@@ -37,7 +37,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
         { id: 'community', label: 'Open Community', icon: MessageSquare, action: () => navigate('/community') },
         { id: 'templates', label: 'Browse Templates', icon: Star, action: () => navigate('/templates') },
         { id: 'marketplace', label: 'Visit Marketplace', icon: Star, action: () => navigate('/marketplace') },
-        { id: 'profile', label: 'View Profile', icon: User, action: () => navigate('/profile') },
+        { id: 'profile', label: 'View Profile', icon: User, action: () => navigate('/settings') },
         { id: 'settings', label: 'Open Settings', icon: Settings, action: () => navigate('/settings') }
       ]
     },
@@ -46,11 +46,17 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
       items: [
         { 
           id: 'toggle-theme', 
-          label: `Switch to ${user?.preferences.darkMode ? 'Light' : 'Dark'} Mode`, 
-          icon: user?.preferences.darkMode ? Sun : Moon, 
-          action: () => updateUser({ preferences: { ...user!.preferences, darkMode: !user!.preferences.darkMode } })
+          label: `Switch to ${preferences?.theme === 'dark' ? 'Light' : 'Dark'} Mode`, 
+          icon: preferences?.theme === 'dark' ? Sun : Moon, 
+          action: () => {
+            if (preferences) {
+              updatePreferences({ 
+                theme: preferences.theme === 'dark' ? 'light' : 'dark' 
+              });
+            }
+          }
         },
-        { id: 'logout', label: 'Sign Out', icon: LogOut, action: logout }
+        { id: 'logout', label: 'Sign Out', icon: LogOut, action: signOut }
       ]
     }
   ];
