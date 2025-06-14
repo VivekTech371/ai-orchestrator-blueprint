@@ -104,7 +104,7 @@ export const Navigation: React.FC = () => {
         {/* Desktop Navigation (lg+) */}
         <div className="hidden lg:block">
           <div className="flex items-center justify-center h-12 xl:h-14">
-            <div className="flex items-center space-x-1 overflow-x-auto scrollbar-none">
+            <div className="flex items-center space-x-1 overflow-x-hidden">
               {allItems.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
@@ -114,7 +114,7 @@ export const Navigation: React.FC = () => {
                     key={item.path}
                     to={item.path}
                     className={cn(
-                      'group relative flex items-center space-x-2 px-3 xl:px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-105 whitespace-nowrap',
+                      'group relative flex items-center space-x-2 px-3 xl:px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-105 whitespace-nowrap flex-shrink-0',
                       active
                         ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
                         : 'text-muted-foreground hover:text-foreground hover:bg-accent/80 hover:shadow-md'
@@ -137,7 +137,7 @@ export const Navigation: React.FC = () => {
         {/* Tablet Navigation (md to lg) */}
         <div className="hidden md:block lg:hidden">
           <div className="flex items-center justify-between h-12">
-            <div className="flex items-center space-x-1 overflow-x-auto scrollbar-none flex-1 pb-1">
+            <div className="flex items-center space-x-1 overflow-hidden flex-1">
               {getVisibleItems(6).map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
@@ -202,7 +202,7 @@ export const Navigation: React.FC = () => {
         <div className="md:hidden">
           <div className="flex items-center justify-between h-12">
             {/* Primary Mobile Items */}
-            <div className="flex items-center space-x-2 flex-1 overflow-x-auto scrollbar-none pb-1">
+            <div className="flex items-center space-x-2 flex-1 overflow-hidden">
               {getVisibleItems(3).map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
@@ -256,7 +256,7 @@ export const Navigation: React.FC = () => {
               
               {/* Menu */}
               <div className="absolute top-full left-0 right-0 bg-background/98 backdrop-blur-xl border-b border-border shadow-2xl z-50 animate-fade-in">
-                <div className="px-4 py-4 space-y-2 max-h-[70vh] overflow-y-auto scrollbar-thin">
+                <div className="px-4 py-4 space-y-2 max-h-[70vh] overflow-y-auto overflow-x-hidden">
                   {getOverflowItems(3).map((item) => {
                     const Icon = item.icon;
                     const active = isActive(item.path);
