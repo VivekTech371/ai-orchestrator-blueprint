@@ -1,5 +1,6 @@
-
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAgent } from '@/contexts/AgentContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -20,10 +21,13 @@ import {
 import { cn } from '@/lib/utils';
 
 const AgentBuilder = () => {
+  const navigate = useNavigate();
+  const { addAgent } = useAgent();
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [agentName, setAgentName] = useState('');
   const [agentDescription, setAgentDescription] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const steps = [
     {
@@ -79,6 +83,68 @@ const AgentBuilder = () => {
   const handlePrevious = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleSaveDraft = async () => {
+    if (!agentName.trim()) {
+      alert('Please enter an agent name first');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const agent = await addAgent({
+        name: agentName,
+        description: agentDescription,
+        model: 'gpt-3.5-turbo',
+        temperature: 0.7,
+        max_tokens: 1000,
+        status: 'draft',
+        is_public: false,
+        tags: [],
+        metadata: {
+          builderStep: currentStep,
+          completedSteps: completedSteps
+        }
+      });
+      
+      navigate(`/agents/${agent.id}/edit`);
+    } catch (error) {
+      console.error('Error saving draft:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeploy = async () => {
+    if (!agentName.trim()) {
+      alert('Please enter an agent name first');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const agent = await addAgent({
+        name: agentName,
+        description: agentDescription,
+        model: 'gpt-3.5-turbo',
+        temperature: 0.7,
+        max_tokens: 1000,
+        status: 'active',
+        is_public: false,
+        tags: [],
+        metadata: {
+          builderCompleted: true,
+          completedSteps: [...completedSteps, currentStep]
+        }
+      });
+      
+      navigate(`/agents/${agent.id}`);
+    } catch (error) {
+      console.error('Error deploying agent:', error);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -368,15 +434,24 @@ const AgentBuilder = () => {
           </Button>
 
           <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 w-full sm:w-auto order-1 sm:order-2">
-            <Button variant="outline" className="border-gray-600 hover:bg-gray-700 w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              className="border-gray-600 hover:bg-gray-700 w-full sm:w-auto"
+              onClick={handleSaveDraft}
+              disabled={saving}
+            >
               <Save className="w-4 h-4 mr-2" />
-              Save Draft
+              {saving ? 'Saving...' : 'Save Draft'}
             </Button>
             
             {currentStep === steps.length ? (
-              <Button className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 w-full sm:w-auto">
+              <Button 
+                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 w-full sm:w-auto"
+                onClick={handleDeploy}
+                disabled={saving}
+              >
                 <Rocket className="w-4 h-4 mr-2" />
-                Deploy Agent
+                {saving ? 'Deploying...' : 'Deploy Agent'}
               </Button>
             ) : (
               <Button
