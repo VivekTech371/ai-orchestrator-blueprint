@@ -201,12 +201,21 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({ children }) 
 
   const downloadTemplate = async (id: string) => {
     try {
-      const { error } = await supabase
+      // Get current downloads count first
+      const { data: template } = await supabase
         .from('templates')
-        .update({ downloads: supabase.raw('downloads + 1') })
-        .eq('id', id);
+        .select('downloads')
+        .eq('id', id)
+        .single();
 
-      if (error) throw error;
+      if (template) {
+        const { error } = await supabase
+          .from('templates')
+          .update({ downloads: template.downloads + 1 })
+          .eq('id', id);
+
+        if (error) throw error;
+      }
 
       toast({
         title: "Template downloaded",
