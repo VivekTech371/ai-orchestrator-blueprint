@@ -33,34 +33,54 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <AgentProvider>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/login" element={<ProtectedRoute requireAuth={false}><Login /></ProtectedRoute>} />
-                <Route path="/signup" element={<ProtectedRoute requireAuth={false}><Signup /></ProtectedRoute>} />
-                <Route path="/reset-password" element={<ProtectedRoute requireAuth={false}><ResetPassword /></ProtectedRoute>} />
-                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                <Route path="/community" element={<Community />} />
-                <Route path="/templates" element={<Templates />} />
-                <Route path="/marketplace" element={<Marketplace />} />
-                <Route path="/agents" element={
-                  <ProtectedRoute>
-                    <Agents />
-                  </ProtectedRoute>
-                } />
-                <Route path="/agents/:id" element={
-                  <ProtectedRoute>
-                    <AgentDetail />
-                  </ProtectedRoute>
-                } />
-                <Route path="/agents/:id/edit" element={
-                  <ProtectedRoute>
-                    <AgentEdit />
-                  </ProtectedRoute>
-                } />
-              </Routes>
-            </Layout>
+            <WorkflowProvider>
+              <TemplateProvider>
+                <Layout>
+                  <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/login" element={<ProtectedRoute requireAuth={false}><Login /></ProtectedRoute>} />
+                    <Route path="/signup" element={<ProtectedRoute requireAuth={false}><Signup /></ProtectedRoute>} />
+                    <Route path="/reset-password" element={<ProtectedRoute requireAuth={false}><ResetPassword /></ProtectedRoute>} />
+                    <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                    <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                    <Route path="/community" element={<Community />} />
+                    <Route path="/templates" element={<Templates />} />
+                    <Route path="/marketplace" element={<Marketplace />} />
+                    <Route path="/template-marketplace" element={<TemplateMarketplace />} />
+                    <Route path="/agents" element={
+                      <ProtectedRoute>
+                        <Agents />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/agent-builder" element={
+                      <ProtectedRoute>
+                        <AgentBuilder />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/agents/:id" element={
+                      <ProtectedRoute>
+                        <AgentDetail />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/agents/:id/edit" element={
+                      <ProtectedRoute>
+                        <AgentEdit />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/workflows" element={
+                      <ProtectedRoute>
+                        <Workflows />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/workflow-builder" element={
+                      <ProtectedRoute>
+                        <WorkflowBuilder />
+                      </ProtectedRoute>
+                    } />
+                  </Routes>
+                </Layout>
+              </TemplateProvider>
+            </WorkflowProvider>
           </AgentProvider>
         </AuthProvider>
       </BrowserRouter>
