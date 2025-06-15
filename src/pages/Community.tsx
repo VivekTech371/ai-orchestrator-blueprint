@@ -1,294 +1,359 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+
+import React, { useState, useEffect } from 'react';
+import { useSocial } from '@/contexts/SocialContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import WorkingButton from '@/components/WorkingButton';
-import LikeButton from '@/components/LikeButton';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Users, 
+  Search, 
+  TrendingUp, 
   MessageSquare, 
   Heart, 
-  Share2, 
-  Eye, 
-  Plus, 
-  Search, 
+  Share2,
+  Plus,
   Filter,
-  TrendingUp,
-  Clock,
+  Users,
   Star,
-  BookOpen
+  Award,
+  BookOpen,
+  HelpCircle
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Community = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('trending');
+  const { user } = useAuth();
+  const { posts, loading, fetchPosts, likePost, searchPosts } = useSocial();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [searchResults, setSearchResults] = useState([]);
+  const navigate = useNavigate();
 
-  const posts = [
-    {
-      id: 1,
-      title: 'How I Built a Customer Service AI Agent That Reduced Response Time by 80%',
-      author: 'Sarah Chen',
-      avatar: '/placeholder.svg',
-      content: 'After months of development, I\'m excited to share my customer service AI agent that has transformed our support workflow...',
-      tags: ['AI', 'Customer Service', 'Automation'],
-      likes: 42,
-      comments: 15,
-      views: 234,
-      timeAgo: '2 hours ago',
-      isLiked: false
-    },
-    {
-      id: 2,
-      title: 'The Ultimate Guide to AI-Powered Content Creation',
-      author: 'David Lee',
-      avatar: '/placeholder.svg',
-      content: 'In this comprehensive guide, I\'ll walk you through the process of creating high-quality content using AI tools and techniques...',
-      tags: ['AI', 'Content Creation', 'Marketing'],
-      likes: 78,
-      comments: 23,
-      views: 312,
-      timeAgo: '5 hours ago',
-      isLiked: true
-    },
-    {
-      id: 3,
-      title: 'Building a Community with AI: My Experience',
-      author: 'Emily White',
-      avatar: '/placeholder.svg',
-      content: 'I\'ve been experimenting with AI to build and manage online communities, and I\'m excited to share my findings with you...',
-      tags: ['AI', 'Community Building', 'Social Media'],
-      likes: 56,
-      comments: 18,
-      views: 189,
-      timeAgo: '1 day ago',
-      isLiked: false
-    },
-    {
-      id: 4,
-      title: 'AI in Education: Transforming the Learning Experience',
-      author: 'Michael Brown',
-      avatar: '/placeholder.svg',
-      content: 'AI is revolutionizing the education sector, and I\'m here to explore the possibilities and challenges of this exciting technology...',
-      tags: ['AI', 'Education', 'Technology'],
-      likes: 63,
-      comments: 21,
-      views: 267,
-      timeAgo: '3 days ago',
-      isLiked: true
+  useEffect(() => {
+    fetchPosts(typeFilter);
+  }, [typeFilter]);
+
+  const handleSearch = async () => {
+    if (searchQuery.trim()) {
+      const results = await searchPosts(searchQuery);
+      setSearchResults(results);
+    } else {
+      setSearchResults([]);
+      fetchPosts(typeFilter);
     }
-  ];
+  };
 
-  const templates = [
-    {
-      id: 1,
-      title: 'E-commerce Support Bot',
-      author: 'Alex Rodriguez',
-      description: 'Ready-to-use template for handling e-commerce customer inquiries',
-      downloads: 156,
-      rating: 4.8,
-      category: 'Customer Service'
-    },
-    {
-      id: 2,
-      title: 'Marketing Email Generator',
-      author: 'Jessica Davis',
-      description: 'Template for generating personalized marketing emails with AI',
-      downloads: 89,
-      rating: 4.5,
-      category: 'Marketing'
-    },
-    {
-      id: 3,
-      title: 'Data Analysis Workflow',
-      author: 'Kevin Smith',
-      description: 'Automated workflow for analyzing and visualizing data with AI',
-      downloads: 112,
-      rating: 4.7,
-      category: 'Data Analysis'
-    },
-    {
-      id: 4,
-      title: 'Social Media Content Creator',
-      author: 'Laura Johnson',
-      description: 'Template for creating engaging social media content with AI',
-      downloads: 67,
-      rating: 4.3,
-      category: 'Social Media'
+  const displayPosts = searchResults.length > 0 ? searchResults : posts;
+
+  const featuredPosts = posts.filter(post => post.is_featured).slice(0, 3);
+  const postTypes = ['all', 'discussion', 'showcase', 'question', 'tutorial'];
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'discussion': return <MessageSquare className="w-4 h-4" />;
+      case 'showcase': return <Star className="w-4 h-4" />;
+      case 'question': return <HelpCircle className="w-4 h-4" />;
+      case 'tutorial': return <BookOpen className="w-4 h-4" />;
+      default: return <MessageSquare className="w-4 h-4" />;
     }
-  ];
+  };
 
-  const filteredPosts = posts.filter(post =>
-    post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    post.content.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'discussion': return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
+      case 'showcase': return 'bg-purple-500/10 text-purple-500 border-purple-500/20';
+      case 'question': return 'bg-orange-500/10 text-orange-500 border-orange-500/20';
+      case 'tutorial': return 'bg-green-500/10 text-green-500 border-green-500/20';
+      default: return 'bg-gray-500/10 text-gray-500 border-gray-500/20';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-96">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/5 to-cyan-900/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-                Community
-              </h1>
-              <p className="text-gray-400">
-                Connect, share, and learn from fellow AI builders
-              </p>
-            </div>
-            
-            <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600">
-              <Plus className="w-4 h-4 mr-2" />
-              Create Post
-            </Button>
-          </div>
-
-          {/* Search and Filter */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search posts and discussions..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-              />
-            </div>
-            <Button variant="outline" className="border-gray-600 hover:bg-gray-700">
-              <Filter className="w-4 h-4 mr-2" />
-              Filter
-            </Button>
-          </div>
-
-          {/* Tabs */}
-          <div className="flex space-x-1 bg-gray-800/60 p-1 rounded-lg">
-            {[
-              { id: 'trending', label: 'Trending', icon: TrendingUp },
-              { id: 'recent', label: 'Recent', icon: Clock },
-              { id: 'templates', label: 'Templates', icon: BookOpen }
-            ].map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                    activeTab === tab.id
-                      ? 'bg-blue-500 text-white'
-                      : 'text-gray-400 hover:text-white hover:bg-gray-700'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">Community</h1>
+          <p className="text-gray-400">Connect, share, and learn with the AI community</p>
         </div>
+        <Button 
+          onClick={() => navigate('/community/feed')}
+          className="bg-blue-500 hover:bg-blue-600"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Create Post
+        </Button>
+      </div>
 
-        {/* Content */}
-        {activeTab === 'templates' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {templates.map((template) => (
-              <div key={template.id} className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700 hover:border-gray-600 transition-all duration-300">
-                <div className="flex items-start justify-between mb-4">
-                  <Badge variant="outline" className="border-blue-500/30 text-blue-400 text-xs">
-                    {template.category}
-                  </Badge>
-                  <div className="flex items-center gap-1 text-yellow-400">
-                    <Star className="w-4 h-4 fill-current" />
-                    <span className="text-sm">{template.rating}</span>
-                  </div>
-                </div>
-
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  {template.title}
-                </h3>
-                
-                <p className="text-gray-400 text-sm mb-4 line-clamp-2">
-                  {template.description}
-                </p>
-
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs text-gray-500">by {template.author}</span>
-                  <span className="text-xs text-gray-500">{template.downloads} downloads</span>
-                </div>
-
-                <WorkingButton 
-                  action="useTemplate"
-                  className="w-full bg-blue-500 hover:bg-blue-600"
-                >
-                  Use Template
-                </WorkingButton>
-              </div>
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-8">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Input
+            placeholder="Search community posts..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            className="pl-10 bg-gray-800 border-gray-700 text-white"
+          />
+        </div>
+        <Button onClick={handleSearch} variant="outline">
+          Search
+        </Button>
+        <Select value={typeFilter} onValueChange={setTypeFilter}>
+          <SelectTrigger className="w-48 bg-gray-800 border-gray-700 text-white">
+            <Filter className="w-4 h-4 mr-2" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-gray-800 border-gray-700">
+            {postTypes.map((type) => (
+              <SelectItem key={type} value={type}>
+                {type === 'all' ? 'All Posts' : type.charAt(0).toUpperCase() + type.slice(1)}
+              </SelectItem>
             ))}
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {filteredPosts.map((post) => (
-              <div key={post.id} className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700 hover:border-gray-600 transition-all duration-300">
-                <div className="flex items-start space-x-4">
-                  <img
-                    src={post.avatar}
-                    alt={post.author}
-                    className="w-12 h-12 rounded-full bg-gray-700"
-                  />
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <h3 className="font-semibold text-white">{post.author}</h3>
-                      <span className="text-gray-500 text-sm">•</span>
-                      <span className="text-gray-500 text-sm">{post.timeAgo}</span>
-                    </div>
-                    
-                    <h2 className="text-lg font-bold text-white mb-3 hover:text-blue-400 cursor-pointer transition-colors">
-                      {post.title}
-                    </h2>
-                    
-                    <p className="text-gray-300 mb-4 line-clamp-3">
-                      {post.content}
-                    </p>
-                    
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {post.tags.map((tag) => (
-                        <Badge key={tag} variant="outline" className="border-gray-600 text-gray-400 text-xs">
-                          {tag}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <Tabs defaultValue="all" className="w-full">
+        <TabsList className="grid w-full grid-cols-4 bg-gray-800 border-gray-700">
+          <TabsTrigger value="all">All Posts</TabsTrigger>
+          <TabsTrigger value="featured">Featured</TabsTrigger>
+          <TabsTrigger value="trending">Trending</TabsTrigger>
+          <TabsTrigger value="recent">Recent</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all" className="mt-6">
+          {/* Featured Posts */}
+          {featuredPosts.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+                <Award className="w-5 h-5 mr-2 text-yellow-500" />
+                Featured Posts
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {featuredPosts.map((post) => (
+                  <Card key={post.id} className="bg-gradient-to-br from-yellow-900/20 to-orange-900/20 border-yellow-500/30">
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center space-x-2">
+                          {getTypeIcon(post.type)}
+                          <Badge className={getTypeColor(post.type)}>
+                            {post.type}
+                          </Badge>
+                        </div>
+                        <Badge className="bg-yellow-500 text-black text-xs">
+                          <Award className="w-3 h-3 mr-1" />
+                          Featured
                         </Badge>
-                      ))}
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <LikeButton 
-                          itemId={post.id.toString()}
-                          initialLiked={post.isLiked}
-                          initialCount={post.likes}
-                          size="sm"
-                        />
-                        
-                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                          <MessageSquare className="w-4 h-4 mr-1" />
-                          {post.comments}
-                        </Button>
-                        
-                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                          <Eye className="w-4 h-4 mr-1" />
-                          {post.views}
+                      </div>
+                      <CardTitle className="text-white text-lg line-clamp-2">{post.title}</CardTitle>
+                      <CardDescription className="text-gray-300">
+                        by {post.user?.name || post.user?.email} • {new Date(post.created_at).toLocaleDateString()}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-400 line-clamp-3 mb-4">{post.content}</p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                          <div className="flex items-center">
+                            <Heart className="w-4 h-4 mr-1" />
+                            {post.likes_count}
+                          </div>
+                          <div className="flex items-center">
+                            <MessageSquare className="w-4 h-4 mr-1" />
+                            {post.comments_count}
+                          </div>
+                        </div>
+                        <Button size="sm" variant="ghost">
+                          <Share2 className="w-4 h-4" />
                         </Button>
                       </div>
-                      
-                      <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                        <Share2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
+            </div>
+          )}
+
+          {/* All Posts */}
+          <div>
+            <h2 className="text-xl font-semibold text-white mb-4">Community Posts</h2>
+            {displayPosts.length === 0 ? (
+              <div className="text-center py-12">
+                <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-white mb-2">No posts found</h3>
+                <p className="text-gray-400 mb-4">Be the first to start a discussion</p>
+                <Button 
+                  onClick={() => navigate('/community/feed')}
+                  className="bg-blue-500 hover:bg-blue-600"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Post
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {displayPosts.map((post) => (
+                  <Card key={post.id} className="bg-gray-800/60 border-gray-700 hover:border-blue-500/50 transition-all duration-300">
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                            <span className="text-white font-semibold">
+                              {(post.user?.name || post.user?.email || 'U')[0].toUpperCase()}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="flex items-center space-x-2">
+                              <h3 className="text-white font-medium">
+                                {post.user?.name || post.user?.email}
+                              </h3>
+                              <Badge className={getTypeColor(post.type)}>
+                                {getTypeIcon(post.type)}
+                                <span className="ml-1">{post.type}</span>
+                              </Badge>
+                            </div>
+                            <p className="text-gray-400 text-sm">
+                              {new Date(post.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        {post.is_featured && (
+                          <Badge className="bg-yellow-500 text-black text-xs">
+                            <Award className="w-3 h-3 mr-1" />
+                            Featured
+                          </Badge>
+                        )}
+                      </div>
+                      <CardTitle className="text-white text-xl mt-4">{post.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-300 mb-4 line-clamp-3">{post.content}</p>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {post.tags?.map((tag, index) => (
+                          <Badge key={index} variant="outline" className="border-gray-600 text-gray-400">
+                            #{tag}
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-6">
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => likePost(post.id)}
+                            className="text-gray-400 hover:text-red-500"
+                          >
+                            <Heart className="w-4 h-4 mr-2" />
+                            {post.likes_count} Likes
+                          </Button>
+                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-blue-500">
+                            <MessageSquare className="w-4 h-4 mr-2" />
+                            {post.comments_count} Comments
+                          </Button>
+                        </div>
+                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-blue-500">
+                          <Share2 className="w-4 h-4 mr-2" />
+                          Share
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="featured" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {featuredPosts.map((post) => (
+              <Card key={post.id} className="bg-gradient-to-br from-yellow-900/20 to-orange-900/20 border-yellow-500/30">
+                <CardHeader>
+                  <div className="flex items-center space-x-2 mb-2">
+                    {getTypeIcon(post.type)}
+                    <Badge className={getTypeColor(post.type)}>
+                      {post.type}
+                    </Badge>
+                    <Badge className="bg-yellow-500 text-black text-xs">
+                      <Award className="w-3 h-3 mr-1" />
+                      Featured
+                    </Badge>
+                  </div>
+                  <CardTitle className="text-white">{post.title}</CardTitle>
+                  <CardDescription className="text-gray-300">
+                    by {post.user?.name || post.user?.email}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-400 line-clamp-4">{post.content}</p>
+                </CardContent>
+              </Card>
             ))}
           </div>
-        )}
-      </div>
+        </TabsContent>
+
+        <TabsContent value="trending" className="mt-6">
+          <div className="space-y-4">
+            {posts
+              .sort((a, b) => (b.likes_count + b.comments_count) - (a.likes_count + a.comments_count))
+              .slice(0, 10)
+              .map((post) => (
+                <Card key={post.id} className="bg-gray-800/60 border-gray-700">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <TrendingUp className="w-5 h-5 text-orange-500" />
+                        <CardTitle className="text-white">{post.title}</CardTitle>
+                        <Badge className={getTypeColor(post.type)}>
+                          {post.type}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center space-x-4 text-sm text-gray-400">
+                        <span>{post.likes_count} likes</span>
+                        <span>{post.comments_count} comments</span>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Card>
+              ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="recent" className="mt-6">
+          <div className="space-y-4">
+            {posts.slice(0, 10).map((post) => (
+              <Card key={post.id} className="bg-gray-800/60 border-gray-700">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <CardTitle className="text-white">{post.title}</CardTitle>
+                      <Badge className={getTypeColor(post.type)}>
+                        {post.type}
+                      </Badge>
+                    </div>
+                    <span className="text-sm text-gray-400">
+                      {new Date(post.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

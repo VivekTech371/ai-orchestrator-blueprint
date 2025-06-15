@@ -1,347 +1,363 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
+import { useMarketplace } from '@/contexts/MarketplaceContext';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import WorkingButton from '@/components/WorkingButton';
-import LikeButton from '@/components/LikeButton';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  ShoppingBag, 
   Search, 
-  Filter, 
   Star, 
   Download, 
-  Eye, 
-  TrendingUp,
   DollarSign,
+  Filter,
+  ShoppingCart,
+  TrendingUp,
+  Award,
   Users,
-  Clock
+  Zap,
+  FileText,
+  Puzzle,
+  Store,
+  Plus
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Marketplace = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [priceFilter, setPriceFilter] = useState('all');
+  const navigate = useNavigate();
+  const { items, purchases, loading, fetchItems, getFeaturedItems } = useMarketplace();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [featuredItems, setFeaturedItems] = useState([]);
 
-  const categories = [
-    { id: 'all', label: 'All Categories' },
-    { id: 'customer-service', label: 'Customer Service' },
-    { id: 'sales', label: 'Sales & Marketing' },
-    { id: 'data-analysis', label: 'Data Analysis' },
-    { id: 'automation', label: 'Automation' },
-    { id: 'finance', label: 'Finance' }
-  ];
+  useEffect(() => {
+    fetchItems(categoryFilter);
+    loadFeaturedItems();
+  }, [categoryFilter]);
 
-  const agents = [
-    {
-      id: 1,
-      title: 'Advanced Customer Support AI',
-      description: 'Intelligent customer support agent with multi-language support and sentiment analysis.',
-      author: 'TechCorp Solutions',
-      price: 99,
-      originalPrice: 149,
-      rating: 4.8,
-      reviews: 124,
-      downloads: 1247,
-      category: 'customer-service',
-      tags: ['AI', 'Support', 'Multilingual'],
-      featured: true,
-      isLiked: false,
-      likes: 89
-    },
-    {
-      id: 2,
-      title: 'Sales Lead Qualifier Bot',
-      description: 'Automatically qualify and score sales leads based on predefined criteria.',
-      author: 'SalesMax Inc',
-      price: 0,
-      rating: 4.6,
-      reviews: 89,
-      downloads: 2156,
-      category: 'sales',
-      tags: ['Sales', 'CRM', 'Automation'],
-      featured: false,
-      isLiked: true,
-      likes: 156
-    },
-    {
-      id: 3,
-      title: 'Data Analysis & Reporting Agent',
-      description: 'Comprehensive data analysis agent for generating reports and insights.',
-      author: 'DataWise Analytics',
-      price: 49,
-      rating: 4.5,
-      reviews: 67,
-      downloads: 894,
-      category: 'data-analysis',
-      tags: ['Data', 'Analytics', 'Reporting'],
-      featured: false,
-      isLiked: false,
-      likes: 72
-    },
-    {
-      id: 4,
-      title: 'Automated Workflow Manager',
-      description: 'Streamline your business processes with this automated workflow management agent.',
-      author: 'AutoFlow Systems',
-      price: 79,
-      rating: 4.7,
-      reviews: 102,
-      downloads: 1532,
-      category: 'automation',
-      tags: ['Workflow', 'Automation', 'Management'],
-      featured: true,
-      isLiked: true,
-      likes: 112
-    },
-    {
-      id: 5,
-      title: 'Financial Analysis AI Agent',
-      description: 'Analyze financial data, generate reports, and provide investment recommendations.',
-      author: 'FinInsight Solutions',
-      price: 129,
-      originalPrice: 199,
-      rating: 4.9,
-      reviews: 156,
-      downloads: 987,
-      category: 'finance',
-      tags: ['Finance', 'Analysis', 'Investment'],
-      featured: false,
-      isLiked: false,
-      likes: 134
-    },
-    {
-      id: 6,
-      title: 'Basic Customer Support AI',
-      description: 'Simple customer support agent with basic question answering capabilities.',
-      author: 'SupportAI',
-      price: 0,
-      rating: 4.2,
-      reviews: 45,
-      downloads: 3456,
-      category: 'customer-service',
-      tags: ['AI', 'Support', 'Basic'],
-      featured: false,
-      isLiked: true,
-      likes: 234
+  const loadFeaturedItems = async () => {
+    const featured = await getFeaturedItems();
+    setFeaturedItems(featured);
+  };
+
+  const filteredItems = items.filter(item =>
+    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const categories = ['all', 'agent', 'workflow', 'template', 'integration'];
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'agent': return <Users className="w-4 h-4" />;
+      case 'workflow': return <Zap className="w-4 h-4" />;
+      case 'template': return <FileText className="w-4 h-4" />;
+      case 'integration': return <Puzzle className="w-4 h-4" />;
+      default: return <FileText className="w-4 h-4" />;
     }
-  ];
+  };
 
-  const filteredAgents = agents.filter(agent => {
-    const matchesSearch = agent.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         agent.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || agent.category === selectedCategory;
-    const matchesPrice = priceFilter === 'all' || 
-                        (priceFilter === 'free' && agent.price === 0) ||
-                        (priceFilter === 'paid' && agent.price > 0);
-    
-    return matchesSearch && matchesCategory && matchesPrice;
-  });
+  const formatPrice = (price: number, currency: string) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency.toUpperCase()
+    }).format(price);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-96">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/5 to-cyan-900/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-                AI Agent Marketplace
-              </h1>
-              <p className="text-gray-400">
-                Discover, purchase, and deploy powerful AI agents
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">AI Marketplace</h1>
+          <p className="text-gray-400">Discover and purchase premium AI tools and templates</p>
+        </div>
+        <div className="flex space-x-2">
+          <Button 
+            onClick={() => navigate('/marketplace/store')}
+            className="bg-blue-500 hover:bg-blue-600"
+          >
+            <Store className="w-4 h-4 mr-2" />
+            Browse Store
+          </Button>
+          <Button variant="outline">
+            <Plus className="w-4 h-4 mr-2" />
+            Sell Item
+          </Button>
+        </div>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-8">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Input
+            placeholder="Search marketplace..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 bg-gray-800 border-gray-700 text-white"
+          />
+        </div>
+        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+          <SelectTrigger className="w-48 bg-gray-800 border-gray-700 text-white">
+            <Filter className="w-4 h-4 mr-2" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-gray-800 border-gray-700">
+            {categories.map((category) => (
+              <SelectItem key={category} value={category}>
+                {category === 'all' ? 'All Categories' : category.charAt(0).toUpperCase() + category.slice(1)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <Tabs defaultValue="featured" className="w-full">
+        <TabsList className="grid w-full grid-cols-4 bg-gray-800 border-gray-700">
+          <TabsTrigger value="featured">Featured</TabsTrigger>
+          <TabsTrigger value="trending">Trending</TabsTrigger>
+          <TabsTrigger value="recent">Recent</TabsTrigger>
+          <TabsTrigger value="purchases">My Purchases</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="featured" className="mt-6">
+          {/* Hero Section */}
+          <div className="bg-gradient-to-r from-blue-900/50 to-purple-900/50 rounded-lg p-8 mb-8">
+            <div className="max-w-2xl">
+              <h2 className="text-3xl font-bold text-white mb-4">Featured AI Solutions</h2>
+              <p className="text-gray-300 mb-6">
+                Discover the most popular and highly-rated AI agents, workflows, and templates 
+                created by our community of experts.
               </p>
+              <Button className="bg-white text-black hover:bg-gray-100">
+                Explore Featured Items
+              </Button>
             </div>
-            
-            <WorkingButton 
-              action="startSelling"
-              className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
-            >
-              <DollarSign className="w-4 h-4 mr-2" />
-              Start Selling
-            </WorkingButton>
           </div>
 
-          {/* Search and Filters */}
-          <div className="flex flex-col lg:flex-row gap-4 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search AI agents..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-              />
-            </div>
-            
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
-            >
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.label}
-                </option>
+          {/* Featured Items */}
+          {featuredItems.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredItems.map((item) => (
+                <Card key={item.id} className="bg-gradient-to-br from-yellow-900/20 to-orange-900/20 border-yellow-500/30">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
+                          {getTypeIcon(item.type)}
+                        </div>
+                        <div>
+                          <CardTitle className="text-white text-lg">{item.title}</CardTitle>
+                          <Badge className="bg-yellow-500 text-black text-xs mt-1">
+                            {item.type}
+                          </Badge>
+                        </div>
+                      </div>
+                      <Badge className="bg-yellow-500 text-black text-xs">
+                        <Award className="w-3 h-3 mr-1" />
+                        Featured
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-gray-300 line-clamp-2 mb-4">
+                      {item.description}
+                    </CardDescription>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-4 text-sm text-gray-400">
+                        <div className="flex items-center">
+                          <Download className="w-4 h-4 mr-1" />
+                          {item.downloads}
+                        </div>
+                        <div className="flex items-center">
+                          <Star className="w-4 h-4 mr-1 fill-yellow-400 text-yellow-400" />
+                          {item.rating.toFixed(1)}
+                        </div>
+                      </div>
+                      <div className="text-lg font-bold text-white">
+                        {formatPrice(item.price, item.currency)}
+                      </div>
+                    </div>
+                    <Button className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black">
+                      <ShoppingCart className="w-4 h-4 mr-2" />
+                      Purchase
+                    </Button>
+                  </CardContent>
+                </Card>
               ))}
-            </select>
-            
-            <select
-              value={priceFilter}
-              onChange={(e) => setPriceFilter(e.target.value)}
-              className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
-            >
-              <option value="all">All Prices</option>
-              <option value="free">Free</option>
-              <option value="paid">Paid</option>
-            </select>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="trending" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {items
+              .sort((a, b) => b.downloads - a.downloads)
+              .slice(0, 9)
+              .map((item) => (
+                <Card key={item.id} className="bg-gray-800/60 border-gray-700">
+                  <CardHeader>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
+                        {getTypeIcon(item.type)}
+                      </div>
+                      <div>
+                        <CardTitle className="text-white text-base">{item.title}</CardTitle>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <Badge variant="outline" className="border-gray-600 text-gray-300 text-xs">
+                            {item.type}
+                          </Badge>
+                          <div className="flex items-center text-xs text-green-500">
+                            <TrendingUp className="w-3 h-3 mr-1" />
+                            Trending
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-gray-400 line-clamp-2 mb-4">
+                      {item.description}
+                    </CardDescription>
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm font-bold text-white">
+                        {formatPrice(item.price, item.currency)}
+                      </div>
+                      <div className="flex items-center space-x-2 text-xs text-gray-500">
+                        <span>{item.downloads} downloads</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
           </div>
+        </TabsContent>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-            <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
-              <div className="flex items-center gap-3">
-                <ShoppingBag className="w-5 h-5 text-blue-400" />
-                <div>
-                  <p className="text-sm text-gray-400">Total Agents</p>
-                  <p className="text-lg font-semibold text-white">{agents.length}</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
-              <div className="flex items-center gap-3">
-                <Download className="w-5 h-5 text-green-400" />
-                <div>
-                  <p className="text-sm text-gray-400">Downloads</p>
-                  <p className="text-lg font-semibold text-white">12.5k</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
-              <div className="flex items-center gap-3">
-                <Users className="w-5 h-5 text-purple-400" />
-                <div>
-                  <p className="text-sm text-gray-400">Creators</p>
-                  <p className="text-lg font-semibold text-white">234</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-gray-800/60 p-4 rounded-xl border border-gray-700">
-              <div className="flex items-center gap-3">
-                <TrendingUp className="w-5 h-5 text-orange-400" />
-                <div>
-                  <p className="text-sm text-gray-400">This Month</p>
-                  <p className="text-lg font-semibold text-white">+47%</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Agents Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAgents.map((agent) => (
-            <div key={agent.id} className="bg-gray-800/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700 hover:border-gray-600 transition-all duration-300 group">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  {agent.featured && (
-                    <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-semibold">
-                      Featured
-                    </Badge>
-                  )}
-                  <Badge variant="outline" className="border-blue-500/30 text-blue-400 text-xs">
-                    {categories.find(c => c.id === agent.category)?.label}
-                  </Badge>
-                </div>
-                
-                <LikeButton 
-                  itemId={agent.id.toString()}
-                  initialLiked={agent.isLiked}
-                  initialCount={agent.likes}
-                  size="sm"
-                />
-              </div>
-
-              <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">
-                {agent.title}
-              </h3>
-              
-              <p className="text-gray-400 text-sm mb-4 line-clamp-2">
-                {agent.description}
-              </p>
-
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                  <span className="text-sm text-white font-medium">{agent.rating}</span>
-                  <span className="text-xs text-gray-500">({agent.reviews})</span>
-                </div>
-                <span className="text-gray-500">•</span>
-                <span className="text-xs text-gray-500">{agent.downloads} downloads</span>
-              </div>
-
-              <div className="flex flex-wrap gap-1 mb-4">
-                {agent.tags.map((tag) => (
-                  <Badge key={tag} variant="outline" className="border-gray-600 text-gray-400 text-xs">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-left">
-                  <div className="flex items-center gap-2">
-                    {agent.price === 0 ? (
-                      <span className="text-green-400 font-bold text-lg">Free</span>
-                    ) : (
-                      <>
-                        <span className="text-white font-bold text-lg">${agent.price}</span>
-                        {agent.originalPrice && (
-                          <span className="text-gray-500 line-through text-sm">${agent.originalPrice}</span>
-                        )}
-                      </>
-                    )}
+        <TabsContent value="recent" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {items.slice(0, 12).map((item) => (
+              <Card key={item.id} className="bg-gray-800/60 border-gray-700">
+                <CardHeader>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded flex items-center justify-center">
+                      {getTypeIcon(item.type)}
+                    </div>
+                    <div>
+                      <CardTitle className="text-white text-sm">{item.title}</CardTitle>
+                      <Badge variant="outline" className="border-gray-600 text-gray-300 text-xs">
+                        {item.type}
+                      </Badge>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-500">by {agent.author}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {agent.price === 0 ? (
-                  <WorkingButton 
-                    action="download"
-                    className="flex-1 bg-green-500 hover:bg-green-600 text-sm"
-                  >
-                    <Download className="w-3 h-3 mr-1" />
-                    Download
-                  </WorkingButton>
-                ) : (
-                  <WorkingButton 
-                    action="purchase"
-                    className="flex-1 bg-blue-500 hover:bg-blue-600 text-sm"
-                  >
-                    <ShoppingBag className="w-3 h-3 mr-1" />
-                    Purchase
-                  </WorkingButton>
-                )}
-                <WorkingButton 
-                  action="view"
-                  variant="outline"
-                  className="border-gray-600 hover:bg-gray-700 text-sm"
-                >
-                  <Eye className="w-3 h-3" />
-                </WorkingButton>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {filteredAgents.length === 0 && (
-          <div className="text-center py-16">
-            <ShoppingBag className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">No agents found</h3>
-            <p className="text-gray-400">Try adjusting your search criteria or filters.</p>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm font-bold text-white">
+                      {formatPrice(item.price, item.currency)}
+                    </div>
+                    <div className="flex items-center text-xs text-gray-500">
+                      <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
+                      {item.rating.toFixed(1)}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        )}
+        </TabsContent>
+
+        <TabsContent value="purchases" className="mt-6">
+          {purchases.length === 0 ? (
+            <div className="text-center py-12">
+              <ShoppingCart className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-white mb-2">No purchases yet</h3>
+              <p className="text-gray-400 mb-4">Start exploring the marketplace to find amazing AI tools</p>
+              <Button 
+                onClick={() => navigate('/marketplace/store')}
+                className="bg-blue-500 hover:bg-blue-600"
+              >
+                <Store className="w-4 h-4 mr-2" />
+                Browse Store
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {purchases.map((purchase) => (
+                <Card key={purchase.id} className="bg-gray-800/60 border-gray-700">
+                  <CardHeader>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                        {getTypeIcon(purchase.item?.type || 'template')}
+                      </div>
+                      <div>
+                        <CardTitle className="text-white text-base">{purchase.item?.title}</CardTitle>
+                        <Badge 
+                          variant={purchase.status === 'completed' ? 'default' : 'secondary'}
+                          className="text-xs mt-1"
+                        >
+                          {purchase.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm font-bold text-white">
+                        {formatPrice(purchase.amount, purchase.currency)}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {new Date(purchase.created_at).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+
+      {/* Stats Section */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12">
+        <Card className="bg-gray-800/60 border-gray-700 text-center">
+          <CardContent className="pt-6">
+            <Users className="w-8 h-8 text-blue-500 mx-auto mb-2" />
+            <div className="text-2xl font-bold text-white">1,200+</div>
+            <div className="text-gray-400">Active Sellers</div>
+          </CardContent>
+        </Card>
+        <Card className="bg-gray-800/60 border-gray-700 text-center">
+          <CardContent className="pt-6">
+            <ShoppingCart className="w-8 h-8 text-green-500 mx-auto mb-2" />
+            <div className="text-2xl font-bold text-white">5,000+</div>
+            <div className="text-gray-400">Items Available</div>
+          </CardContent>
+        </Card>
+        <Card className="bg-gray-800/60 border-gray-700 text-center">
+          <CardContent className="pt-6">
+            <Download className="w-8 h-8 text-purple-500 mx-auto mb-2" />
+            <div className="text-2xl font-bold text-white">25,000+</div>
+            <div className="text-gray-400">Downloads</div>
+          </CardContent>
+        </Card>
+        <Card className="bg-gray-800/60 border-gray-700 text-center">
+          <CardContent className="pt-6">
+            <Star className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
+            <div className="text-2xl font-bold text-white">4.8</div>
+            <div className="text-gray-400">Average Rating</div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
